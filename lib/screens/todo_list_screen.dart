@@ -43,49 +43,56 @@ class _TodoListScreenState extends State<TodoListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo 리스트')),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      hintText: '할 일을 입력하세요',
-                      border: OutlineInputBorder(),
-                    ),
-                    onSubmitted: (_) => _addTodo(),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                ElevatedButton(onPressed: _addTodo, child: const Text('추가')),
-              ],
-            ),
-          ),
-          Expanded(
-            child:
-                _todos.isEmpty
-                    ? const Center(
-                      child: Text(
-                        '할 일을 추가해보세요!',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: const InputDecoration(
+                        hintText: '할 일을 입력하세요',
+                        border: OutlineInputBorder(),
                       ),
-                    )
-                    : ListView.builder(
-                      itemCount: _todos.length,
-                      itemBuilder: (context, index) {
-                        return TodoListItem(
-                          todo: _todos[index],
-                          onToggle: () => _toggleTodo(index),
-                          onDelete: () => _deleteTodo(index),
-                        );
-                      },
+                      onSubmitted: (_) => _addTodo(),
                     ),
-          ),
-        ],
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _addTodo,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('추가'),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child:
+                  _todos.isEmpty
+                      ? const Center(
+                        child: Text(
+                          '할 일을 추가해보세요!',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      )
+                      : ListView.builder(
+                        itemCount: _todos.length,
+                        itemBuilder: (context, index) {
+                          return TodoListItem(
+                            todo: _todos[index],
+                            onToggle: () => _toggleTodo(index),
+                            onDelete: () => _deleteTodo(index),
+                          );
+                        },
+                      ),
+            ),
+          ],
+        ),
       ),
     );
   }
