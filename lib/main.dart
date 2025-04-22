@@ -3,26 +3,9 @@ import 'package:flutter/services.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/todo_list_screen.dart';
 import 'screens/profile_screen.dart';
+import 'utils/neumorphic_styles.dart';
 
-// 앱 테마 색상을 정의하는 클래스
-class AppTheme {
-  // 라이트 모드 팔레트
-  static const Color mainColor = Color(0xFF4C92EA); // 메인 블루
-  static const Color pointColor = Color(0xFF2E3A59); // 딥 네이비
-  static const Color secondaryColor = Color(0xFFA7B8E4); // 라이트 블루
-  static const Color backgroundColor = Color(0xFFF5F7FA); // 밝은 그레이
-  static const Color textColor = Color(0xFF333333); // 진한 차콜
-
-  // 다크 모드 팔레트
-  static const Color darkMainColor = Color(0xFF728DCE); // 소프트 블루
-  static const Color darkPointColor = Color(0xFFA7B8E4); // 라이트 블루
-  static const Color darkSecondaryColor = Color(0xFF2E3A59); // 딥 네이비
-  static const Color darkBackgroundColor = Color(0xFF1A1D26); // 다크 네이비 그레이
-  static const Color darkSubBackgroundColor = Color(0xFF252A37); // 어두운 차콜 블루
-  static const Color darkTextColor = Color(0xFFE3E6EF); // 밝은 그레이
-}
-
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 시스템 UI 오버레이 스타일 설정 (상태 표시줄, 내비게이션 바 등)
@@ -30,7 +13,7 @@ void main() {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarColor: NeumorphicStyles.backgroundColor,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
@@ -46,32 +29,37 @@ class TodoApp extends StatelessWidget {
     return MaterialApp(
       title: 'Todo 리스트',
       theme: ThemeData(
-        primaryColor: AppTheme.mainColor,
-        scaffoldBackgroundColor: AppTheme.backgroundColor,
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(color: AppTheme.textColor),
-          bodyMedium: TextStyle(color: AppTheme.textColor),
+        scaffoldBackgroundColor: NeumorphicStyles.backgroundColor,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: NeumorphicStyles.textDark),
+          bodyMedium: TextStyle(color: NeumorphicStyles.textDark),
         ),
-        colorScheme: ColorScheme.light(
-          primary: AppTheme.mainColor,
-          secondary: AppTheme.secondaryColor,
-          surface: AppTheme.backgroundColor,
+        colorScheme: const ColorScheme.light(
+          primary: NeumorphicStyles.primaryButtonColor,
+          secondary: NeumorphicStyles.secondaryButtonColor,
+          surface: NeumorphicStyles.backgroundColor,
+        ),
+        appBarTheme: const AppBarTheme(
+          color: NeumorphicStyles.backgroundColor,
+          elevation: 0,
+          iconTheme: IconThemeData(color: NeumorphicStyles.textDark),
+          titleTextStyle: TextStyle(
+            color: NeumorphicStyles.textDark,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        // 버튼 테마 변경
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: NeumorphicStyles.primaryButtonColor,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
         ),
       ),
-      darkTheme: ThemeData(
-        primaryColor: AppTheme.darkMainColor,
-        scaffoldBackgroundColor: AppTheme.darkBackgroundColor,
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(color: AppTheme.darkTextColor),
-          bodyMedium: TextStyle(color: AppTheme.darkTextColor),
-        ),
-        colorScheme: ColorScheme.dark(
-          primary: AppTheme.darkMainColor,
-          secondary: AppTheme.darkPointColor,
-          surface: AppTheme.darkSubBackgroundColor,
-        ),
-      ),
-      themeMode: ThemeMode.system, // 시스템 설정에 따라 테마 적용
       home: const MainScreen(),
     );
   }
@@ -132,7 +120,6 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
@@ -162,14 +149,20 @@ class _MainScreenState extends State<MainScreen>
           margin: const EdgeInsets.symmetric(horizontal: 24.0),
           height: navBarHeight,
           decoration: BoxDecoration(
-            color: isDarkMode ? AppTheme.darkSubBackgroundColor : Colors.white,
+            color: NeumorphicStyles.backgroundColor,
             borderRadius: BorderRadius.circular(37.5), // 높이의 절반
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: NeumorphicStyles.darkShadow.withOpacity(0.3),
                 blurRadius: 15,
-                spreadRadius: 2,
-                offset: const Offset(0, 5),
+                spreadRadius: 1,
+                offset: const Offset(4, 4),
+              ),
+              BoxShadow(
+                color: NeumorphicStyles.lightShadow.withOpacity(0.7),
+                blurRadius: 15,
+                spreadRadius: 1,
+                offset: const Offset(-4, -4),
               ),
             ],
           ),
@@ -183,7 +176,6 @@ class _MainScreenState extends State<MainScreen>
                     _navItems[index]['icon'],
                     _navItems[index]['label'],
                     index,
-                    isDarkMode,
                     itemWidth,
                   );
                 }),
@@ -212,10 +204,7 @@ class _MainScreenState extends State<MainScreen>
                         width: 20,
                         height: 4,
                         decoration: BoxDecoration(
-                          color:
-                              isDarkMode
-                                  ? AppTheme.darkMainColor
-                                  : AppTheme.mainColor,
+                          color: NeumorphicStyles.primaryButtonColor,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -234,17 +223,14 @@ class _MainScreenState extends State<MainScreen>
     IconData icon,
     String label,
     int index,
-    bool isDarkMode,
     double itemWidth,
   ) {
     final isSelected = _selectedIndex == index;
 
     // 선택된 아이템의 색상
-    final Color activeColor =
-        isDarkMode ? AppTheme.darkMainColor : AppTheme.mainColor;
+    final Color activeColor = NeumorphicStyles.primaryButtonColor;
     // 선택되지 않은 아이템의 색상
-    final Color inactiveColor =
-        isDarkMode ? AppTheme.darkTextColor.withOpacity(0.5) : Colors.grey;
+    final Color inactiveColor = NeumorphicStyles.textLight;
 
     return SizedBox(
       width: itemWidth, // 동적으로 계산된 너비 사용
@@ -276,26 +262,39 @@ class _MainScreenState extends State<MainScreen>
               // 아이콘 부분
               Positioned(
                 top: 8, // 상단에 더 가깝게 위치
-                child: TweenAnimationBuilder(
-                  tween: Tween<double>(
-                    begin: isSelected ? 26 : 32,
-                    end: isSelected ? 32 : 26,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration:
+                      isSelected
+                          ? BoxDecoration(
+                            color: NeumorphicStyles.backgroundColor,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: NeumorphicStyles.darkShadow.withOpacity(
+                                  0.2,
+                                ),
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                                offset: const Offset(2, 2),
+                              ),
+                              BoxShadow(
+                                color: NeumorphicStyles.lightShadow.withOpacity(
+                                  0.5,
+                                ),
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                                offset: const Offset(-2, -2),
+                              ),
+                            ],
+                          )
+                          : null,
+                  child: Icon(
+                    icon,
+                    color: isSelected ? activeColor : inactiveColor,
+                    size: 24,
                   ),
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOutBack,
-                  builder: (context, size, child) {
-                    return Transform.translate(
-                      offset: Offset(
-                        0,
-                        isSelected ? -4 : 0, // 이동 거리 줄임
-                      ),
-                      child: Icon(
-                        icon,
-                        color: isSelected ? activeColor : inactiveColor,
-                        size: size,
-                      ),
-                    );
-                  },
                 ),
               ),
 
