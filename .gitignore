@@ -117,3 +117,66 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+
+# IDE 관련 파일
+**/.idea/modules.xml
+**/.idea/libraries/
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/.name
+**/.idea/*.iml
+**/.idea/dictionaries
+**/.idea/runConfigurations/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# FVM (Flutter Version Management) 관련
+.fvm/flutter_sdk
+
+# 안드로이드 추가 제외
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# iOS 추가 제외
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Generated.xcconfig
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# 로컬 환경 설정
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 빌드 아티팩트
+*.apk
+*.aab
+*.ipa
+*.app.dSYM.zip
+
+# Firebase 설정 파일 (보안 상 민감한 정보가 포함될 수 있음)
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+**/ios/firebase_app_id_file.json
+**/lib/firebase_options.dart
+
+# 테스트 관련 파일
+coverage/
+test/reports/
+junit/
+reports/
+
+# 코드 생성 관련
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# 이미지 애셋 캐시
+.DS_Store
+**/images/.DS_Store
+
+!pubspec.lock
