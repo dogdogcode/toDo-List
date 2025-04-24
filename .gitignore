@@ -179,6 +179,7 @@ reports/
 .DS_Store
 **/images/.DS_Store
 
+<<<<<<< HEAD
 !pubspec.lock
 .metadata
 analysis_options.yaml
@@ -301,3 +302,6 @@ windows/runner/win32_window.cpp
 windows/runner/win32_window.h
 windows/runner/resources/app_icon.ico
 .gitignore
+=======
+!pubspec.lock
+>>>>>>> 436416a91c9b1368e14184328abbca0f63447f6b
