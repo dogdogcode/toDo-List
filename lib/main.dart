@@ -144,7 +144,9 @@ class _MainScreenState extends State<MainScreen>
         children: _screens,
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(bottom: 20.0 + bottomPadding),
+        padding: EdgeInsets.only(
+          bottom: 10.0 + bottomPadding,
+        ), // 네비게이션 바 위치 하향 조정
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 24.0),
           height: navBarHeight,

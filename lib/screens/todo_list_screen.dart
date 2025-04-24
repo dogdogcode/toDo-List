@@ -234,41 +234,18 @@ class _TodoListScreenState extends State<TodoListScreen>
                       ),
                     ),
 
-                    // 추가 버튼
+                    // 추가 버튼 (기한 없는 간단한 할 일 추가)
                     GestureDetector(
                       onTap: _addSimpleTodo,
                       child: Container(
                         width: 40,
                         height: 40,
-                        margin: const EdgeInsets.only(right: 8),
+                        margin: const EdgeInsets.only(right: 16),
                         decoration: BoxDecoration(
                           color: NeumorphicStyles.primaryButtonColor,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(Icons.add, color: Colors.white),
-                      ),
-                    ),
-
-                    // 상세 입력 버튼
-                    GestureDetector(
-                      onTap: _showDetailedTodoInput,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: NeumorphicStyles.primaryButtonColor,
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.calendar_today_outlined,
-                          color: NeumorphicStyles.primaryButtonColor,
-                          size: 20,
-                        ),
                       ),
                     ),
                   ],
@@ -280,7 +257,7 @@ class _TodoListScreenState extends State<TodoListScreen>
 
             // 탭 선택 영역
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -310,7 +287,7 @@ class _TodoListScreenState extends State<TodoListScreen>
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
                   ),
-                  padding: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(8), // 패딩값 늘림
                   tabs: const [
                     Tab(text: '기간 없는 작업', height: 40),
                     Tab(text: '기간 있는 작업', height: 40),
@@ -389,6 +366,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       floatingActionButton: Container(
         width: 64,
         height: 64,
+        margin: const EdgeInsets.only(bottom: 120), // 플러스 버튼을 더 위로 올림
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -416,6 +394,8 @@ class _TodoListScreenState extends State<TodoListScreen>
           ),
         ),
       ),
+      // FloatingActionButton 위치 지정
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
