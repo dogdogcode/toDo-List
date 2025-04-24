@@ -4,6 +4,8 @@ import 'screens/calendar_screen.dart';
 import 'screens/todo_list_screen.dart';
 import 'screens/profile_screen.dart';
 import 'utils/neumorphic_styles.dart';
+import 'widgets/detailed_todo_input.dart';
+import 'models/todo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -124,7 +126,7 @@ class _MainScreenState extends State<MainScreen>
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     // 네비게이션 바 크기 계산
-    final navBarHeight = 75.0;
+    final navBarHeight = 95.0; // 네비게이션 바 높이 증가
     final navBarWidth = screenWidth - 48.0; // 좌우 패딩 24씩 제외
     final itemWidth = navBarWidth / 3; // 3개 아이템 균등 배분
 
@@ -143,12 +145,44 @@ class _MainScreenState extends State<MainScreen>
         },
         children: _screens,
       ),
-      floatingActionButton: Container(
-        width: 64,
-        height: 64,
-        margin: const EdgeInsets.only(bottom: 120),
-        decoration: NeumorphicStyles.getFABDecoration(),
-      ),
+      floatingActionButton:
+          _selectedIndex ==
+                  1 // 할일 페이지에서만 플로팅 버튼 표시
+              ? Container(
+                width: 75, // 버튼 크기 증가
+                height: 75, // 버튼 크기 증가
+                margin: const EdgeInsets.only(bottom: 130), // 플러스 버튼을 더 위로 올림
+                decoration: NeumorphicStyles.getFABDecoration(),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(38),
+                    onTap: () {
+                      // 상세 할일 추가 화면 호출 (바텀 시트 사용)
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder:
+                            (context) => DetailedTodoInput(
+                              onSave: (todo) async {
+                                // Todo 저장 및 화면 닫기
+                                Navigator.pop(context);
+                              },
+                            ),
+                      );
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 38,
+                    ), // 아이콘 크기 증가
+                  ),
+                ),
+              )
+              : null, // 다른 화면에서는 버튼 표시하지 않음
+      // FloatingActionButton 위치 지정
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
           bottom: 10.0 + bottomPadding,
@@ -158,29 +192,28 @@ class _MainScreenState extends State<MainScreen>
           height: navBarHeight,
           decoration: BoxDecoration(
             color: NeumorphicStyles.backgroundColor,
-            borderRadius: BorderRadius.circular(37.5), // 높이의 절반
+            borderRadius: BorderRadius.circular(25), // 더 둥근한 테두리
             boxShadow: [
               BoxShadow(
-                color: Color.fromRGBO(
-                  163, // darkShadow.red
-                  177, // darkShadow.green
-                  198, // darkShadow.blue
-                  76 / 255,
-                ),
+                color: Color.fromRGBO(163, 177, 198, 0.3), // 그림자 효과 강화
                 blurRadius: 15,
                 spreadRadius: 1,
-                offset: const Offset(4, 4),
+                offset: const Offset(4, 6), // 그림자 위치 조정
               ),
               BoxShadow(
-                color: Color.fromRGBO(
-                  255, // lightShadow.red
-                  255, // lightShadow.green
-                  255, // lightShadow.blue
-                  178 / 255,
-                ),
+                color: Colors.white.withAlpha(
+                  204,
+                ), // withOpacity 대신 withAlpha 사용
                 blurRadius: 15,
                 spreadRadius: 1,
-                offset: const Offset(-4, -4),
+                offset: const Offset(-3, -3),
+              ),
+              // 추가 그림자 효과
+              BoxShadow(
+                color: Color.fromRGBO(163, 177, 198, 0.15),
+                blurRadius: 5,
+                spreadRadius: 2,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -272,17 +305,17 @@ class _MainScreenState extends State<MainScreen>
         splashColor: Colors.transparent, // 물결 효과 제거
         highlightColor: Colors.transparent, // 하이라이트 효과 제거
         child: SizedBox(
-          height: 75, // 컨테이너와 동일한 높이 설정
+          height: 95, // 바 높이 고정 값으로 사용
           child: Stack(
             clipBehavior: Clip.none, // 오버플로우 클리핑 방지
             alignment: Alignment.center,
             children: [
               // 아이콘 부분
               Positioned(
-                top: 8, // 상단에 더 가깝게 위치
+                top: 8, // 상단 위치 더 위로 올림
                 child: Container(
-                  width: 40,
-                  height: 40,
+                  width: 45, // 아이콘 컨테이너 크기 증가
+                  height: 45,
                   decoration:
                       isSelected
                           ? BoxDecoration(
@@ -290,24 +323,16 @@ class _MainScreenState extends State<MainScreen>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Color.fromRGBO(
-                                  NeumorphicStyles.darkShadow.r.round(),
-                                  NeumorphicStyles.darkShadow.g.round(),
-                                  NeumorphicStyles.darkShadow.b.round(),
-                                  51 / 255,
-                                ),
-                                blurRadius: 5,
+                                color: Color.fromRGBO(163, 177, 198, 0.4),
+                                blurRadius: 8,
                                 spreadRadius: 1,
                                 offset: const Offset(2, 2),
                               ),
                               BoxShadow(
-                                color: Color.fromRGBO(
-                                  NeumorphicStyles.lightShadow.r.round(),
-                                  NeumorphicStyles.lightShadow.g.round(),
-                                  NeumorphicStyles.lightShadow.b.round(),
-                                  127 / 255,
-                                ),
-                                blurRadius: 5,
+                                color: Colors.white.withAlpha(
+                                  230,
+                                ), // withOpacity 대신 withAlpha 사용
+                                blurRadius: 8,
                                 spreadRadius: 1,
                                 offset: const Offset(-2, -2),
                               ),
@@ -317,21 +342,22 @@ class _MainScreenState extends State<MainScreen>
                   child: Icon(
                     icon,
                     color: isSelected ? activeColor : inactiveColor,
-                    size: 24,
+                    size: 26, // 아이콘 크기 증가
                   ),
                 ),
               ),
 
               // 텍스트 부분
               Positioned(
-                bottom: 14, // 하단에 더 가깝게 위치
+                bottom: 22, // 하단 위치 조정 - 더 아래로 내림
                 child: AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 200),
                   style: TextStyle(
                     color: isSelected ? activeColor : inactiveColor,
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 13, // 폰트 크기 유지
+                    fontSize: 13.5, // 폰트 크기 약간 증가
+                    letterSpacing: isSelected ? 0.5 : 0, // 선택시 문자 간격 두기
                   ),
                   child: Text(label),
                 ),

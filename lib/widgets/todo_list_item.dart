@@ -58,6 +58,7 @@ class TodoListItem extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min, // 내용에 맞춰 크기 조절
                 children: [
                   // 상단 헤더 (체크박스 + 삭제 버튼)
                   Row(
@@ -119,8 +120,7 @@ class TodoListItem extends StatelessWidget {
                           todo.completed ? TextDecoration.lineThrough : null,
                       color: todo.completed ? completedTextColor : darkColor,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    // maxLines 제한 제거하여 내용에 따라 자동 줄바꿈
                   ),
 
                   const SizedBox(height: 8),
@@ -164,7 +164,7 @@ class TodoListItem extends StatelessWidget {
                     Text(
                       todo.memo!,
                       style: TextStyle(fontSize: 12, color: dateTextColor),
-                      maxLines: 1,
+                      maxLines: 2, // 메모는 2줄까지만 표시
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],

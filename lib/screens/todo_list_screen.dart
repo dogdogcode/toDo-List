@@ -257,14 +257,14 @@ class TodoListScreenState extends State<TodoListScreen>
 
             // 탭 선택 영역
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Color.fromARGB(13, 0, 0, 0),
+                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -287,9 +287,13 @@ class TodoListScreenState extends State<TodoListScreen>
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
                   ),
-                  padding: const EdgeInsets.all(8), // 패딩값 늘림
+                  padding: const EdgeInsets.all(4),
                   tabs: const [
-                    Tab(text: '기간 없는 작업', height: 40),
+                    Tab(
+                      text: '기간 없는 작업',
+                      height: 40,
+                      icon: SizedBox(width: 8),
+                    ), // 간격 추가
                     Tab(text: '기간 있는 작업', height: 40),
                   ],
                 ),
@@ -363,22 +367,8 @@ class TodoListScreenState extends State<TodoListScreen>
           ],
         ),
       ),
-      floatingActionButton: Container(
-        width: 64,
-        height: 64,
-        margin: const EdgeInsets.only(bottom: 120), // 플러스 버튼을 더 위로 올림
-        decoration: NeumorphicStyles.getFABDecoration(),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(32),
-            onTap: _showDetailedTodoInput,
-            child: const Icon(Icons.add, color: Colors.white, size: 32),
-          ),
-        ),
-      ),
-      // FloatingActionButton 위치 지정
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // 할 일 입력 영역에서 이미 기간 없는 할 일 추가 기능이 있으므로
+      // 추가 버튼을 제거하여 UI 단순화
     );
   }
 
@@ -391,7 +381,8 @@ class TodoListScreenState extends State<TodoListScreen>
           crossAxisCount: 2, // 가로 방향 아이템 개수
           crossAxisSpacing: 16, // 가로 방향 간격
           mainAxisSpacing: 16, // 세로 방향 간격
-          childAspectRatio: 1.0, // 카드 비율 (가로:세로)
+          mainAxisExtent: 200, // 고정 높이 설정 (스크롤 가능)
+          childAspectRatio: 0.9, // 비율 무시됨 (mainAxisExtent가 우선)
         ),
         itemCount: todos.length,
         itemBuilder: (context, index) {
