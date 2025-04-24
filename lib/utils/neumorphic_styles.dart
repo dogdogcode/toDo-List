@@ -37,13 +37,23 @@ class NeumorphicStyles {
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: darkShadow.withOpacity(intensity),
+          color: Color.fromARGB(
+            (255 * intensity).toInt(),
+            163, // darkShadow.red
+            177, // darkShadow.green
+            198, // darkShadow.blue
+          ),
           offset: const Offset(5, 5),
           blurRadius: 15,
           spreadRadius: 1,
         ),
         BoxShadow(
-          color: lightShadow.withOpacity(intensity + 0.05),
+          color: Color.fromARGB(
+            (255 * (intensity + 0.05)).round(),
+            255, // lightShadow.red
+            255, // lightShadow.green
+            255, // lightShadow.blue
+          ),
           offset: const Offset(-5, -5),
           blurRadius: 15,
           spreadRadius: 1,
@@ -65,7 +75,8 @@ class NeumorphicStyles {
       color: color,
       borderRadius: BorderRadius.circular(radius),
       gradient: RadialGradient(
-        colors: [color.withOpacity(0.95), color],
+        // backgroundColor 고정값: R=245, G=248, B=255
+        colors: [Color.fromRGBO(245, 248, 255, 242 / 255), color],
         center: Alignment.center,
         focal: Alignment.center,
         radius: 2.0,
@@ -73,10 +84,37 @@ class NeumorphicStyles {
       ),
       boxShadow: [
         BoxShadow(
-          color: darkShadow.withOpacity(intensity / 3),
+          color: Color.fromRGBO(
+            163, // darkShadow.red
+            177, // darkShadow.green
+            198, // darkShadow.blue
+            (255 * intensity / 3).round() / 255,
+          ),
           offset: const Offset(2, 2),
           blurRadius: 5,
           spreadRadius: 0,
+        ),
+      ],
+    );
+  }
+
+  // 새로 추가: 플로팅 액션 버튼 꾸밈 헬퍼 메서드
+  static BoxDecoration getFABDecoration() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          primaryButtonColor,
+          primaryButtonColor.withAlpha(204), // 여기도 필요시 255,193,7에 직접 값 넣을 수 있음
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(32),
+      boxShadow: [
+        BoxShadow(
+          color: primaryButtonColor.withAlpha(76), // withAlpha 사용
+          blurRadius: 12,
+          offset: const Offset(0, 6),
         ),
       ],
     );
@@ -157,10 +195,10 @@ class NeumorphicButton extends StatefulWidget {
   });
 
   @override
-  _NeumorphicButtonState createState() => _NeumorphicButtonState();
+  NeumorphicButtonState createState() => NeumorphicButtonState();
 }
 
-class _NeumorphicButtonState extends State<NeumorphicButton> {
+class NeumorphicButtonState extends State<NeumorphicButton> {
   bool _isPressed = false;
 
   @override
@@ -261,7 +299,12 @@ class NeumorphicCheckbox extends StatelessWidget {
                   borderRadius: BorderRadius.circular(size / 3),
                   boxShadow: [
                     BoxShadow(
-                      color: NeumorphicStyles.darkShadow.withOpacity(0.3),
+                      color: Color.fromRGBO(
+                        163, // darkShadow.red
+                        177, // darkShadow.green
+                        198, // darkShadow.blue
+                        76 / 255,
+                      ),
                       offset: const Offset(2, 2),
                       blurRadius: 5,
                     ),

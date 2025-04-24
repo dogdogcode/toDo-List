@@ -143,6 +143,12 @@ class _MainScreenState extends State<MainScreen>
         },
         children: _screens,
       ),
+      floatingActionButton: Container(
+        width: 64,
+        height: 64,
+        margin: const EdgeInsets.only(bottom: 120),
+        decoration: NeumorphicStyles.getFABDecoration(),
+      ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
           bottom: 10.0 + bottomPadding,
@@ -155,13 +161,23 @@ class _MainScreenState extends State<MainScreen>
             borderRadius: BorderRadius.circular(37.5), // 높이의 절반
             boxShadow: [
               BoxShadow(
-                color: NeumorphicStyles.darkShadow.withOpacity(0.3),
+                color: Color.fromRGBO(
+                  163, // darkShadow.red
+                  177, // darkShadow.green
+                  198, // darkShadow.blue
+                  76 / 255,
+                ),
                 blurRadius: 15,
                 spreadRadius: 1,
                 offset: const Offset(4, 4),
               ),
               BoxShadow(
-                color: NeumorphicStyles.lightShadow.withOpacity(0.7),
+                color: Color.fromRGBO(
+                  255, // lightShadow.red
+                  255, // lightShadow.green
+                  255, // lightShadow.blue
+                  178 / 255,
+                ),
                 blurRadius: 15,
                 spreadRadius: 1,
                 offset: const Offset(-4, -4),
@@ -274,16 +290,22 @@ class _MainScreenState extends State<MainScreen>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: NeumorphicStyles.darkShadow.withOpacity(
-                                  0.2,
+                                color: Color.fromRGBO(
+                                  NeumorphicStyles.darkShadow.r.round(),
+                                  NeumorphicStyles.darkShadow.g.round(),
+                                  NeumorphicStyles.darkShadow.b.round(),
+                                  51 / 255,
                                 ),
                                 blurRadius: 5,
                                 spreadRadius: 1,
                                 offset: const Offset(2, 2),
                               ),
                               BoxShadow(
-                                color: NeumorphicStyles.lightShadow.withOpacity(
-                                  0.5,
+                                color: Color.fromRGBO(
+                                  NeumorphicStyles.lightShadow.r.round(),
+                                  NeumorphicStyles.lightShadow.g.round(),
+                                  NeumorphicStyles.lightShadow.b.round(),
+                                  127 / 255,
                                 ),
                                 blurRadius: 5,
                                 spreadRadius: 1,

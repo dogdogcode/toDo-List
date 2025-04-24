@@ -8,10 +8,10 @@ class DetailedTodoInput extends StatefulWidget {
   const DetailedTodoInput({super.key, required this.onSave});
 
   @override
-  _DetailedTodoInputState createState() => _DetailedTodoInputState();
+  DetailedTodoInputState createState() => DetailedTodoInputState();
 }
 
-class _DetailedTodoInputState extends State<DetailedTodoInput> {
+class DetailedTodoInputState extends State<DetailedTodoInput> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();

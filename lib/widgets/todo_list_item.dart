@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
-import '../utils/neumorphic_styles.dart';
+
+// Color 확장 메서드 - 클래스 외부에 선언해야 합니다
+extension ColorBrightness on Color {
+  Color withBrightness(double brightness) {
+    final hsl = HSLColor.fromColor(this);
+    return hsl
+        .withLightness((hsl.lightness * brightness).clamp(0.0, 1.0))
+        .toColor();
+  }
+}
 
 class TodoListItem extends StatelessWidget {
+  // 고정 색상 정의 - 올바른 방식으로 상수 선언
+  static const Color transparentWhite = Color(0xB2FFFFFF); // 70% 투명도
+  static const Color lightTransparentWhite = Color(0x4DFFFFFF); // 30% 투명도
+  static const Color shadowColor = Color(0x19000000); // 10% 불투명도
+  static const Color completedTextColor = Color(0x99000000); // 60% 불투명도
+  static const Color dateTextColor = Color(0x66000000); // 40% 불투명도
+  static const Color tagBackgroundColor = Color(0x1A000000); // 10% 불투명도
+
   final Todo todo;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
@@ -19,19 +36,15 @@ class TodoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lightColor = Color.lerp(cardColor, Colors.white, 0.5)!;
-    final darkColor = Color.lerp(cardColor, Colors.black, 0.1)!;
+    // 단순화된 색상 계산
+    final darkColor = cardColor.withBrightness(0.9);
 
     return Container(
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
+        boxShadow: const [
+          BoxShadow(color: shadowColor, blurRadius: 10, offset: Offset(0, 4)),
         ],
       ),
       child: ClipRRect(
@@ -40,7 +53,7 @@ class TodoListItem extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onToggle,
-            splashColor: lightColor,
+            splashColor: lightTransparentWhite,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -57,15 +70,11 @@ class TodoListItem extends StatelessWidget {
                           height: 24,
                           decoration: BoxDecoration(
                             color:
-                                todo.completed
-                                    ? darkColor
-                                    : Colors.white.withOpacity(0.7),
+                                todo.completed ? darkColor : transparentWhite,
                             shape: BoxShape.circle,
                             border: Border.all(
                               color:
-                                  todo.completed
-                                      ? darkColor
-                                      : Colors.white.withOpacity(0.9),
+                                  todo.completed ? darkColor : transparentWhite,
                               width: 2,
                             ),
                           ),
@@ -89,7 +98,7 @@ class TodoListItem extends StatelessWidget {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
+                            color: lightTransparentWhite,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(Icons.close, size: 16, color: darkColor),
@@ -108,10 +117,7 @@ class TodoListItem extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       decoration:
                           todo.completed ? TextDecoration.lineThrough : null,
-                      color:
-                          todo.completed
-                              ? darkColor.withOpacity(0.6)
-                              : darkColor,
+                      color: todo.completed ? completedTextColor : darkColor,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -127,7 +133,7 @@ class TodoListItem extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.4),
+                        color: lightTransparentWhite,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -143,7 +149,7 @@ class TodoListItem extends StatelessWidget {
                             DateFormat('MM/dd').format(todo.deadline!),
                             style: TextStyle(
                               fontSize: 12,
-                              color: darkColor,
+                              color: dateTextColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -157,10 +163,7 @@ class TodoListItem extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       todo.memo!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: darkColor.withOpacity(0.7),
-                      ),
+                      style: TextStyle(fontSize: 12, color: dateTextColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -182,7 +185,7 @@ class TodoListItem extends StatelessWidget {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: darkColor.withOpacity(0.1),
+                                    color: tagBackgroundColor,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -205,10 +208,7 @@ class TodoListItem extends StatelessWidget {
                     child: Text(
                       // 오늘 생성된 항목은 시간만, 그 외는 날짜만 표시
                       _getTimeString(todo.createdAt),
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: darkColor.withOpacity(0.6),
-                      ),
+                      style: TextStyle(fontSize: 10, color: dateTextColor),
                     ),
                   ),
                 ],

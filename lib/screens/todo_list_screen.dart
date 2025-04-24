@@ -10,10 +10,10 @@ class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
 
   @override
-  _TodoListScreenState createState() => _TodoListScreenState();
+  TodoListScreenState createState() => TodoListScreenState();
 }
 
-class _TodoListScreenState extends State<TodoListScreen>
+class TodoListScreenState extends State<TodoListScreen>
     with SingleTickerProviderStateMixin {
   List<Todo> _todos = [];
   final TextEditingController _textController = TextEditingController();
@@ -59,7 +59,7 @@ class _TodoListScreenState extends State<TodoListScreen>
         _isLoading = false;
       });
     } catch (e) {
-      print('할 일 목록 불러오기 오류: $e');
+      // 오류 로깅: 할 일 목록 불러오기 오류
       setState(() {
         _isLoading = false;
       });
@@ -82,7 +82,7 @@ class _TodoListScreenState extends State<TodoListScreen>
         await _loadTodos(); // 목록 새로고침
         _textController.clear();
       } catch (e) {
-        print('할 일 추가 오류: $e');
+        // 오류 로깅: 할 일 추가 오류
       }
     }
   }
@@ -99,7 +99,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       await TodoService.addTodo(todo);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      print('상세 할 일 추가 오류: $e');
+      // 오류 로깅: 상세 할 일 추가 오류
     }
   }
 
@@ -109,7 +109,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       await TodoService.toggleTodoCompleted(id);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      print('할 일 상태 변경 오류: $e');
+      // 오류 로깅: 할 일 상태 변경 오류
     }
   }
 
@@ -119,7 +119,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       await TodoService.deleteTodo(id);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      print('할 일 삭제 오류: $e');
+      // 오류 로깅: 할 일 삭제 오류
     }
   }
 
@@ -212,7 +212,7 @@ class _TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Color.fromARGB(13, 0, 0, 0),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -264,7 +264,7 @@ class _TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Color.fromARGB(13, 0, 0, 0),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -367,24 +367,7 @@ class _TodoListScreenState extends State<TodoListScreen>
         width: 64,
         height: 64,
         margin: const EdgeInsets.only(bottom: 120), // 플러스 버튼을 더 위로 올림
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              NeumorphicStyles.primaryButtonColor,
-              NeumorphicStyles.primaryButtonColor.withOpacity(0.8),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: NeumorphicStyles.primaryButtonColor.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
+        decoration: NeumorphicStyles.getFABDecoration(),
         child: Material(
           color: Colors.transparent,
           child: InkWell(

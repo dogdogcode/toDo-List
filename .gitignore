@@ -117,78 +117,21 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
-
-# IDE 관련 파일
-**/.idea/modules.xml
-**/.idea/libraries/
-**/.idea/workspace.xml
-**/.idea/tasks.xml
-**/.idea/.name
-**/.idea/*.iml
-**/.idea/dictionaries
-**/.idea/runConfigurations/
-.vscode/
-*.iml
-*.ipr
-*.iws
-
-# FVM (Flutter Version Management) 관련
-.fvm/flutter_sdk
-
-# 안드로이드 추가 제외
-**/android/app/debug
-**/android/app/profile
-**/android/app/release
-
-# iOS 추가 제외
-**/ios/Flutter/flutter_export_environment.sh
-**/ios/Flutter/Generated.xcconfig
-**/ios/Runner/GeneratedPluginRegistrant.*
-
-# 로컬 환경 설정
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# 빌드 아티팩트
-*.apk
-*.aab
-*.ipa
-*.app.dSYM.zip
-
-# Firebase 설정 파일 (보안 상 민감한 정보가 포함될 수 있음)
-**/android/app/google-services.json
-**/ios/Runner/GoogleService-Info.plist
-**/ios/firebase_app_id_file.json
-**/lib/firebase_options.dart
-
-# 테스트 관련 파일
-coverage/
-test/reports/
-junit/
-reports/
-
-# 코드 생성 관련
-*.g.dart
-*.freezed.dart
-*.mocks.dart
-
-# 이미지 애셋 캐시
-.DS_Store
-**/images/.DS_Store
-
-<<<<<<< HEAD
-!pubspec.lock
 .metadata
 analysis_options.yaml
 devtools_options.yaml
 LICENSE
+todo.iml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/libraries/Dart_SDK.xml
+.idea/libraries/KotlinJavaRuntime.xml
+.idea/runConfigurations/main_dart.xml
 android/.gitignore
 android/build.gradle.kts
 android/gradle.properties
 android/settings.gradle.kts
+android/todo_android.iml
 android/app/build.gradle.kts
 android/app/src/debug/AndroidManifest.xml
 android/app/src/main/AndroidManifest.xml
@@ -301,7 +244,3 @@ windows/runner/utils.h
 windows/runner/win32_window.cpp
 windows/runner/win32_window.h
 windows/runner/resources/app_icon.ico
-.gitignore
-=======
-!pubspec.lock
->>>>>>> 436416a91c9b1368e14184328abbca0f63447f6b
