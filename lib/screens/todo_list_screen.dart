@@ -123,15 +123,7 @@ class TodoListScreenState extends State<TodoListScreen>
     }
   }
 
-  // 상세 할 일 입력 대화상자 표시
-  void _showDetailedTodoInput() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DetailedTodoInput(onSave: _addDetailedTodo),
-    );
-  }
+  // 상세 할 일 입력 대화상자는 플로팅 버튼에서 직접 호출하민로 메서드 삭제
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +256,7 @@ class TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withAlpha(13), // 0.05 투명도를 alpha로 변환 (255 * 0.05 = 13)
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -372,30 +364,28 @@ class TodoListScreenState extends State<TodoListScreen>
     );
   }
 
-  // 그리드 뷰 레이아웃 구성
+  // 리스트 뷰 레이아웃 구성 (유동적 높이의 직사각형 아이템)
   Widget _buildGridView(List<Todo> todos) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // 가로 방향 아이템 개수
-          crossAxisSpacing: 16, // 가로 방향 간격
-          mainAxisSpacing: 16, // 세로 방향 간격
-          mainAxisExtent: 200, // 고정 높이 설정 (스크롤 가능)
-          childAspectRatio: 0.9, // 비율 무시됨 (mainAxisExtent가 우선)
-        ),
+      child: ListView.builder(
         itemCount: todos.length,
+        // itemExtent 삭제 - 높이를 자유롭게 설정하여 컨텐츠에 맞춰 자동 조절
         itemBuilder: (context, index) {
           final todo = todos[index];
           // 각 할 일에 대한 색상 가져오기, 없으면 기본 색상 사용
           final cardColor =
               _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
 
-          return TodoListItem(
-            todo: todo,
-            onToggle: () => _toggleTodo(todo.id),
-            onDelete: () => _deleteTodo(todo.id),
-            cardColor: cardColor,
+          // 연속된 아이템 사이 간격 추가
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: TodoListItem(
+              todo: todo,
+              onToggle: () => _toggleTodo(todo.id),
+              onDelete: () => _deleteTodo(todo.id),
+              cardColor: cardColor,
+            ),
           );
         },
       ),

@@ -5,7 +5,6 @@ import 'screens/todo_list_screen.dart';
 import 'screens/profile_screen.dart';
 import 'utils/neumorphic_styles.dart';
 import 'widgets/detailed_todo_input.dart';
-import 'models/todo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +74,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin { // SingleTickerProviderStateMixin 제거 - TickerProviderStateMixin이 모든 기능 포함
   int _selectedIndex = 0; // 기본값 "일정" 탭으로 설정
 
   // 네비게이션 아이템 정보
@@ -88,6 +87,9 @@ class _MainScreenState extends State<MainScreen>
   // initState에서 초기화할 변수들 선언
   late PageController _pageController;
   late AnimationController _animationController;
+  late AnimationController _selectionAnimationController;
+  late Animation<double> _selectionAnimation;
+  int _oldIndex = 0; // 이전 선택 인덱스 기록
 
   final List<Widget> _screens = [
     const CalendarScreen(),
@@ -102,14 +104,32 @@ class _MainScreenState extends State<MainScreen>
     // 페이지 컨트롤러 초기화
     _pageController = PageController(initialPage: _selectedIndex);
 
-    // 애니메이션 컨트롤러 초기화
+    // 기본 애니메이션 컨트롤러 초기화
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    
+    // 네비게이션 항목 선택 애니메이션 컨트롤러 초기화
+    _selectionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 700), // 애니메이션 시간 증가
+      vsync: this,
+    );
+    
+    // 사각형 크기 변화 애니메이션 초기화 - 탓성 효과 강화
+    _selectionAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.3, // 더 크게 변화하도록 조정
+    ).animate(
+      CurvedAnimation(
+        parent: _selectionAnimationController,
+        curve: Curves.easeOutBack, // 더 강조된 애니메이션 동작 곳선
+      ),
+    );
 
     // 처음 시작시 애니메이션 실행
     _animationController.forward();
+    _selectionAnimationController.forward();
   }
 
   @override
@@ -117,6 +137,7 @@ class _MainScreenState extends State<MainScreen>
     // 리소스 해제
     _pageController.dispose();
     _animationController.dispose();
+    _selectionAnimationController.dispose();
     super.dispose();
   }
 
@@ -136,12 +157,17 @@ class _MainScreenState extends State<MainScreen>
         controller: _pageController,
         onPageChanged: (index) {
           setState(() {
+            _oldIndex = _selectedIndex;
             _selectedIndex = index;
           });
 
           // 페이지 전환시 애니메이션 재시작
           _animationController.reset();
           _animationController.forward();
+
+          // 선택 애니메이션 재시작
+          _selectionAnimationController.reset();
+          _selectionAnimationController.forward();
         },
         children: _screens,
       ),
@@ -232,37 +258,7 @@ class _MainScreenState extends State<MainScreen>
                 }),
               ),
 
-              // 인디케이터 - 정확한 위치 계산
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOutQuint,
-                // 정확한 중앙 위치 계산
-                left: (itemWidth * _selectedIndex) + (itemWidth / 2) - 10,
-                bottom: 8,
-                child: AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (context, child) {
-                    // 애니메이션 계산
-                    final value =
-                        CurvedAnimation(
-                          parent: _animationController,
-                          curve: Curves.elasticOut,
-                        ).value;
-
-                    return Transform.scale(
-                      scale: 0.5 + (value * 0.5),
-                      child: Container(
-                        width: 20,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: NeumorphicStyles.primaryButtonColor,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              // 인디케이터 제거 - 아이콘 선택 효과만 사용
             ],
           ),
         ),
@@ -287,13 +283,21 @@ class _MainScreenState extends State<MainScreen>
       width: itemWidth, // 동적으로 계산된 너비 사용
       child: InkWell(
         onTap: () {
+          if (_selectedIndex == index) return; // 현재 선택된 탭을 다시 탭할 경우 무시
+
+          // 이전 인덱스 기억
+          setState(() {
+            _oldIndex = _selectedIndex;
+            _selectedIndex = index;
+          });
+
           // 인디케이터 애니메이션 재시작
           _animationController.reset();
           _animationController.forward();
 
-          setState(() {
-            _selectedIndex = index;
-          });
+          // 크기 애니메이션 재시작
+          _selectionAnimationController.reset();
+          _selectionAnimationController.forward();
 
           // 페이지 전환
           _pageController.animateToPage(
@@ -311,39 +315,70 @@ class _MainScreenState extends State<MainScreen>
             alignment: Alignment.center,
             children: [
               // 아이콘 부분
+              // 아이콘 배경 효과 (선택된 항목은 네모 모양으로 표시)
               Positioned(
-                top: 8, // 상단 위치 더 위로 올림
-                child: Container(
-                  width: 45, // 아이콘 컨테이너 크기 증가
-                  height: 45,
-                  decoration:
-                      isSelected
-                          ? BoxDecoration(
-                            color: NeumorphicStyles.backgroundColor,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color.fromRGBO(163, 177, 198, 0.4),
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                                offset: const Offset(2, 2),
-                              ),
-                              BoxShadow(
-                                color: Colors.white.withAlpha(
-                                  230,
-                                ), // withOpacity 대신 withAlpha 사용
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                                offset: const Offset(-2, -2),
-                              ),
-                            ],
-                          )
-                          : null,
-                  child: Icon(
-                    icon,
-                    color: isSelected ? activeColor : inactiveColor,
-                    size: 26, // 아이콘 크기 증가
-                  ),
+                top: 8, // 상단 위치 조정
+                child: AnimatedBuilder(
+                  animation: _selectionAnimationController,
+                  builder: (context, child) {
+                    // 선택된 버튼 보여주기 위한 존재 여부
+                    final bool showSelectedEffect = isSelected;
+                    // 애니메이션 중이면서 이전 선택된 버튼이었던 것 보여주기
+                    final bool showOldEffect = _oldIndex == index && _selectionAnimationController.isAnimating;
+                    // 현재 애니메이션이 진행중인지
+                    final bool isAnimating = _selectionAnimationController.isAnimating;
+                    
+                    // 애니메이션 변화값
+                    double animValue;
+                    if (showSelectedEffect) {
+                      // 현재 선택된 것이면 점점 커지는 효과
+                      animValue = _selectionAnimation.value;
+                    } else if (showOldEffect) {
+                      // 이전에 선택되었던 것이면 점점 작아지는 효과
+                      animValue = 2.0 - _selectionAnimation.value;
+                    } else {
+                      // 스크린 전환시에도 응답하도록 animValue 초기화
+                      animValue = 1.0;
+                    }
+                    
+                    return Container(
+                      width: (showSelectedEffect || showOldEffect) && isAnimating
+                          ? (45 + (animValue - 1.0) * 30) // 애니메이션중에는 크기 변경 적용
+                          : (showSelectedEffect ? 60 : 45), // 애니메이션 완료되면 고정 크기
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: NeumorphicStyles.backgroundColor,
+                        // 선택된 아이템은 정사각형(4.0), 나머지는 원형(22.5)
+                        borderRadius: BorderRadius.circular(
+                          showSelectedEffect ? 4.0 : 22.5 // 더 사각형에 가까운 모서리
+                        ),
+                        // 활성화된 항목에만 그림자 효과 적용, 나머지는 그림자 없음
+                        boxShadow: showSelectedEffect
+                            ? [
+                                BoxShadow(
+                                  color: Color.fromRGBO(163, 177, 198, 0.5),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                  offset: const Offset(2, 2),
+                                ),
+                                BoxShadow(
+                                  color: Colors.white.withAlpha(240),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                  offset: const Offset(-2, -2),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          icon,
+                          color: isSelected ? activeColor : inactiveColor,
+                          size: 26,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
 
