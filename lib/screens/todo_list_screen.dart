@@ -277,17 +277,17 @@ class _TodoListScreenState extends State<TodoListScreen>
                     borderRadius: BorderRadius.circular(16),
                   ),
                   dividerColor: Colors.transparent, // 구분선 제거
-                  labelColor: Colors.black,  // 선택된 탭 글자색을 검정색으로
+                  labelColor: Colors.black, // 선택된 탭 글자색을 검정색으로
                   unselectedLabelColor: const Color(0xFF888888),
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    letterSpacing: 0.5,  // 선택된 탭에 글자 간격 추가
+                    letterSpacing: 0.5, // 선택된 탭에 글자 간격 추가
                   ),
                   unselectedLabelStyle: const TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
-                    letterSpacing: 0,  // 선택되지 않은 탭은 글자 간격 없음
+                    letterSpacing: 0, // 선택되지 않은 탭은 글자 간격 없음
                   ),
                   padding: const EdgeInsets.all(4),
                   tabs: const [
