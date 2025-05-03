@@ -10,10 +10,10 @@ class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
 
   @override
-  TodoListScreenState createState() => TodoListScreenState();
+  _TodoListScreenState createState() => _TodoListScreenState();
 }
 
-class TodoListScreenState extends State<TodoListScreen>
+class _TodoListScreenState extends State<TodoListScreen>
     with SingleTickerProviderStateMixin {
   List<Todo> _todos = [];
   final TextEditingController _textController = TextEditingController();
@@ -59,7 +59,7 @@ class TodoListScreenState extends State<TodoListScreen>
         _isLoading = false;
       });
     } catch (e) {
-      // 오류 로깅: 할 일 목록 불러오기 오류
+      print('할 일 목록 불러오기 오류: $e');
       setState(() {
         _isLoading = false;
       });
@@ -82,7 +82,7 @@ class TodoListScreenState extends State<TodoListScreen>
         await _loadTodos(); // 목록 새로고침
         _textController.clear();
       } catch (e) {
-        // 오류 로깅: 할 일 추가 오류
+        print('할 일 추가 오류: $e');
       }
     }
   }
@@ -99,7 +99,7 @@ class TodoListScreenState extends State<TodoListScreen>
       await TodoService.addTodo(todo);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      // 오류 로깅: 상세 할 일 추가 오류
+      print('상세 할 일 추가 오류: $e');
     }
   }
 
@@ -109,7 +109,7 @@ class TodoListScreenState extends State<TodoListScreen>
       await TodoService.toggleTodoCompleted(id);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      // 오류 로깅: 할 일 상태 변경 오류
+      print('할 일 상태 변경 오류: $e');
     }
   }
 
@@ -119,11 +119,19 @@ class TodoListScreenState extends State<TodoListScreen>
       await TodoService.deleteTodo(id);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      // 오류 로깅: 할 일 삭제 오류
+      print('할 일 삭제 오류: $e');
     }
   }
 
-  // 상세 할 일 입력 대화상자는 플로팅 버튼에서 직접 호출하민로 메서드 삭제
+  // 상세 할 일 입력 대화상자 표시
+  void _showDetailedTodoInput() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DetailedTodoInput(onSave: _addDetailedTodo),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +212,7 @@ class TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Color.fromARGB(13, 0, 0, 0),
+                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -226,18 +234,41 @@ class TodoListScreenState extends State<TodoListScreen>
                       ),
                     ),
 
-                    // 추가 버튼 (기한 없는 간단한 할 일 추가)
+                    // 추가 버튼
                     GestureDetector(
                       onTap: _addSimpleTodo,
                       child: Container(
                         width: 40,
                         height: 40,
-                        margin: const EdgeInsets.only(right: 16),
+                        margin: const EdgeInsets.only(right: 8),
                         decoration: BoxDecoration(
                           color: NeumorphicStyles.primaryButtonColor,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(Icons.add, color: Colors.white),
+                      ),
+                    ),
+
+                    // 상세 입력 버튼
+                    GestureDetector(
+                      onTap: _showDetailedTodoInput,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: NeumorphicStyles.primaryButtonColor,
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.calendar_today_outlined,
+                          color: NeumorphicStyles.primaryButtonColor,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ],
@@ -256,7 +287,7 @@ class TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(13), // 0.05 투명도를 alpha로 변환 (255 * 0.05 = 13)
+                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -281,11 +312,7 @@ class TodoListScreenState extends State<TodoListScreen>
                   ),
                   padding: const EdgeInsets.all(4),
                   tabs: const [
-                    Tab(
-                      text: '기간 없는 작업',
-                      height: 40,
-                      icon: SizedBox(width: 8),
-                    ), // 간격 추가
+                    Tab(text: '기간 없는 작업', height: 40),
                     Tab(text: '기간 있는 작업', height: 40),
                   ],
                 ),
@@ -328,7 +355,7 @@ class TodoListScreenState extends State<TodoListScreen>
                                   ],
                                 ),
                               )
-                              : _buildGridView(simpleTodos),
+                              : _buildListView(simpleTodos),
 
                           // 기간 있는 할 일 탭
                           detailedTodos.isEmpty
@@ -352,43 +379,64 @@ class TodoListScreenState extends State<TodoListScreen>
                                   ],
                                 ),
                               )
-                              : _buildGridView(detailedTodos),
+                              : _buildListView(detailedTodos),
                         ],
                       ),
             ),
           ],
         ),
       ),
-      // 할 일 입력 영역에서 이미 기간 없는 할 일 추가 기능이 있으므로
-      // 추가 버튼을 제거하여 UI 단순화
+      floatingActionButton: Container(
+        width: 64,
+        height: 64,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              NeumorphicStyles.primaryButtonColor,
+              NeumorphicStyles.primaryButtonColor.withOpacity(0.8),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: NeumorphicStyles.primaryButtonColor.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(32),
+            onTap: _showDetailedTodoInput,
+            child: const Icon(Icons.add, color: Colors.white, size: 32),
+          ),
+        ),
+      ),
     );
   }
 
-  // 리스트 뷰 레이아웃 구성 (유동적 높이의 직사각형 아이템)
-  Widget _buildGridView(List<Todo> todos) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListView.builder(
-        itemCount: todos.length,
-        // itemExtent 삭제 - 높이를 자유롭게 설정하여 컨텐츠에 맞춰 자동 조절
-        itemBuilder: (context, index) {
-          final todo = todos[index];
-          // 각 할 일에 대한 색상 가져오기, 없으면 기본 색상 사용
-          final cardColor =
-              _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+  // 리스트 뷰 레이아웃 구성
+  Widget _buildListView(List<Todo> todos) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: todos.length,
+      itemBuilder: (context, index) {
+        final todo = todos[index];
+        // 각 할 일에 대한 색상 가져오기, 없으면 기본 색상 사용
+        final cardColor =
+            _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
 
-          // 연속된 아이템 사이 간격 추가
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: TodoListItem(
-              todo: todo,
-              onToggle: () => _toggleTodo(todo.id),
-              onDelete: () => _deleteTodo(todo.id),
-              cardColor: cardColor,
-            ),
-          );
-        },
-      ),
+        return TodoListItem(
+          todo: todo,
+          onToggle: () => _toggleTodo(todo.id),
+          onDelete: () => _deleteTodo(todo.id),
+          cardColor: cardColor,
+        );
+      },
     );
   }
 }

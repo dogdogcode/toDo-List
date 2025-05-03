@@ -105,12 +105,19 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: NeumorphicStyles.backgroundColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(32),
           topRight: Radius.circular(32),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: NeumorphicStyles.darkShadow.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -122,26 +129,43 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '기간이 있는 할 일 추가',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: NeumorphicStyles.textDark,
-                  ),
+                // 이모티콘과 타이틀
+                Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: NeumorphicStyles.primaryButtonColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.calendar_month,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      '기간이 있는 할 일 추가',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: NeumorphicStyles.textDark,
+                      ),
+                    ),
+                  ],
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: NeumorphicStyles.getNeumorphicElevated(
-                      radius: 12,
-                      intensity: 0.1,
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      color: NeumorphicStyles.textDark,
-                    ),
+                // 닫기 버튼
+                NeumorphicButton(
+                  onPressed: () => Navigator.pop(context),
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  padding: EdgeInsets.zero,
+                  child: const Icon(
+                    Icons.close,
+                    color: NeumorphicStyles.textDark,
                   ),
                 ),
               ],
@@ -149,26 +173,53 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
             const SizedBox(height: 24),
 
             // 제목 입력
-            const Text(
-              '제목',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: NeumorphicStyles.textDark,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: NeumorphicStyles.getNeumorphicElevated(
+                radius: 12,
+                intensity: 0.05,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.title, color: NeumorphicStyles.primaryButtonColor, size: 20),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '제목',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: NeumorphicStyles.textDark,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),
             NeumorphicTextField(
               controller: _titleController,
               hintText: '할 일 제목을 입력하세요',
+              borderRadius: 16,
             ),
             const SizedBox(height: 20),
 
             // 날짜 선택
-            const Text(
-              '날짜',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: NeumorphicStyles.textDark,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: NeumorphicStyles.getNeumorphicElevated(
+                radius: 12,
+                intensity: 0.05,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.event, color: NeumorphicStyles.primaryButtonColor, size: 20),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '날짜',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: NeumorphicStyles.textDark,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -202,11 +253,24 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
             const SizedBox(height: 20),
 
             // 메모 입력
-            const Text(
-              '메모',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: NeumorphicStyles.textDark,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: NeumorphicStyles.getNeumorphicElevated(
+                radius: 12,
+                intensity: 0.05,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.note, color: NeumorphicStyles.primaryButtonColor, size: 20),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '메모',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: NeumorphicStyles.textDark,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -229,11 +293,24 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
             const SizedBox(height: 20),
 
             // 태그 입력
-            const Text(
-              '태그',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: NeumorphicStyles.textDark,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: NeumorphicStyles.getNeumorphicElevated(
+                radius: 12,
+                intensity: 0.05,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.label, color: NeumorphicStyles.primaryButtonColor, size: 20),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '태그',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: NeumorphicStyles.textDark,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -276,36 +353,50 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
               ),
               const SizedBox(height: 8),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children:
-                    _tags
-                        .map(
-                          (tag) => Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: NeumorphicStyles.getNeumorphicElevated(
-                              radius: 12,
-                              intensity: 0.1,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '#$tag',
-                                  style: const TextStyle(
-                                    color: NeumorphicStyles.textDark,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                GestureDetector(
-                                  onTap: () => _removeTag(tag),
-                                  child: const Icon(
-                                    Icons.close,
-                                    size: 16,
-                                    color: Colors.redAccent,
+              spacing: 8,
+              runSpacing: 8,
+              children:
+              _tags
+              .map(
+              (tag) => NeumorphicContainer(
+              height: 32,
+              width: null,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
+              borderRadius: 16,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                Icons.tag,
+              size: 14,
+              color: NeumorphicStyles.primaryButtonColor,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                tag,
+                style: const TextStyle(
+                color: NeumorphicStyles.textDark,
+                fontSize: 14,
+              ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () => _removeTag(tag),
+                  child: Container(
+                      width: 18,
+                        height: 18,
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.close,
+                                      size: 12,
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 ),
                               ],
