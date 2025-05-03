@@ -142,8 +142,8 @@ class ProfileScreen extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: isLogout 
-                  ? Colors.red.withOpacity(0.1)
-                  : NeumorphicStyles.primaryButtonColor.withOpacity(0.1),
+                  ? Colors.red.withValues(alpha: 0.1)
+                  : NeumorphicStyles.primaryButtonColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(

@@ -10,7 +10,7 @@ class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
 
   @override
-  _TodoListScreenState createState() => _TodoListScreenState();
+  State<TodoListScreen> createState() => _TodoListScreenState();
 }
 
 class _TodoListScreenState extends State<TodoListScreen>
@@ -59,7 +59,7 @@ class _TodoListScreenState extends State<TodoListScreen>
         _isLoading = false;
       });
     } catch (e) {
-      print('할 일 목록 불러오기 오류: $e');
+      debugPrint('할 일 목록 불러오기 오류: $e');
       setState(() {
         _isLoading = false;
       });
@@ -82,7 +82,7 @@ class _TodoListScreenState extends State<TodoListScreen>
         await _loadTodos(); // 목록 새로고침
         _textController.clear();
       } catch (e) {
-        print('할 일 추가 오류: $e');
+        debugPrint('할 일 추가 오류: $e');
       }
     }
   }
@@ -99,7 +99,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       await TodoService.addTodo(todo);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      print('상세 할 일 추가 오류: $e');
+      debugPrint('상세 할 일 추가 오류: $e');
     }
   }
 
@@ -109,7 +109,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       await TodoService.toggleTodoCompleted(id);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      print('할 일 상태 변경 오류: $e');
+      debugPrint('할 일 상태 변경 오류: $e');
     }
   }
 
@@ -119,7 +119,7 @@ class _TodoListScreenState extends State<TodoListScreen>
       await TodoService.deleteTodo(id);
       await _loadTodos(); // 목록 새로고침
     } catch (e) {
-      print('할 일 삭제 오류: $e');
+      debugPrint('할 일 삭제 오류: $e');
     }
   }
 
@@ -212,7 +212,7 @@ class _TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -287,7 +287,7 @@ class _TodoListScreenState extends State<TodoListScreen>
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -393,7 +393,7 @@ class _TodoListScreenState extends State<TodoListScreen>
           gradient: LinearGradient(
             colors: [
               NeumorphicStyles.primaryButtonColor,
-              NeumorphicStyles.primaryButtonColor.withOpacity(0.8),
+              NeumorphicStyles.primaryButtonColor.withValues(alpha: 0.8),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -401,7 +401,7 @@ class _TodoListScreenState extends State<TodoListScreen>
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: NeumorphicStyles.primaryButtonColor.withOpacity(0.3),
+              color: NeumorphicStyles.primaryButtonColor.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),

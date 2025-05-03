@@ -113,7 +113,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
         ),
         boxShadow: [
           BoxShadow(
-            color: NeumorphicStyles.darkShadow.withOpacity(0.2),
+            color: NeumorphicStyles.darkShadow.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -360,7 +360,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
               .map(
               (tag) => NeumorphicContainer(
               height: 32,
-              width: null,
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,
                 vertical: 6,
@@ -389,7 +389,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                       width: 18,
                         height: 18,
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
+                            color: Colors.red.withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(

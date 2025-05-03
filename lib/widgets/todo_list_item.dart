@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
-import '../utils/neumorphic_styles.dart';
+
 
 class TodoListItem extends StatelessWidget {
   final Todo todo;
@@ -29,7 +29,7 @@ class TodoListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -59,13 +59,13 @@ class TodoListItem extends StatelessWidget {
                           color:
                               todo.completed
                                   ? darkColor
-                                  : Colors.white.withOpacity(0.7),
+                                  : Colors.white.withValues(alpha: 0.7),
                           shape: BoxShape.circle,
                           border: Border.all(
                             color:
                                 todo.completed
                                     ? darkColor
-                                    : Colors.white.withOpacity(0.9),
+                                    : Colors.white.withValues(alpha: 0.9),
                             width: 2,
                           ),
                         ),
@@ -98,7 +98,7 @@ class TodoListItem extends StatelessWidget {
                                 todo.completed ? TextDecoration.lineThrough : null,
                             color:
                                 todo.completed
-                                    ? darkColor.withOpacity(0.6)
+                                    ? darkColor.withValues(alpha: 0.6)
                                     : darkColor,
                           ),
                           maxLines: 2,
@@ -112,7 +112,7 @@ class TodoListItem extends StatelessWidget {
                             todo.memo!,
                             style: TextStyle(
                               fontSize: 14,
-                              color: darkColor.withOpacity(0.7),
+                              color: darkColor.withValues(alpha: 0.7),
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -132,7 +132,7 @@ class TodoListItem extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.4),
+                                  color: Colors.white.withValues(alpha: 0.4),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
@@ -174,7 +174,7 @@ class TodoListItem extends StatelessWidget {
                                                 vertical: 2,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: darkColor.withOpacity(0.1),
+                                                color: darkColor.withValues(alpha: 0.1),
                                                 borderRadius: BorderRadius.circular(4),
                                               ),
                                               child: Text(
@@ -198,7 +198,7 @@ class TodoListItem extends StatelessWidget {
                               _getTimeString(todo.createdAt),
                               style: TextStyle(
                                 fontSize: 10,
-                                color: darkColor.withOpacity(0.6),
+                                color: darkColor.withValues(alpha: 0.6),
                               ),
                             ),
                           ],
@@ -216,7 +216,7 @@ class TodoListItem extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
