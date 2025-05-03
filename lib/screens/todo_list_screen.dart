@@ -248,29 +248,6 @@ class _TodoListScreenState extends State<TodoListScreen>
                         child: const Icon(Icons.add, color: Colors.white),
                       ),
                     ),
-
-                    // 상세 입력 버튼
-                    GestureDetector(
-                      onTap: _showDetailedTodoInput,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: NeumorphicStyles.primaryButtonColor,
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.calendar_today_outlined,
-                          color: NeumorphicStyles.primaryButtonColor,
-                          size: 20,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -300,15 +277,17 @@ class _TodoListScreenState extends State<TodoListScreen>
                     borderRadius: BorderRadius.circular(16),
                   ),
                   dividerColor: Colors.transparent, // 구분선 제거
-                  labelColor: Colors.white,
+                  labelColor: Colors.black,  // 선택된 탭 글자색을 검정색으로
                   unselectedLabelColor: const Color(0xFF888888),
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
+                    letterSpacing: 0.5,  // 선택된 탭에 글자 간격 추가
                   ),
                   unselectedLabelStyle: const TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
+                    letterSpacing: 0,  // 선택되지 않은 탭은 글자 간격 없음
                   ),
                   padding: const EdgeInsets.all(4),
                   tabs: const [
@@ -386,36 +365,7 @@ class _TodoListScreenState extends State<TodoListScreen>
           ],
         ),
       ),
-      floatingActionButton: Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              NeumorphicStyles.primaryButtonColor,
-              NeumorphicStyles.primaryButtonColor.withValues(alpha: 0.8),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: NeumorphicStyles.primaryButtonColor.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(32),
-            onTap: _showDetailedTodoInput,
-            child: const Icon(Icons.add, color: Colors.white, size: 32),
-          ),
-        ),
-      ),
+      // 플로팅 액션 버튼 제거 - main.dart에서 하나로 통일
     );
   }
 

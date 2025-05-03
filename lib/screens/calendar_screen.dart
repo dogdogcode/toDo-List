@@ -138,6 +138,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: NeumorphicContainer(
         width: double.infinity,
+        height: 380, // 고정된 높이 추가
         intensity: 0.05,
         child: TableCalendar(
           firstDay: DateTime.utc(2021, 1, 1),

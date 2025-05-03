@@ -98,8 +98,8 @@ class TodoListItem extends StatelessWidget {
                                 todo.completed ? TextDecoration.lineThrough : null,
                             color:
                                 todo.completed
-                                    ? darkColor.withValues(alpha: 0.6)
-                                    : darkColor,
+                                    ? Colors.black54
+                                    : Colors.black87,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -112,7 +112,7 @@ class TodoListItem extends StatelessWidget {
                             todo.memo!,
                             style: TextStyle(
                               fontSize: 14,
-                              color: darkColor.withValues(alpha: 0.7),
+                              color: Colors.black87,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -148,7 +148,7 @@ class TodoListItem extends StatelessWidget {
                                       DateFormat('MM/dd').format(todo.deadline!),
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: darkColor,
+                                        color: Colors.black87,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -198,7 +198,7 @@ class TodoListItem extends StatelessWidget {
                               _getTimeString(todo.createdAt),
                               style: TextStyle(
                                 fontSize: 10,
-                                color: darkColor.withValues(alpha: 0.6),
+                                color: Colors.black54,
                               ),
                             ),
                           ],

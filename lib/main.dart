@@ -172,42 +172,37 @@ class _MainScreenState extends State<MainScreen>
         children: _screens,
       ),
       floatingActionButton:
-          _selectedIndex ==
-                  1 // 할일 페이지에서만 플로팅 버튼 표시
-              ? Container(
-                width: 75, // 버튼 크기 증가
-                height: 75, // 버튼 크기 증가
-                margin: const EdgeInsets.only(bottom: 130), // 플러스 버튼을 더 위로 올림
-                decoration: NeumorphicStyles.getFABDecoration(),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(38),
-                    onTap: () {
-                      // 상세 할일 추가 화면 호출 (바텀 시트 사용)
+          _selectedIndex == 1
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 100), // 위치 조정
+                  child: NeumorphicButton(
+                    width: 64,
+                    height: 64,
+                    borderRadius: 32,
+                    color: NeumorphicStyles.primaryButtonColor,
+                    onPressed: () {
+                      // 상세 할일 추가 화면 호출
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder:
-                            (context) => DetailedTodoInput(
-                              onSave: (todo) async {
-                                // Todo 저장 및 화면 닫기
-                                Navigator.pop(context);
-                              },
-                            ),
+                        builder: (context) => DetailedTodoInput(
+                          onSave: (todo) async {
+                            // Todo 저장 및 화면 닫기 
+                            Navigator.pop(context);
+                          },
+                        ),
                       );
                     },
+                    padding: EdgeInsets.zero,
                     child: const Icon(
-                      Icons.add,
+                      Icons.calendar_today,
                       color: Colors.white,
-                      size: 38,
-                    ), // 아이콘 크기 증가
+                      size: 28,
+                    ),
                   ),
-                ),
-              )
-              : null, // 다른 화면에서는 버튼 표시하지 않음
-      // FloatingActionButton 위치 지정
+                )
+              : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
