@@ -13,25 +13,21 @@ class TodoListScreen extends StatefulWidget {
   State<TodoListScreen> createState() => _TodoListScreenState();
 }
 
-class _TodoListScreenState extends State<TodoListScreen>
-    with SingleTickerProviderStateMixin {
+class _TodoListScreenState extends State<TodoListScreen> {
   List<Todo> _todos = [];
   final TextEditingController _textController = TextEditingController();
   bool _isLoading = true;
-  late TabController _tabController;
   final Map<String, Color> _todoColors = {};
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _loadTodos();
   }
 
   @override
   void dispose() {
     _textController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -123,15 +119,7 @@ class _TodoListScreenState extends State<TodoListScreen>
     }
   }
 
-  // 상세 할 일 입력 대화상자 표시
-  void _showDetailedTodoInput() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DetailedTodoInput(onSave: _addDetailedTodo),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -255,112 +243,17 @@ class _TodoListScreenState extends State<TodoListScreen>
 
             const SizedBox(height: 24),
 
-            // 탭 선택 영역
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: NeumorphicStyles.primaryButtonColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  dividerColor: Colors.transparent, // 구분선 제거
-                  labelColor: Colors.black, // 선택된 탭 글자색을 검정색으로
-                  unselectedLabelColor: const Color(0xFF888888),
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    letterSpacing: 0.5, // 선택된 탭에 글자 간격 추가
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                    letterSpacing: 0, // 선택되지 않은 탭은 글자 간격 없음
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  tabs: const [
-                    Tab(text: '기간 없는 작업', height: 40),
-                    Tab(text: '기간 있는 작업', height: 40),
-                  ],
-                ),
-              ),
-            ),
-
             const SizedBox(height: 20),
 
-            // 할 일 목록 부분
+            // 할 일 목록 부분 - 단일 스크롤 뷰로 변경
             Expanded(
-              child:
-                  _isLoading
-                      ? const Center(
-                        child: CircularProgressIndicator(
-                          color: NeumorphicStyles.primaryButtonColor,
-                        ),
-                      )
-                      : TabBarView(
-                        controller: _tabController,
-                        children: [
-                          // 기간 없는 할 일 탭
-                          simpleTodos.isEmpty
-                              ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.assignment_outlined,
-                                      size: 56,
-                                      color: Colors.grey[300],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      '기간 없는 할 일을 추가해보세요!',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[500],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              : _buildListView(simpleTodos),
-
-                          // 기간 있는 할 일 탭
-                          detailedTodos.isEmpty
-                              ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.event_note_outlined,
-                                      size: 56,
-                                      color: Colors.grey[300],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      '기간 있는 할 일을 추가해보세요!',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[500],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              : _buildListView(detailedTodos),
-                        ],
-                      ),
+              child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: NeumorphicStyles.primaryButtonColor,
+                    ),
+                  )
+                : _buildCombinedListView(simpleTodos, detailedTodos),
             ),
           ],
         ),
@@ -369,24 +262,138 @@ class _TodoListScreenState extends State<TodoListScreen>
     );
   }
 
-  // 리스트 뷰 레이아웃 구성
-  Widget _buildListView(List<Todo> todos) {
-    return ListView.builder(
+  // 기간 없는 작업과 기간 있는 작업을 하나의 스크롤에 표시하는 위젯
+  Widget _buildCombinedListView(List<Todo> simpleTodos, List<Todo> detailedTodos) {
+    return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: todos.length,
-      itemBuilder: (context, index) {
-        final todo = todos[index];
-        // 각 할 일에 대한 색상 가져오기, 없으면 기본 색상 사용
-        final cardColor =
-            _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+      children: [
+        // 기간 없는 작업 섹션 헤더
+        Padding(
+          padding: const EdgeInsets.only(left: 8, bottom: 12),
+          child: Row(
+            children: [
+              Icon(
+                Icons.assignment_outlined,
+                color: NeumorphicStyles.textDark,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '기간 없는 작업',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: NeumorphicStyles.textDark,
+                ),
+              ),
+            ],
+          ),
+        ),
 
-        return TodoListItem(
-          todo: todo,
-          onToggle: () => _toggleTodo(todo.id),
-          onDelete: () => _deleteTodo(todo.id),
-          cardColor: cardColor,
-        );
-      },
+        // 기간 없는 작업 목록
+        if (simpleTodos.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.assignment_outlined,
+                    size: 36,
+                    color: Colors.grey[300],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '기간 없는 할 일을 추가해보세요!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          ...simpleTodos.map((todo) {
+            final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+            return TodoListItem(
+              todo: todo,
+              onToggle: () => _toggleTodo(todo.id),
+              onDelete: () => _deleteTodo(todo.id),
+              cardColor: cardColor,
+            );
+          }).toList(),
+
+        // 구분선
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Container(
+            height: 1,
+            color: Colors.grey.withValues(alpha: 51),
+          ),
+        ),
+
+        // 기간 있는 작업 섹션 헤더
+        Padding(
+          padding: const EdgeInsets.only(left: 8, bottom: 12, top: 8),
+          child: Row(
+            children: [
+              Icon(
+                Icons.event_note_outlined,
+                color: NeumorphicStyles.textDark,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '기간 있는 작업',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: NeumorphicStyles.textDark,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // 기간 있는 작업 목록
+        if (detailedTodos.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.event_note_outlined,
+                    size: 36,
+                    color: Colors.grey[300],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '기간 있는 할 일을 추가해보세요!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          ...detailedTodos.map((todo) {
+            final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+            return TodoListItem(
+              todo: todo,
+              onToggle: () => _toggleTodo(todo.id),
+              onDelete: () => _deleteTodo(todo.id),
+              cardColor: cardColor,
+            );
+          }).toList(),
+      ],
     );
   }
+  
+
 }

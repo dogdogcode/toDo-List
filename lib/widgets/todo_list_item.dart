@@ -23,7 +23,8 @@ class TodoListItem extends StatelessWidget {
     final darkColor = Color.lerp(cardColor, Colors.black, 0.1)!;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
+      constraints: const BoxConstraints(minHeight: 120),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
@@ -44,7 +45,9 @@ class TodoListItem extends StatelessWidget {
             splashColor: lightColor,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Row(
+              child: Stack(
+                children: [
+                  Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 체크박스
@@ -208,8 +211,9 @@ class TodoListItem extends StatelessWidget {
                   ),
                   
                   // 삭제 버튼
-                  Container(
-                    margin: const EdgeInsets.only(left: 8),
+                  Positioned(
+                    top: 8,
+                    right: 8,
                     child: GestureDetector(
                       onTap: onDelete,
                       child: Container(
@@ -227,6 +231,8 @@ class TodoListItem extends StatelessWidget {
                       ),
                     ),
                   ),
+                ],
+              ),
                 ],
               ),
             ),

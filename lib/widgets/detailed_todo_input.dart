@@ -45,6 +45,30 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
             dialogTheme: DialogThemeData(
               backgroundColor: NeumorphicStyles.backgroundColor,
             ),
+            // 뉴모피즘 스타일 추가
+            datePickerTheme: DatePickerThemeData(
+              dayStyle: TextStyle(color: NeumorphicStyles.textDark),
+              weekdayStyle: TextStyle(color: NeumorphicStyles.textLight),
+              // 오늘 날짜
+              todayBackgroundColor: WidgetStatePropertyAll<Color>(NeumorphicStyles.backgroundColor),
+              todayForegroundColor: WidgetStatePropertyAll<Color>(NeumorphicStyles.secondaryButtonColor),
+              // 선택된 날짜
+              dayBackgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return NeumorphicStyles.backgroundColor; // 배경색 변경
+                }
+                return NeumorphicStyles.backgroundColor;
+              }),
+              dayForegroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return NeumorphicStyles.primaryButtonColor; // 글자 색상 변경
+                }
+                return NeumorphicStyles.textDark;
+              }),
+              rangePickerBackgroundColor: NeumorphicStyles.backgroundColor,
+              backgroundColor: NeumorphicStyles.backgroundColor,
+              headerBackgroundColor: NeumorphicStyles.backgroundColor,
+            ),
           ),
           child: child!,
         );
@@ -88,9 +112,17 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
       return;
     }
 
+    // 현재 선택된 날짜의 시간을 정확하게 설정 (시간대 문제 해결)
+    final deadline = DateTime(
+      _selectedDate!.year,
+      _selectedDate!.month,
+      _selectedDate!.day,
+      23, 59, 59, // 해당 날짜의 마지막 시간으로 설정
+    );
+
     final todo = Todo.detailed(
       title: _titleController.text,
-      deadline: _selectedDate!,
+      deadline: deadline, // 수정된 날짜 사용
       memo: _memoController.text.isEmpty ? null : _memoController.text,
       tags: _tags.isEmpty ? null : _tags,
     );
@@ -215,6 +247,16 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
               controller: _titleController,
               hintText: '할 일 제목을 입력하세요',
               borderRadius: 16,
+              textStyle: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
+              hintStyle: const TextStyle(
+                fontSize: 16,
+                color: Colors.black38,
+                fontStyle: FontStyle.italic,
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -300,10 +342,19 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                 controller: _memoController,
                 decoration: const InputDecoration(
                   hintText: '메모를 입력하세요 (선택사항)',
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black38,
+                    fontStyle: FontStyle.italic,
+                  ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16),
                 ),
-                style: const TextStyle(color: NeumorphicStyles.textDark),
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
                 maxLines: 3,
               ),
             ),
@@ -337,6 +388,16 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                   child: NeumorphicTextField(
                     controller: _tagController,
                     hintText: '태그 입력 (선택사항)',
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    hintStyle: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black38,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),

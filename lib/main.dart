@@ -74,8 +74,8 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
-    with TickerProviderStateMixin { // SingleTickerProviderStateMixin 제거 - TickerProviderStateMixin이 모든 기능 포함
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  // SingleTickerProviderStateMixin 제거 - TickerProviderStateMixin이 모든 기능 포함
   int _selectedIndex = 0; // 기본값 "일정" 탭으로 설정
 
   // 네비게이션 아이템 정보
@@ -110,13 +110,13 @@ class _MainScreenState extends State<MainScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     // 네비게이션 항목 선택 애니메이션 컨트롤러 초기화
     _selectionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 700), // 애니메이션 시간 증가
       vsync: this,
     );
-    
+
     // 사각형 크기 변화 애니메이션 초기화 - 탓성 효과 강화
     _selectionAnimation = Tween<double>(
       begin: 1.0,
@@ -173,50 +173,52 @@ class _MainScreenState extends State<MainScreen>
         children: _screens,
       ),
       floatingActionButton:
-          _selectedIndex == 1 // 할일 페이지에서만 플로팅 버튼 표시
+          _selectedIndex ==
+                  1 // 할일 페이지에서만 플로팅 버튼 표시
               ? Container(
-                  width: 75, // 버튼 크기 증가
-                  height: 75, // 버튼 크기 증가
-                  margin: const EdgeInsets.only(bottom: 130), // 플러스 버튼을 더 위로 올림
-                  decoration: NeumorphicStyles.getFABDecoration(),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(38),
-                      onTap: () {
-                        // 상세 할일 추가 화면 호출 (바텀 시트 사용)
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => DetailedTodoInput(
-                            onSave: (todo) async {
-                              try {
-                                // TodoService를 사용하여 실제로 할 일 저장
-                                await TodoService.addTodo(todo);
-                                // 화면은 DetailedTodoInput 내부에서 닫히므로 여기서는 별도로 처리하지 않음
-                              } catch (e) {
-                                print('할 일 저장 오류: $e');
-                                // 에러 발생 시 스낵바 표시
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('오류가 발생했습니다: $e'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        );
-                      },
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 38,
-                      ), // 아이콘 크기 증가
-                    ),
+                width: 75, // 버튼 크기 증가
+                height: 75, // 버튼 크기 증가
+                margin: const EdgeInsets.only(bottom: 130), // 플러스 버튼을 더 위로 올림
+                decoration: NeumorphicStyles.getFABDecoration(),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(38),
+                    onTap: () {
+                      // 상세 할일 추가 화면 호출 (바텀 시트 사용)
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder:
+                            (context) => DetailedTodoInput(
+                              onSave: (todo) async {
+                                try {
+                                  // TodoService를 사용하여 실제로 할 일 저장
+                                  await TodoService.addTodo(todo);
+                                  // 화면은 DetailedTodoInput 내부에서 닫히므로 여기서는 별도로 처리하지 않음
+                                } catch (e) {
+                                  print('할 일 저장 오류: $e');
+                                  // 에러 발생 시 스낵바 표시
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('오류가 발생했습니다: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                      );
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 38,
+                    ), // 아이콘 크기 증가
                   ),
-                )
+                ),
+              )
               : null, // 다른 화면에서는 버튼 표시하지 않음,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: Padding(
@@ -334,10 +336,13 @@ class _MainScreenState extends State<MainScreen>
                     // 선택된 버튼 보여주기 위한 존재 여부
                     final bool showSelectedEffect = isSelected;
                     // 애니메이션 중이면서 이전 선택된 버튼이었던 것 보여주기
-                    final bool showOldEffect = _oldIndex == index && _selectionAnimationController.isAnimating;
+                    final bool showOldEffect =
+                        _oldIndex == index &&
+                        _selectionAnimationController.isAnimating;
                     // 현재 애니메이션이 진행중인지
-                    final bool isAnimating = _selectionAnimationController.isAnimating;
-                    
+                    final bool isAnimating =
+                        _selectionAnimationController.isAnimating;
+
                     // 애니메이션 변화값
                     double animValue;
                     if (showSelectedEffect) {
@@ -350,35 +355,40 @@ class _MainScreenState extends State<MainScreen>
                       // 스크린 전환시에도 응답하도록 animValue 초기화
                       animValue = 1.0;
                     }
-                    
+
                     return Container(
-                      width: (showSelectedEffect || showOldEffect) && isAnimating
-                          ? (45 + (animValue - 1.0) * 30) // 애니메이션중에는 크기 변경 적용
-                          : (showSelectedEffect ? 60 : 45), // 애니메이션 완료되면 고정 크기
+                      width:
+                          (showSelectedEffect || showOldEffect) && isAnimating
+                              ? (45 +
+                                  (animValue - 1.0) * 30) // 애니메이션중에는 크기 변경 적용
+                              : (showSelectedEffect
+                                  ? 60
+                                  : 45), // 애니메이션 완료되면 고정 크기
                       height: 45,
                       decoration: BoxDecoration(
                         color: NeumorphicStyles.backgroundColor,
                         // 선택된 아이템은 정사각형(4.0), 나머지는 원형(22.5)
                         borderRadius: BorderRadius.circular(
-                          showSelectedEffect ? 4.0 : 22.5 // 더 사각형에 가까운 모서리
+                          showSelectedEffect ? 4.0 : 22.5, // 더 사각형에 가까운 모서리
                         ),
                         // 활성화된 항목에만 그림자 효과 적용, 나머지는 그림자 없음
-                        boxShadow: showSelectedEffect
-                            ? [
-                                BoxShadow(
-                                  color: Color.fromRGBO(163, 177, 198, 0.5),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                  offset: const Offset(2, 2),
-                                ),
-                                BoxShadow(
-                                  color: Colors.white.withAlpha(240),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                  offset: const Offset(-2, -2),
-                                ),
-                              ]
-                            : [],
+                        boxShadow:
+                            showSelectedEffect
+                                ? [
+                                  BoxShadow(
+                                    color: Color.fromRGBO(163, 177, 198, 0.5),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                    offset: const Offset(2, 2),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white.withAlpha(240),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                    offset: const Offset(-2, -2),
+                                  ),
+                                ]
+                                : [],
                       ),
                       child: Center(
                         child: Icon(

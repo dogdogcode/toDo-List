@@ -237,6 +237,8 @@ class NeumorphicTextField extends StatelessWidget {
   final String hintText;
   final Function(String)? onSubmitted;
   final double borderRadius;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
 
   const NeumorphicTextField({
     super.key,
@@ -244,6 +246,8 @@ class NeumorphicTextField extends StatelessWidget {
     required this.hintText,
     this.onSubmitted,
     this.borderRadius = 16.0,
+    this.textStyle,
+    this.hintStyle,
   });
 
   @override
@@ -257,13 +261,14 @@ class NeumorphicTextField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
+          hintStyle: hintStyle ?? TextStyle(color: NeumorphicStyles.textLight, fontSize: 16.0, fontStyle: FontStyle.italic),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 14.0,
           ),
         ),
-        style: TextStyle(color: NeumorphicStyles.textDark, fontSize: 16.0),
+        style: textStyle ?? TextStyle(color: NeumorphicStyles.textDark, fontSize: 16.0, fontWeight: FontWeight.w500),
         onSubmitted: onSubmitted,
       ),
     );
