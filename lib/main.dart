@@ -5,6 +5,7 @@ import 'screens/todo_list_screen.dart';
 import 'screens/profile_screen.dart';
 import 'utils/neumorphic_styles.dart';
 import 'widgets/detailed_todo_input.dart';
+import 'services/todo_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -172,37 +173,51 @@ class _MainScreenState extends State<MainScreen>
         children: _screens,
       ),
       floatingActionButton:
-          _selectedIndex == 1
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 100), // 위치 조정
-                  child: NeumorphicButton(
-                    width: 64,
-                    height: 64,
-                    borderRadius: 32,
-                    color: NeumorphicStyles.primaryButtonColor,
-                    onPressed: () {
-                      // 상세 할일 추가 화면 호출
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => DetailedTodoInput(
-                          onSave: (todo) async {
-                            // Todo 저장 및 화면 닫기 
-                            Navigator.pop(context);
-                          },
-                        ),
-                      );
-                    },
-                    padding: EdgeInsets.zero,
-                    child: const Icon(
-                      Icons.calendar_today,
-                      color: Colors.white,
-                      size: 28,
+          _selectedIndex == 1 // 할일 페이지에서만 플로팅 버튼 표시
+              ? Container(
+                  width: 75, // 버튼 크기 증가
+                  height: 75, // 버튼 크기 증가
+                  margin: const EdgeInsets.only(bottom: 130), // 플러스 버튼을 더 위로 올림
+                  decoration: NeumorphicStyles.getFABDecoration(),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(38),
+                      onTap: () {
+                        // 상세 할일 추가 화면 호출 (바텀 시트 사용)
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => DetailedTodoInput(
+                            onSave: (todo) async {
+                              try {
+                                // TodoService를 사용하여 실제로 할 일 저장
+                                await TodoService.addTodo(todo);
+                                // 화면은 DetailedTodoInput 내부에서 닫히므로 여기서는 별도로 처리하지 않음
+                              } catch (e) {
+                                print('할 일 저장 오류: $e');
+                                // 에러 발생 시 스낵바 표시
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('오류가 발생했습니다: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      },
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 38,
+                      ), // 아이콘 크기 증가
                     ),
                   ),
                 )
-              : null,
+              : null, // 다른 화면에서는 버튼 표시하지 않음,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(

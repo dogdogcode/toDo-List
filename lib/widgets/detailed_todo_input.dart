@@ -75,7 +75,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
   }
 
   // 할 일 저장
-  void _saveTodo() {
+  Future<void> _saveTodo() async {
     if (_titleController.text.isEmpty || _selectedDate == null) {
       // 제목이나 날짜가 없으면 경고 표시
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,8 +95,25 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
       tags: _tags.isEmpty ? null : _tags,
     );
 
-    widget.onSave(todo);
-    Navigator.pop(context);
+    try {
+      // 저장 작업 실행 (비동기로 처리)
+      await widget.onSave(todo);
+      
+      // context가 여전히 유효한지 확인 후 화면 닫기
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      // 에러 발생 시 처리
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('오류가 발생했습니다: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
