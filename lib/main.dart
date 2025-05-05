@@ -198,14 +198,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   await TodoService.addTodo(todo);
                                   // 화면은 DetailedTodoInput 내부에서 닫히므로 여기서는 별도로 처리하지 않음
                                 } catch (e) {
-                                  print('할 일 저장 오류: $e');
-                                  // 에러 발생 시 스낵바 표시
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('오류가 발생했습니다: $e'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  // print 대신 debugPrint 사용
+                                  debugPrint('할 일 저장 오류: $e');
+                                  // 에러 발생 시 스낵바 표시 전에 mounted 확인
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('오류가 발생했습니다: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                             ),

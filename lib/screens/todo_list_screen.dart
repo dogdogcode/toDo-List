@@ -3,7 +3,7 @@ import 'dart:math';
 import '../models/todo.dart';
 import '../services/todo_service.dart';
 import '../widgets/todo_list_item.dart';
-import '../widgets/detailed_todo_input.dart';
+// detailed_todo_input.dart는 main.dart에서 사용하므로 여기서 제거
 import '../utils/neumorphic_styles.dart';
 
 class TodoListScreen extends StatefulWidget {
@@ -83,21 +83,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
     }
   }
 
-  // 기간 있는 할 일 추가
-  Future<void> _addDetailedTodo(Todo todo) async {
-    // 새 할 일에 색상 할당
-    _todoColors[todo.id] =
-        NeumorphicStyles.cardColors[Random().nextInt(
-          NeumorphicStyles.cardColors.length,
-        )];
-
-    try {
-      await TodoService.addTodo(todo);
-      await _loadTodos(); // 목록 새로고침
-    } catch (e) {
-      debugPrint('상세 할 일 추가 오류: $e');
-    }
-  }
+  // 삭제: _addDetailedTodo 메서드는 사용하지 않으므로 제거
 
   // 할 일 상태 토글
   Future<void> _toggleTodo(String id) async {
@@ -316,14 +302,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
           )
         else
           ...simpleTodos.map((todo) {
-            final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
-            return TodoListItem(
-              todo: todo,
-              onToggle: () => _toggleTodo(todo.id),
-              onDelete: () => _deleteTodo(todo.id),
-              cardColor: cardColor,
-            );
-          }).toList(),
+          final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+          return TodoListItem(
+          todo: todo,
+          onToggle: () => _toggleTodo(todo.id),
+          onDelete: () => _deleteTodo(todo.id),
+          cardColor: cardColor,
+          );
+          }),
 
         // 구분선
         Padding(
@@ -383,14 +369,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
           )
         else
           ...detailedTodos.map((todo) {
-            final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
-            return TodoListItem(
-              todo: todo,
-              onToggle: () => _toggleTodo(todo.id),
-              onDelete: () => _deleteTodo(todo.id),
-              cardColor: cardColor,
-            );
-          }).toList(),
+          final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+          return TodoListItem(
+          todo: todo,
+          onToggle: () => _toggleTodo(todo.id),
+          onDelete: () => _deleteTodo(todo.id),
+          cardColor: cardColor,
+          );
+          }),
       ],
     );
   }

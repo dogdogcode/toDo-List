@@ -427,13 +427,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       holiday,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
                     ),
-                  )),
+                  )).toList(),
                 ],
               ),
             ),
@@ -469,7 +469,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       intensity: 0.08,
-      constraints: const BoxConstraints(minHeight: 120),
+      // constraints 대신 height 속성 사용
+      height: 120,
       child: Stack(
         children: [
           Row(
