@@ -43,7 +43,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Future<void> _loadTodos() async {
     final todos = await TodoService.getTodos();
     final eventsByDate = <DateTime, List<Todo>>{};
-    
+
     for (var todo in todos) {
       if (todo.hasDeadline && todo.deadline != null) {
         final date = DateTime(
@@ -57,7 +57,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         eventsByDate[date]!.add(todo);
       }
     }
-    
+
     if (mounted) {
       setState(() {
         _eventsByDate = eventsByDate;
@@ -69,13 +69,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<Todo> _getEventsForDay(DateTime day) {
     return _eventsByDate[DateTime(day.year, day.month, day.day)] ?? [];
   }
-  
+
   // 공휴일 확인 함수
   List<String> _getHolidaysForDay(DateTime day) {
     final normalizedDay = DateTime(day.year, day.month, day.day);
     return _holidays[normalizedDay] ?? [];
   }
-  
+
   // 이벤트와 공휴일을 함께 표시하기 위한 함수
   List<dynamic> _getEventsAndHolidaysForDay(DateTime day) {
     final List<dynamic> result = [];
@@ -96,14 +96,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
           children: [
             // 헤더
             _buildHeader(),
-            
+
             // 캘린더
             _buildCalendar(),
-            
+
             // 선택한 날짜의 할 일 목록
-            Expanded(
-              child: _buildEventList(),
-            ),
+            Expanded(child: _buildEventList()),
           ],
         ),
       ),
@@ -181,7 +179,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           eventLoader: _getEventsAndHolidaysForDay,
           // 공휴일 스타일 적용
           holidayPredicate: (day) {
-          return _getHolidaysForDay(day).isNotEmpty;
+            return _getHolidaysForDay(day).isNotEmpty;
           },
           calendarStyle: CalendarStyle(
             // 이벤트 표시기 (점)
@@ -197,14 +195,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
               color: NeumorphicStyles.backgroundColor,
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
-                BoxShadow(
-                  color: NeumorphicStyles.darkShadow.withValues(alpha: 51),
-                  offset: const Offset(2, 2),
+                const BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.2),
+                  offset: Offset(2, 2),
                   blurRadius: 4,
                 ),
-                BoxShadow(
-                  color: NeumorphicStyles.lightShadow.withValues(alpha: 178),
-                  offset: const Offset(-2, -2),
+                const BoxShadow(
+                  color: Color.fromRGBO(255, 255, 255, 0.7),
+                  offset: Offset(-2, -2),
                   blurRadius: 4,
                 ),
               ],
@@ -218,14 +216,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
               color: NeumorphicStyles.backgroundColor,
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
-                BoxShadow(
-                  color: NeumorphicStyles.darkShadow.withValues(alpha: 76),
-                  offset: const Offset(2, 2),
+                const BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.3),
+                  offset: Offset(2, 2),
                   blurRadius: 4,
                 ),
-                BoxShadow(
-                  color: NeumorphicStyles.lightShadow.withValues(alpha: 178),
-                  offset: const Offset(-2, -2),
+                const BoxShadow(
+                  color: Color.fromRGBO(255, 255, 255, 0.7),
+                  offset: Offset(-2, -2),
                   blurRadius: 4,
                 ),
               ],
@@ -256,9 +254,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               color: NeumorphicStyles.primaryButtonColor,
             ),
             // 기본 텍스트 스타일
-            defaultTextStyle: const TextStyle(
-              color: NeumorphicStyles.textDark,
-            ),
+            defaultTextStyle: const TextStyle(color: NeumorphicStyles.textDark),
           ),
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
@@ -301,19 +297,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   // 둥근 모양에서 네모 형태로 변경
-                  borderRadius: BorderRadius.circular(8), // 둥근 모서리를 8로 줄임 (네모에 가깝게)
+                  borderRadius: BorderRadius.circular(
+                    8,
+                  ), // 둥근 모서리를 8로 줄임 (네모에 가깝게)
                   // 뉴모피즘 스타일 적용
                   color: NeumorphicStyles.backgroundColor,
                   boxShadow: [
-                    BoxShadow(
-                      color: NeumorphicStyles.darkShadow.withValues(alpha: 76),
-                      offset: const Offset(2, 2),
+                    const BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.3),
+                      offset: Offset(2, 2),
                       blurRadius: 4,
                       spreadRadius: 0,
                     ),
-                    BoxShadow(
-                      color: NeumorphicStyles.lightShadow.withValues(alpha: 178),
-                      offset: const Offset(-2, -2),
+                    const BoxShadow(
+                      color: Color.fromRGBO(255, 255, 255, 0.7),
+                      offset: Offset(-2, -2),
                       blurRadius: 4,
                       spreadRadius: 0,
                     ),
@@ -367,7 +365,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     // 공휴일 확인
     final holidays = _getHolidaysForDay(_selectedDay!);
     final bool hasHoliday = holidays.isNotEmpty;
-    
+
     if (_selectedEvents.isEmpty && !hasHoliday) {
       return Center(
         child: Column(
@@ -376,31 +374,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Icon(
               Icons.event_available,
               size: 48,
-              color: NeumorphicStyles.textLight.withValues(alpha: 127),
+              color: const Color.fromRGBO(150, 150, 150, 0.5),
             ),
             const SizedBox(height: 16),
             Text(
               '${_selectedDay?.month}월 ${_selectedDay?.day}일에 할 일이 없습니다',
-              style: TextStyle(
-                color: NeumorphicStyles.textLight,
-                fontSize: 16,
-              ),
+              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
             ),
           ],
         ),
       );
     }
-    
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         // 공휴일 표시
-        if (hasHoliday) ...[          
+        if (hasHoliday)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: NeumorphicContainer(
               padding: const EdgeInsets.all(16),
-              color: Colors.red.withValues(alpha: 50),
+              color: const Color.fromRGBO(255, 0, 0, 0.05),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -408,38 +403,39 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     children: [
                       Icon(
                         Icons.celebration,
-                        color: Colors.red,
+                        color: const Color(0xFFFF0000),
                         size: 20,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '공휴일',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Colors.red,
+                          color: Color(0xFFFF0000),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  ...holidays.map((holiday) => Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      holiday,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                  // 공휴일 리스트를 for 루프로 대체
+                  for (var holiday in holidays)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        holiday,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
-                  )).toList(),
                 ],
               ),
             ),
           ),
-        ],
-        
+
         // 할 일 목록
         if (_selectedEvents.isEmpty)
           SizedBox.shrink()
@@ -456,20 +452,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildEventCard(Todo todo) {
-    // 태그별 색상 배열
-    final tagColors = [
-      NeumorphicStyles.primaryButtonColor,
-      NeumorphicStyles.secondaryButtonColor,
-      Colors.green,
-      Colors.purple,
-      Colors.orange,
+    // 태그별 색상 배열 - 고정 색상 사용
+    final tagColors = const [
+      Color(0xFF3D5AFE), // Primary Button Color
+      Color(0xFF651FFF), // Secondary Button Color
+      Color(0xFF00C853), // Green
+      Color(0xFFAA00FF), // Purple
+      Color(0xFFFF9100), // Orange
     ];
 
     return NeumorphicContainer(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       intensity: 0.08,
-      // constraints 대신 height 속성 사용
       height: 120,
       child: Stack(
         children: [
@@ -496,59 +491,71 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: NeumorphicStyles.textDark,
-                        decoration: todo.completed
-                            ? TextDecoration.lineThrough
-                            : null,
+                        color: const Color(0xFF212121),
+                        decoration:
+                            todo.completed ? TextDecoration.lineThrough : null,
                       ),
                     ),
                     if (todo.memo != null && todo.memo!.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    todo.memo!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: NeumorphicStyles.textLight,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-                if (todo.tags.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: todo.tags.map((tag) {
-                      final index = todo.tags.indexOf(tag);
-                      final color = tagColors[index % tagColors.length];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
+                      const SizedBox(height: 4),
+                      Text(
+                        todo.memo!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF757575),
                         ),
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: 25),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: color.withValues(alpha: 76),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          '#$tag',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: color,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              ],
-            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    if (todo.tags.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        children:
+                            todo.tags.map((tag) {
+                              final index = todo.tags.indexOf(tag);
+                              final color = tagColors[index % tagColors.length];
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(
+                                    color.r.toInt(),
+                                    color.g.toInt(),
+                                    color.b.toInt(),
+                                    0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(
+                                      color.r.toInt(),
+                                      color.g.toInt(),
+                                      color.b.toInt(),
+                                      0.3,
+                                    ),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  '#$tag',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: color,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
           ),
           // 삭제 버튼
           Positioned(
@@ -557,7 +564,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: IconButton(
               icon: Icon(
                 Icons.delete_outline,
-                color: Colors.red.withValues(alpha: 178),
+                color: const Color.fromRGBO(255, 0, 0, 0.7),
               ),
               onPressed: () async {
                 await TodoService.deleteTodo(todo.id);

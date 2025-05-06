@@ -190,28 +190,27 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder:
-                            (context) => DetailedTodoInput(
-                              onSave: (todo) async {
-                                try {
-                                  // TodoService를 사용하여 실제로 할 일 저장
-                                  await TodoService.addTodo(todo);
-                                  // 화면은 DetailedTodoInput 내부에서 닫히므로 여기서는 별도로 처리하지 않음
-                                } catch (e) {
-                                  // print 대신 debugPrint 사용
-                                  debugPrint('할 일 저장 오류: $e');
-                                  // 에러 발생 시 스낵바 표시 전에 mounted 확인
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('오류가 발생했습니다: $e'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                            ),
+                        builder: (BuildContext sheetContext) {
+                          return DetailedTodoInput(
+                            onSave: (todo) async {
+                              // TodoService를 사용하여 실제로 할 일 저장
+                              try {
+                                await TodoService.addTodo(todo);
+                                // 저장 성공 - DetailedTodoInput 내부에서 화면을 닫음
+                              } catch (e) {
+                                debugPrint('할 일 저장 오류: $e');
+                                if (!mounted) return;
+                                // 오류 발생 시 스낵바 표시
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('오류가 발생했습니다: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
                       );
                     },
                     child: const Icon(
