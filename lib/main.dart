@@ -10,7 +10,6 @@ import 'services/todo_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 시스템 UI 오버레이 스타일 설정 (상태 표시줄, 내비게이션 바 등)
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -172,57 +171,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         },
         children: _screens,
       ),
-      floatingActionButton:
-          _selectedIndex ==
-                  1 // 할일 페이지에서만 플로팅 버튼 표시
-              ? Container(
-                width: 75, // 버튼 크기 증가
-                height: 75, // 버튼 크기 증가
-                margin: const EdgeInsets.only(bottom: 130), // 플러스 버튼을 더 위로 올림
-                decoration: NeumorphicStyles.getFABDecoration(),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(38),
-                    onTap: () {
-                      // 상세 할일 추가 화면 호출 (바텀 시트 사용)
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (BuildContext sheetContext) {
-                          return DetailedTodoInput(
-                            onSave: (todo) async {
-                              // TodoService를 사용하여 실제로 할 일 저장
-                              try {
-                                await TodoService.addTodo(todo);
-                                // 저장 성공 - DetailedTodoInput 내부에서 화면을 닫음
-                              } catch (e) {
-                                debugPrint('할 일 저장 오류: $e');
-                                if (!mounted) return;
-                                // 오류 발생 시 스낵바 표시
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('오류가 발생했습니다: $e'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 38,
-                    ), // 아이콘 크기 증가
-                  ),
-                ),
-              )
-              : null, // 다른 화면에서는 버튼 표시하지 않음,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: null, // 상세 추가 버튼 제거 (화면과 함께 스크롤되도록 함)
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
           bottom: 10.0 + bottomPadding,

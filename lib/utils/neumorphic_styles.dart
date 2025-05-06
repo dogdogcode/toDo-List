@@ -26,35 +26,26 @@ class NeumorphicStyles {
   static const Color textDark = Color(0xFF2D3748);
   static const Color textLight = Color(0xFF718096);
 
-  // 뉴모피즘 돌출 효과 (볼록)
+  // 뉴모피즘 돌출 효과 (볼록): 윤곽선을 추가하고 그림자 효과 강화
   static BoxDecoration getNeumorphicElevated({
     Color color = backgroundColor,
     double radius = 16.0,
-    double intensity = 0.1,
+    double intensity = 0.15,
   }) {
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: Colors.white.withAlpha(153), width: 1.5),
       boxShadow: [
         BoxShadow(
-          color: Color.fromARGB(
-            (255 * intensity).toInt(),
-            163, // darkShadow.red
-            177, // darkShadow.green
-            198, // darkShadow.blue
-          ),
-          offset: const Offset(5, 5),
+          color: lightShadow.withAlpha(204),
+          offset: const Offset(-5, -5),
           blurRadius: 15,
           spreadRadius: 1,
         ),
         BoxShadow(
-          color: Color.fromARGB(
-            (255 * (intensity + 0.05)).round(),
-            255, // lightShadow.red
-            255, // lightShadow.green
-            255, // lightShadow.blue
-          ),
-          offset: const Offset(-5, -5),
+          color: darkShadow.withAlpha(128),
+          offset: const Offset(5, 5),
           blurRadius: 15,
           spreadRadius: 1,
         ),
@@ -62,37 +53,26 @@ class NeumorphicStyles {
     );
   }
 
-  // 뉴모피즘 함몰 효과 (오목) - inset 속성 제거
+  // 뉴모피즘 함몰 효과 (오목): 터치시 반응하는 색상 변화 및 윤곽선 효과 적용
   static BoxDecoration getNeumorphicPressed({
     Color color = backgroundColor,
     double radius = 16.0,
     double intensity = 0.25,
   }) {
-    // Flutter에서는 BoxShadow에 inset 속성이 없으므로 대안으로
-    // InnerShadow 효과를 내기 위해 다른 방식으로 구현합니다.
-    // 어두운 색상의 그라디언트를 사용합니다.
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
-      gradient: RadialGradient(
-        // backgroundColor 고정값: R=245, G=248, B=255
-        colors: [Color.fromRGBO(245, 248, 255, 242 / 255), color],
-        center: Alignment.center,
-        focal: Alignment.center,
-        radius: 2.0,
-        focalRadius: 0.0,
+      border: Border.all(color: darkShadow.withAlpha(128), width: 1.5),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [color.withAlpha(235), color],
       ),
       boxShadow: [
         BoxShadow(
-          color: Color.fromRGBO(
-            163, // darkShadow.red
-            177, // darkShadow.green
-            198, // darkShadow.blue
-            (255 * intensity / 3).round() / 255,
-          ),
+          color: darkShadow.withAlpha(153),
           offset: const Offset(2, 2),
-          blurRadius: 5,
-          spreadRadius: 0,
+          blurRadius: 7,
         ),
       ],
     );
@@ -130,6 +110,7 @@ class NeumorphicStyles {
 // 기본 뉴모픽 컨테이너 위젯
 class NeumorphicContainer extends StatelessWidget {
   final Widget child;
+  final EdgeInsetsGeometry? margin; // 새로 추가
   final EdgeInsetsGeometry padding;
   final double width;
   final double height;
@@ -137,10 +118,12 @@ class NeumorphicContainer extends StatelessWidget {
   final double borderRadius;
   final bool isPressed;
   final double intensity;
+  final BoxDecoration? decoration; // 새로 추가: 외부 decoration override
 
   const NeumorphicContainer({
     super.key,
     required this.child,
+    this.margin,
     this.padding = const EdgeInsets.all(16.0),
     this.width = double.infinity,
     this.height = 100.0,
@@ -148,26 +131,30 @@ class NeumorphicContainer extends StatelessWidget {
     this.borderRadius = 16.0,
     this.isPressed = false,
     this.intensity = 0.1,
+    this.decoration, // override decoration
   });
 
   @override
   Widget build(BuildContext context) {
+    final BoxDecoration computedDecoration =
+        decoration ??
+        (isPressed
+            ? NeumorphicStyles.getNeumorphicPressed(
+              color: color,
+              radius: borderRadius,
+              intensity: intensity,
+            )
+            : NeumorphicStyles.getNeumorphicElevated(
+              color: color,
+              radius: borderRadius,
+              intensity: intensity,
+            ));
     return Container(
+      margin: margin, // 추가
       width: width,
       height: height,
       padding: padding,
-      decoration:
-          isPressed
-              ? NeumorphicStyles.getNeumorphicPressed(
-                color: color,
-                radius: borderRadius,
-                intensity: intensity,
-              )
-              : NeumorphicStyles.getNeumorphicElevated(
-                color: color,
-                radius: borderRadius,
-                intensity: intensity,
-              ),
+      decoration: computedDecoration,
       child: child,
     );
   }
@@ -261,14 +248,26 @@ class NeumorphicTextField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: hintStyle ?? TextStyle(color: NeumorphicStyles.textLight, fontSize: 16.0, fontStyle: FontStyle.italic),
+          hintStyle:
+              hintStyle ??
+              TextStyle(
+                color: NeumorphicStyles.textLight,
+                fontSize: 16.0,
+                fontStyle: FontStyle.italic,
+              ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 14.0,
           ),
         ),
-        style: textStyle ?? TextStyle(color: NeumorphicStyles.textDark, fontSize: 16.0, fontWeight: FontWeight.w500),
+        style:
+            textStyle ??
+            TextStyle(
+              color: NeumorphicStyles.textDark,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+            ),
         onSubmitted: onSubmitted,
       ),
     );

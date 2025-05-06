@@ -8,11 +8,14 @@ environment:
 
 dependencies:
   table_calendar: ^3.0.9
-  intl: ^0.18.1
+  intl: ^0.20.2
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  shared_preferences: ^2.2.2 # 이 줄을 추가해주세요
+  shared_preferences: ^2.2.2
+  firebase_core: ^3.13.0
+  cloud_firestore: ^5.6.7
+  firebase_auth: ^5.5.3
 
 dev_dependencies:
   flutter_test:

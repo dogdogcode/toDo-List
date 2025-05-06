@@ -6,6 +6,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // dummy 계정 정보 사용 (계정 서비스 관련 부분 제거)
+    const String username = '게스트 사용자';
     return Scaffold(
       backgroundColor: NeumorphicStyles.backgroundColor,
       body: SafeArea(
@@ -15,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 16),
-              // 프로필 헤더
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Row(
@@ -66,7 +67,6 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              // 프로필 이미지
               NeumorphicContainer(
                 height: 120,
                 width: 120,
@@ -75,42 +75,32 @@ class ProfileScreen extends StatelessWidget {
                 child: const CircleAvatar(
                   radius: 60,
                   backgroundColor: NeumorphicStyles.secondaryButtonColor,
-                  child: Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                  child: Icon(Icons.person, size: 60, color: Colors.white),
                 ),
               ),
               const SizedBox(height: 24),
-              // 사용자 이름
               NeumorphicContainer(
-                height: 56,
                 width: double.infinity,
-                child: const Center(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 8,
+                ),
+                child: Center(
                   child: Text(
-                    '사용자 이름',
-                    style: TextStyle(
+                    username,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: NeumorphicStyles.textDark,
                     ),
+                    softWrap: true,
                   ),
                 ),
               ),
               const SizedBox(height: 40),
-              // 메뉴 아이템들
-              _buildMenuItem(
-                icon: Icons.settings,
-                title: '설정',
-                onTap: () {},
-              ),
+              _buildMenuItem(icon: Icons.settings, title: '설정', onTap: () {}),
               const SizedBox(height: 16),
-              _buildMenuItem(
-                icon: Icons.help,
-                title: '도움말',
-                onTap: () {},
-              ),
+              _buildMenuItem(icon: Icons.help, title: '도움말', onTap: () {}),
               const SizedBox(height: 16),
               _buildMenuItem(
                 icon: Icons.logout,
@@ -141,16 +131,18 @@ class ProfileScreen extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: isLogout 
-                  ? Colors.red.withValues(alpha: 0.1)
-                  : NeumorphicStyles.primaryButtonColor.withValues(alpha: 0.1),
+              color:
+                  isLogout
+                      ? Colors.red.withValues(alpha: 26)
+                      : NeumorphicStyles.primaryButtonColor.withValues(
+                        alpha: 26,
+                      ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
-              color: isLogout 
-                  ? Colors.red
-                  : NeumorphicStyles.primaryButtonColor,
+              color:
+                  isLogout ? Colors.red : NeumorphicStyles.primaryButtonColor,
               size: 24,
             ),
           ),
@@ -160,16 +152,11 @@ class ProfileScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: isLogout 
-                  ? Colors.red
-                  : NeumorphicStyles.textDark,
+              color: isLogout ? Colors.red : NeumorphicStyles.textDark,
             ),
           ),
           const Spacer(),
-          Icon(
-            Icons.chevron_right,
-            color: NeumorphicStyles.textLight,
-          ),
+          Icon(Icons.chevron_right, color: NeumorphicStyles.textLight),
         ],
       ),
     );

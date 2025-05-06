@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import '../models/todo.dart';
 import '../services/todo_service.dart';
 import '../widgets/todo_list_item.dart';
-// detailed_todo_input.dart는 main.dart에서 사용하므로 여기서 제거
+import '../widgets/detailed_todo_input.dart'; // 추가: DetailedTodoInput import
 import '../utils/neumorphic_styles.dart';
 
 class TodoListScreen extends StatefulWidget {
@@ -42,13 +41,13 @@ class _TodoListScreenState extends State<TodoListScreen> {
       setState(() {
         _todos = todos;
 
-        // 모든 할 일에 일관된 색상 할당
+        // 모든 할 일에 고정된 색상 할당: 기간 없는 작업은 cardColors[0], 기간 있는 작업은 cardColors[1]
         for (var todo in todos) {
           if (!_todoColors.containsKey(todo.id)) {
             _todoColors[todo.id] =
-                NeumorphicStyles.cardColors[Random().nextInt(
-                  NeumorphicStyles.cardColors.length,
-                )];
+                todo.hasDeadline
+                    ? NeumorphicStyles.cardColors[1]
+                    : NeumorphicStyles.cardColors[0];
           }
         }
 
@@ -62,16 +61,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
     }
   }
 
-  // 기간 없는 할 일 추가
+  // 기간 없는 할 일 추가: 고정 색상 할당
   Future<void> _addSimpleTodo() async {
     if (_textController.text.isNotEmpty) {
       final todo = Todo.simple(title: _textController.text);
 
-      // 새 할 일에 색상 할당
-      _todoColors[todo.id] =
-          NeumorphicStyles.cardColors[Random().nextInt(
-            NeumorphicStyles.cardColors.length,
-          )];
+      _todoColors[todo.id] = NeumorphicStyles.cardColors[0];
 
       try {
         await TodoService.addTodo(todo);
@@ -104,8 +99,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
       debugPrint('할 일 삭제 오류: $e');
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +179,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -233,153 +226,179 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
             // 할 일 목록 부분 - 단일 스크롤 뷰로 변경
             Expanded(
-              child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: NeumorphicStyles.primaryButtonColor,
-                    ),
-                  )
-                : _buildCombinedListView(simpleTodos, detailedTodos),
+              child:
+                  _isLoading
+                      ? const Center(
+                        child: CircularProgressIndicator(
+                          color: NeumorphicStyles.primaryButtonColor,
+                        ),
+                      )
+                      : _buildCombinedListView(simpleTodos, detailedTodos),
             ),
           ],
         ),
       ),
-      // 플로팅 액션 버튼 제거 - main.dart에서 하나로 통일
+      // 플로팅 액션 버튼 추가 (상세 작업 추가)
+      floatingActionButton: NeumorphicButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder:
+                (context) => DetailedTodoInput(
+                  onSave: (todo) async {
+                    await TodoService.addTodo(todo);
+                    await _loadTodos();
+                  },
+                ),
+          );
+        },
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        color: NeumorphicStyles.primaryButtonColor,
+        child: const Icon(Icons.add, color: Colors.white, size: 30),
+      ),
     );
   }
 
-  // 기간 없는 작업과 기간 있는 작업을 하나의 스크롤에 표시하는 위젯
-  Widget _buildCombinedListView(List<Todo> simpleTodos, List<Todo> detailedTodos) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      children: [
-        // 기간 없는 작업 섹션 헤더
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 12),
-          child: Row(
-            children: [
-              Icon(
-                Icons.assignment_outlined,
-                color: NeumorphicStyles.textDark,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '기간 없는 작업',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: NeumorphicStyles.textDark,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // 기간 없는 작업 목록
-        if (simpleTodos.isEmpty)
+  Widget _buildCombinedListView(
+    List<Todo> simpleTodos,
+    List<Todo> detailedTodos,
+  ) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 기간 없는 작업 섹션 헤더
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.assignment_outlined,
-                    size: 36,
-                    color: Colors.grey[300],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '기간 없는 할 일을 추가해보세요!',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        else
-          ...simpleTodos.map((todo) {
-          final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
-          return TodoListItem(
-          todo: todo,
-          onToggle: () => _toggleTodo(todo.id),
-          onDelete: () => _deleteTodo(todo.id),
-          cardColor: cardColor,
-          );
-          }),
-
-        // 구분선
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Container(
-            height: 1,
-            color: Colors.grey.withValues(alpha: 51),
-          ),
-        ),
-
-        // 기간 있는 작업 섹션 헤더
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 12, top: 8),
-          child: Row(
-            children: [
-              Icon(
-                Icons.event_note_outlined,
-                color: NeumorphicStyles.textDark,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '기간 있는 작업',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.only(left: 8, bottom: 12),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.assignment_outlined,
                   color: NeumorphicStyles.textDark,
+                  size: 18,
                 ),
-              ),
-            ],
-          ),
-        ),
-
-        // 기간 있는 작업 목록
-        if (detailedTodos.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.event_note_outlined,
-                    size: 36,
-                    color: Colors.grey[300],
+                const SizedBox(width: 8),
+                Text(
+                  '기간 없는 작업',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: NeumorphicStyles.textDark,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '기간 있는 할 일을 추가해보세요!',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          )
-        else
-          ...detailedTodos.map((todo) {
-          final cardColor = _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
-          return TodoListItem(
-          todo: todo,
-          onToggle: () => _toggleTodo(todo.id),
-          onDelete: () => _deleteTodo(todo.id),
-          cardColor: cardColor,
-          );
-          }),
-      ],
+          ),
+          simpleTodos.isEmpty
+              ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.assignment_outlined,
+                        size: 36,
+                        color: Colors.grey[300],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '기간 없는 할 일을 추가해보세요!',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              : ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: simpleTodos.length,
+                itemBuilder: (context, index) {
+                  final todo = simpleTodos[index];
+                  final cardColor =
+                      _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: TodoListItem(
+                      todo: todo,
+                      onToggle: () => _toggleTodo(todo.id),
+                      onDelete: () => _deleteTodo(todo.id),
+                      cardColor: cardColor,
+                    ),
+                  );
+                },
+              ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(color: Colors.grey, thickness: 1),
+          ),
+          // 기간 있는 작업 섹션 헤더
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 12, top: 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.event_note_outlined,
+                  color: NeumorphicStyles.textDark,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '기간 있는 작업',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: NeumorphicStyles.textDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          detailedTodos.isEmpty
+              ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.event_note_outlined,
+                        size: 36,
+                        color: Colors.grey[300],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '기간 있는 할 일을 추가해보세요!',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              : ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: detailedTodos.length,
+                itemBuilder: (context, index) {
+                  final todo = detailedTodos[index];
+                  final cardColor =
+                      _todoColors[todo.id] ?? NeumorphicStyles.cardColors[1];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: TodoListItem(
+                      todo: todo,
+                      onToggle: () => _toggleTodo(todo.id),
+                      onDelete: () => _deleteTodo(todo.id),
+                      cardColor: cardColor,
+                    ),
+                  );
+                },
+              ),
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
-  
-
 }
