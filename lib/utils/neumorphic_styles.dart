@@ -35,18 +35,17 @@ class NeumorphicStyles {
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: Colors.white.withAlpha(153), width: 1.5),
       boxShadow: [
         BoxShadow(
-          color: lightShadow.withAlpha(204),
-          offset: const Offset(-5, -5),
-          blurRadius: 15,
+          color: Colors.white.withAlpha(204),
+          offset: const Offset(-4, -4),
+          blurRadius: 10,
           spreadRadius: 1,
         ),
         BoxShadow(
-          color: darkShadow.withAlpha(128),
-          offset: const Offset(5, 5),
-          blurRadius: 15,
+          color: darkShadow.withAlpha(77),
+          offset: const Offset(4, 4),
+          blurRadius: 10,
           spreadRadius: 1,
         ),
       ],
@@ -62,17 +61,18 @@ class NeumorphicStyles {
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: darkShadow.withAlpha(128), width: 1.5),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [color.withAlpha(235), color],
-      ),
       boxShadow: [
         BoxShadow(
-          color: darkShadow.withAlpha(153),
+          color: darkShadow.withAlpha(102),
           offset: const Offset(2, 2),
-          blurRadius: 7,
+          blurRadius: 5,
+          spreadRadius: -1,
+        ),
+        BoxShadow(
+          color: Colors.white.withAlpha(179),
+          offset: const Offset(-2, -2),
+          blurRadius: 5,
+          spreadRadius: -1,
         ),
       ],
     );

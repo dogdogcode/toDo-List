@@ -18,15 +18,40 @@ class _TodoListScreenState extends State<TodoListScreen> {
   bool _isLoading = true;
   final Map<String, Color> _todoColors = {};
 
+  // 스크롤 애니메이션을 위한 변수
+  final ScrollController _scrollController = ScrollController();
+  bool _isCollapsed = false;
+  final double _appBarHeight = 220.0; // 수정: 높이 증가
+
   @override
   void initState() {
     super.initState();
     _loadTodos();
+
+    // 스크롤 리스너 추가
+    _scrollController.addListener(_scrollListener);
+  }
+
+  // 스크롤 이벤트 리스너
+  void _scrollListener() {
+    // 스크롤 위치가 50을 넘어가면 헤더 축소
+    if (_scrollController.offset > 50 && !_isCollapsed) {
+      setState(() {
+        _isCollapsed = true;
+      });
+    } else if (_scrollController.offset <= 50 && _isCollapsed) {
+      setState(() {
+        _isCollapsed = false;
+      });
+    }
   }
 
   @override
   void dispose() {
     _textController.dispose();
+    // 스크롤 리스너 제거
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -113,117 +138,217 @@ class _TodoListScreenState extends State<TodoListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 16),
-
-            // 앱 헤더
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // 앱 제목 및 설명
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: NeumorphicStyles.primaryButtonColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.checklist_rounded,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            '할 일 목록',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 42),
-                        child: Text(
-                          '오늘의 작업을 관리하세요',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF666666),
+            // 애니메이트된 헤더 영역
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              height: _isCollapsed ? 70 : _appBarHeight,
+              child:
+                  _isCollapsed
+                      ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // 앱 제목만 간단히 표시
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          NeumorphicStyles.primaryButtonColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.checklist_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    '할 일 목록',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF333333),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // 할 일 입력 부분
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    // 텍스트 필드
-                    Expanded(
-                      child: TextField(
-                        controller: _textController,
-                        decoration: const InputDecoration(
-                          hintText: '할 일을 입력하세요',
-                          hintStyle: TextStyle(color: Color(0xFFAAAAAA)),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                          border: InputBorder.none,
+                      )
+                      : SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // 앱 제목 및 설명
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 32,
+                                            height: 32,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  NeumorphicStyles
+                                                      .primaryButtonColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.checklist_rounded,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          const Text(
+                                            '할 일 목록',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF333333),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // 설명 텍스트
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 42),
+                                        child: Text(
+                                          '오늘의 작업을 관리하세요',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xFF666666),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // 할 일 입력 및 기간 있는 할 일 추가 버튼 영역 변경
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: Column(
+                                children: [
+                                  // 기본 할 일 입력창 - NeumorphicContainer 사용
+                                  NeumorphicContainer(
+                                    height: 56,
+                                    borderRadius: 16,
+                                    color: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // 기본 할 일 입력창 내부 변경 (플러스 버튼 부분)
+                                        Expanded(
+                                          child: TextField(
+                                            controller: _textController,
+                                            decoration: const InputDecoration(
+                                              hintText: '기본 할 일을 입력하세요',
+                                              hintStyle: TextStyle(
+                                                color: Color(0xFFAAAAAA),
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                            onSubmitted:
+                                                (_) => _addSimpleTodo(),
+                                          ),
+                                        ),
+                                        // 플러스 버튼: 노란색, 아이콘 Center 정중앙 배치
+                                        NeumorphicButton(
+                                          onPressed: _addSimpleTodo,
+                                          width: 40,
+                                          height: 40,
+                                          borderRadius: 12,
+                                          color:
+                                              NeumorphicStyles
+                                                  .primaryButtonColor,
+                                          child: Center(
+                                            child: const Icon(
+                                              Icons.add_circle,
+                                              color: Colors.white,
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // 기간 있는 할 일 추가 버튼 - NeumorphicButton 사용
+                                  NeumorphicButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder:
+                                            (context) => DetailedTodoInput(
+                                              onSave: (todo) async {
+                                                await TodoService.addTodo(todo);
+                                                await _loadTodos();
+                                              },
+                                            ),
+                                      );
+                                    },
+                                    width: double.infinity,
+                                    height: 46,
+                                    borderRadius: 12,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.event_available,
+                                          color:
+                                              NeumorphicStyles
+                                                  .primaryButtonColor,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '기간이 있는 할 일 추가',
+                                          style: TextStyle(
+                                            color: NeumorphicStyles.textDark,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        onSubmitted: (_) => _addSimpleTodo(),
                       ),
-                    ),
-
-                    // 추가 버튼
-                    GestureDetector(
-                      onTap: _addSimpleTodo,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: NeumorphicStyles.primaryButtonColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.add, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            const SizedBox(height: 20),
-
+            ), // AnimatedContainer 닫는 괄호 추가
             // 할 일 목록 부분 - 단일 스크롤 뷰로 변경
             Expanded(
               child:
@@ -238,27 +363,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
           ],
         ),
       ),
-      // 플로팅 액션 버튼 추가 (상세 작업 추가)
-      floatingActionButton: NeumorphicButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder:
-                (context) => DetailedTodoInput(
-                  onSave: (todo) async {
-                    await TodoService.addTodo(todo);
-                    await _loadTodos();
-                  },
-                ),
-          );
-        },
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        color: NeumorphicStyles.primaryButtonColor,
-        child: const Icon(Icons.add, color: Colors.white, size: 30),
-      ),
     );
   }
 
@@ -267,6 +371,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
     List<Todo> detailedTodos,
   ) {
     return SingleChildScrollView(
+      controller: _scrollController, // 스크롤 컨트롤러 연결
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

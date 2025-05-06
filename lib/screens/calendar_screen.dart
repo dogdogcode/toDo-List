@@ -140,7 +140,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ],
           ),
-          // "오늘로 이동" 버튼 (수정됨)
+          // "오늘로 이동" 버튼 (수정: 더 크고 통합된 디자인으로 변경)
           NeumorphicButton(
             onPressed: () {
               setState(() {
@@ -149,21 +149,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 _selectedEvents = _getEventsForDay(_selectedDay!);
               });
             },
-            width: 150,
-            height: 40,
-            borderRadius: 20,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            width: 180, // 버튼 너비 증가
+            height: 48, // 버튼 높이 증가
+            borderRadius: 24, // 더 둥근 모서리
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            color: NeumorphicStyles.secondaryButtonColor.withValues(alpha: 26), // 10% 알파 값
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                Icon(Icons.today, color: NeumorphicStyles.textDark, size: 20),
-                SizedBox(width: 8),
+                Icon(
+                  Icons.today, 
+                  color: NeumorphicStyles.secondaryButtonColor, 
+                  size: 24
+                ),
+                SizedBox(width: 12),
                 Text(
                   '오늘로 이동',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: NeumorphicStyles.textDark,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: NeumorphicStyles.secondaryButtonColor,
                   ),
                 ),
               ],

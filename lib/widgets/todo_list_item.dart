@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
-import '../utils/neumorphic_styles.dart'; // 추가
 
 class TodoListItem extends StatelessWidget {
   final Todo todo;
@@ -22,225 +21,238 @@ class TodoListItem extends StatelessWidget {
     final lightColor = Color.lerp(cardColor, Colors.white, 0.5)!;
     final darkColor = Color.lerp(cardColor, Colors.black, 0.1)!;
 
-    return NeumorphicContainer(
-      margin: const EdgeInsets.only(bottom: 16), // 이제 인식됨
-      decoration: NeumorphicStyles.getNeumorphicElevated(
-        radius: 20,
-        intensity: 0.1,
-      ),
-      child: ClipRRect(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: cardColor.withAlpha(230),
         borderRadius: BorderRadius.circular(20),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onToggle,
-            splashColor: lightColor,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Stack(
-                children: [
-                  Row(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withAlpha(204),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+          BoxShadow(
+            color: Colors.black.withAlpha(51),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onToggle,
+          splashColor: lightColor,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 체크박스
+                GestureDetector(
+                  onTap: onToggle,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color:
+                          todo.completed
+                              ? darkColor
+                              : Colors.white.withValues(alpha: 179),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color:
+                            todo.completed
+                                ? darkColor
+                                : Colors.white.withValues(alpha: 230),
+                        width: 2,
+                      ),
+                    ),
+                    child:
+                        todo.completed
+                            ? const Icon(
+                              Icons.check,
+                              size: 16,
+                              color: Colors.white,
+                            )
+                            : null,
+                  ),
+                ),
+
+                const SizedBox(width: 16),
+
+                // 제목, 메모, 태그 등 정보
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // 체크박스
-                      Container(
-                        margin: const EdgeInsets.only(top: 2),
-                        child: GestureDetector(
-                          onTap: onToggle,
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color:
-                                  todo.completed
-                                      ? darkColor
-                                      : Colors.white.withValues(alpha: 179),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color:
-                                    todo.completed
-                                        ? darkColor
-                                        : Colors.white.withValues(alpha: 230),
-                                width: 2,
-                              ),
-                            ),
-                            child:
-                                todo.completed
-                                    ? const Icon(
-                                      Icons.check,
-                                      size: 16,
-                                      color: Colors.white,
-                                    )
-                                    : null,
-                          ),
+                      // 제목
+                      Text(
+                        todo.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          decoration:
+                              todo.completed
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                          color:
+                              todo.completed ? Colors.black54 : Colors.black87,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
 
-                      const SizedBox(width: 16),
-
-                      // 메인 컨텐츠
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 제목
-                            Text(
-                              todo.title,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                decoration:
-                                    todo.completed
-                                        ? TextDecoration.lineThrough
-                                        : null,
-                                color:
-                                    todo.completed
-                                        ? Colors.black54
-                                        : Colors.black87,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                      // 메모 (있는 경우에만 표시)
+                      if (todo.memo != null && todo.memo!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            todo.memo!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      else
+                        // 기본 설명 텍스트 (메모가 없을 경우)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4),
+                          child: Text(
+                            '세부 설명이 없습니다',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black45,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
 
-                            // 메모 표시 (있는 경우)
-                            if (todo.memo != null && todo.memo!.isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                todo.memo!,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                      const SizedBox(height: 8),
+
+                      // 하단 정보 (마감일, 태그, 삭제 버튼)
+                      Row(
+                        children: [
+                          // 마감일 (기간 있는 할 일)
+                          if (todo.hasDeadline && todo.deadline != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
                               ),
-                            ],
-
-                            const SizedBox(height: 12),
-
-                            // 하단 정보 영역
-                            Row(
-                              children: [
-                                // 마감일 표시 (기간 있는 할 일)
-                                if (todo.hasDeadline && todo.deadline != null)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 102,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.calendar_today,
-                                          size: 12,
-                                          color: darkColor,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          DateFormat(
-                                            'MM/dd',
-                                          ).format(todo.deadline!),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 102),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 12,
+                                    color: darkColor,
                                   ),
-
-                                const SizedBox(width: 8),
-
-                                // 태그 표시 (있는 경우) - Expanded 대신 Flexible 사용
-                                if (todo.tags.isNotEmpty) ...[
-                                  Flexible(
-                                    child: Wrap(
-                                      spacing: 4,
-                                      runSpacing: 4,
-                                      children:
-                                          todo.tags
-                                              .take(3)
-                                              .map(
-                                                (tag) => Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 6,
-                                                        vertical: 2,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: darkColor.withValues(
-                                                      alpha: 26,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          4,
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    '#$tag',
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: darkColor,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    DateFormat('MM/dd').format(todo.deadline!),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ],
-
-                                const Spacer(),
-
-                                // 생성 시간 표시 (수정됨)
-                                Flexible(
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      _getTimeString(todo.createdAt),
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                const SizedBox(width: 8),
-                                // 삭제 버튼 (Positioned 제거하고 Row의 마지막에 배치)
-                                GestureDetector(
-                                  onTap: onDelete,
-                                  child: Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 77),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 18,
-                                      color: darkColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ],
-                        ),
+
+                          const SizedBox(width: 8),
+
+                          // 태그 (최대 1개만 표시)
+                          if (todo.tags.isNotEmpty)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: darkColor.withValues(alpha: 26),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '#${todo.tags.first}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: darkColor,
+                                ),
+                              ),
+                            ),
+
+                          // 추가 태그 개수 표시
+                          if (todo.tags.length > 1)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: Text(
+                                '+${todo.tags.length - 1}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: darkColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                          const Spacer(),
+
+                          // 생성 시간
+                          Text(
+                            _getTimeString(todo.createdAt),
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+
+                // 삭제 버튼
+                GestureDetector(
+                  onTap: onDelete,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    margin: const EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.6),
+                          offset: const Offset(-2, -2),
+                          blurRadius: 4,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(2, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Icon(Icons.close, size: 18, color: darkColor),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
