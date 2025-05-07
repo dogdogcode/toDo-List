@@ -72,7 +72,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  // SingleTickerProviderStateMixin 제거 - TickerProviderStateMixin이 모든 기능 포함
   int _selectedIndex = 0; // 기본값 "일정" 탭으로 설정
 
   // 네비게이션 아이템 정보
@@ -86,8 +85,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animationController;
   late AnimationController _selectionAnimationController;
-  late Animation<double> _selectionAnimation;
-  int _oldIndex = 0; // 이전 선택 인덱스 기록
 
   final List<Widget> _screens = [
     const CalendarScreen(),
@@ -112,17 +109,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     _selectionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 700), // 애니메이션 시간 증가
       vsync: this,
-    );
-
-    // 사각형 크기 변화 애니메이션 초기화 - 탓성 효과 강화
-    _selectionAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.3, // 더 크게 변화하도록 조정
-    ).animate(
-      CurvedAnimation(
-        parent: _selectionAnimationController,
-        curve: Curves.easeOutBack, // 더 강조된 애니메이션 동작 곳선
-      ),
     );
 
     // 처음 시작시 애니메이션 실행
@@ -156,7 +142,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             controller: _pageController,
             onPageChanged: (index) {
               setState(() {
-                _oldIndex = _selectedIndex;
                 _selectedIndex = index;
               });
               _animationController.reset();
@@ -182,13 +167,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(
+                        alpha: 38,
+                      ), // 변경: withOpacity(0.15) -> withValues(alpha: 38)
                       offset: const Offset(0, 4),
                       blurRadius: 15,
                       spreadRadius: 1,
                     ),
                     BoxShadow(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(
+                        alpha: 179,
+                      ), // 변경: withOpacity(0.7) -> withValues(alpha: 179)
                       offset: const Offset(0, -2),
                       blurRadius: 8,
                       spreadRadius: 0,
@@ -247,7 +236,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     color:
                         isPressed || _selectedIndex == index
-                            ? NeumorphicStyles.backgroundColor.withOpacity(0.8)
+                            ? NeumorphicStyles.backgroundColor.withValues(
+                              alpha: 204,
+                            )
                             : Colors.transparent,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow:

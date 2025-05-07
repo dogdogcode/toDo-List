@@ -110,66 +110,130 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+      child: Column(
         children: [
+          // 타이틀 및 버튼 행
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: NeumorphicStyles.secondaryButtonColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.calendar_today,
-                  color: Colors.white,
-                  size: 20,
-                ),
+              // 타이틀 문구 개선
+              Row(
+                children: [
+                  // 아이콘 컨테이너 개선
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: NeumorphicStyles.secondaryButtonColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 26),
+                          offset: const Offset(2, 2),
+                          blurRadius: 4,
+                        ),
+                        BoxShadow(
+                          color: Colors.white.withValues(alpha: 128),
+                          offset: const Offset(-1, -1),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '일정 관리',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: NeumorphicStyles.textDark,
+                        ),
+                      ),
+                      Text(
+                        '${_focusedDay.year}년 ${_focusedDay.month}월',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: NeumorphicStyles.textLight,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              const Text(
-                '일정 관리',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: NeumorphicStyles.textDark,
+              // "오늘로 이동" 버튼 개선
+              NeumorphicButton(
+                onPressed: () {
+                  setState(() {
+                    _focusedDay = DateTime.now();
+                    _selectedDay = DateTime.now();
+                    _selectedEvents = _getEventsForDay(_selectedDay!);
+                  });
+                },
+                width: 120,
+                height: 40,
+                borderRadius: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                color: NeumorphicStyles.secondaryButtonColor.withValues(
+                  alpha: 26,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.today,
+                      color: NeumorphicStyles.secondaryButtonColor,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '오늘',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: NeumorphicStyles.secondaryButtonColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          // "오늘로 이동" 버튼 (수정: 더 크고 통합된 디자인으로 변경)
-          NeumorphicButton(
-            onPressed: () {
-              setState(() {
-                _focusedDay = DateTime.now();
-                _selectedDay = DateTime.now();
-                _selectedEvents = _getEventsForDay(_selectedDay!);
-              });
-            },
-            width: 180, // 버튼 너비 증가
-            height: 48, // 버튼 높이 증가
-            borderRadius: 24, // 더 둥근 모서리
+
+          // 현재 날짜 표시
+          const SizedBox(height: 16),
+          NeumorphicContainer(
+            height: 40,
+            color: NeumorphicStyles.backgroundColor,
+            borderRadius: 12,
+            intensity: 0.1,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            color: NeumorphicStyles.secondaryButtonColor.withValues(alpha: 26), // 10% 알파 값
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Icon(
-                  Icons.today, 
-                  color: NeumorphicStyles.secondaryButtonColor, 
-                  size: 24
+                  Icons.event_available,
+                  color: NeumorphicStyles.secondaryButtonColor,
+                  size: 20,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
-                  '오늘로 이동',
+                  _selectedDay != null
+                      ? '${_selectedDay!.year}년 ${_selectedDay!.month}월 ${_selectedDay!.day}일'
+                      : '날짜를 선택해주세요',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: NeumorphicStyles.secondaryButtonColor,
+                    color: NeumorphicStyles.textDark,
                   ),
                 ),
               ],
@@ -182,11 +246,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _buildCalendar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: NeumorphicContainer(
         width: double.infinity,
-        height: 380, // 고정된 높이 추가
-        intensity: 0.05,
+        height: 360, // 높이 최적화
+        intensity: 0.07,
+        borderRadius: 20, // 더 둥근 모서리
+        padding: const EdgeInsets.all(8),
+        color: NeumorphicStyles.backgroundColor,
         child: TableCalendar(
           firstDay: DateTime.utc(2021, 1, 1),
           lastDay: DateTime.utc(2030, 12, 31),
@@ -467,23 +534,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
       Color(0xFFFF9100), // Orange
     ];
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: NeumorphicStyles.primaryButtonColor,
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: NeumorphicContainer(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        intensity: 0.08,
-        height: 120,
-        child: Stack(
+        padding: const EdgeInsets.all(16),
+        intensity: 0.1,
+        borderRadius: 16,
+        color:
+            todo.completed
+                ? NeumorphicStyles.backgroundColor.withValues(alpha: 179)
+                : NeumorphicStyles.backgroundColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // 상단 헤더 - 제목과 체크박스
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // 체크박스
                 NeumorphicCheckbox(
@@ -492,103 +560,103 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     await TodoService.toggleTodoCompleted(todo.id);
                     _loadTodos();
                   },
+                  color: NeumorphicStyles.backgroundColor,
                 ),
-                const SizedBox(width: 16),
-                // 할 일 정보
+                const SizedBox(width: 12),
+                // 제목
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 제목
-                      Text(
-                        todo.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF212121),
-                          decoration:
-                              todo.completed
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                        ),
-                      ),
-                      if (todo.memo != null && todo.memo!.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          todo.memo!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF757575),
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                      if (todo.tags.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children:
-                              todo.tags.map((tag) {
-                                final index = todo.tags.indexOf(tag);
-                                final color =
-                                    tagColors[index % tagColors.length];
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Color.fromRGBO(
-                                      color.r.toInt(),
-                                      color.g.toInt(),
-                                      color.b.toInt(),
-                                      0.1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Color.fromRGBO(
-                                        color.r.toInt(),
-                                        color.g.toInt(),
-                                        color.b.toInt(),
-                                        0.3,
-                                      ),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    '#$tag',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: color,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      ],
-                    ],
+                  child: Text(
+                    todo.title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          todo.completed
+                              ? NeumorphicStyles.textLight
+                              : NeumorphicStyles.textDark,
+                      decoration:
+                          todo.completed ? TextDecoration.lineThrough : null,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
+                // 삭제 버튼
+                NeumorphicButton(
+                  onPressed: () async {
+                    await TodoService.deleteTodo(todo.id);
+                    _loadTodos();
+                  },
+                  width: 32,
+                  height: 32,
+                  padding: EdgeInsets.zero,
+                  borderRadius: 16,
+                  color: NeumorphicStyles.backgroundColor,
+                  child: const Icon(
+                    Icons.delete_outline,
+                    size: 18,
+                    color: Colors.redAccent,
                   ),
                 ),
               ],
             ),
-            // 삭제 버튼
-            Positioned(
-              top: 8,
-              right: 8,
-              child: IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: const Color.fromRGBO(255, 0, 0, 0.7),
-                ),
-                onPressed: () async {
-                  await TodoService.deleteTodo(todo.id);
-                  _loadTodos();
-                },
+
+            // 메모 (있을 경우)
+            if (todo.memo != null && todo.memo!.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                todo.memo!,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF757575)),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
+            ],
+            // 태그 섹션
+            if (todo.tags.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children:
+                    todo.tags.map((tag) {
+                      final index = todo.tags.indexOf(tag);
+                      final color = tagColors[index % tagColors.length];
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(
+                            color.r.toInt(),
+                            color.g.toInt(),
+                            color.b.toInt(),
+                            0.1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Color.fromRGBO(
+                              color.r.toInt(),
+                              color.g.toInt(),
+                              color.b.toInt(),
+                              0.3,
+                            ),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          '#$tag',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: color,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              ),
+            ],
           ],
         ),
       ),

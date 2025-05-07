@@ -515,7 +515,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                                     width: 18,
                                     height: 18,
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withValues(alpha: 0.1),
+                                      color: Colors.red.withValues(alpha: 26),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(

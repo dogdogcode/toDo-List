@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
+import '../utils/neumorphic_styles.dart';
 
 class TodoListItem extends StatelessWidget {
   final Todo todo;
@@ -19,28 +20,12 @@ class TodoListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lightColor = Color.lerp(cardColor, Colors.white, 0.5)!;
-    final darkColor = Color.lerp(cardColor, Colors.black, 0.1)!;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: cardColor.withAlpha(230),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withAlpha(204),
-            offset: const Offset(-4, -4),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-          BoxShadow(
-            color: Colors.black.withAlpha(51),
-            offset: const Offset(4, 4),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
+    return NeumorphicContainer(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      color: cardColor.withValues(alpha: 240),
+      borderRadius: 16,
+      intensity: 0.15,
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
@@ -53,35 +38,12 @@ class TodoListItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 체크박스
-                GestureDetector(
-                  onTap: onToggle,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color:
-                          todo.completed
-                              ? darkColor
-                              : Colors.white.withValues(alpha: 179),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color:
-                            todo.completed
-                                ? darkColor
-                                : Colors.white.withValues(alpha: 230),
-                        width: 2,
-                      ),
-                    ),
-                    child:
-                        todo.completed
-                            ? const Icon(
-                              Icons.check,
-                              size: 16,
-                              color: Colors.white,
-                            )
-                            : null,
-                  ),
+                // 개선된 체크박스
+                NeumorphicCheckbox(
+                  value: todo.completed,
+                  onChanged: (_) => onToggle(),
+                  color: NeumorphicStyles.backgroundColor,
+                  size: 24,
                 ),
 
                 const SizedBox(width: 16),
@@ -122,19 +84,6 @@ class TodoListItem extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        )
-                      else
-                        // 기본 설명 텍스트 (메모가 없을 경우)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 4),
-                          child: Text(
-                            '세부 설명이 없습니다',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black45,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
                         ),
 
                       const SizedBox(height: 8),
@@ -142,7 +91,7 @@ class TodoListItem extends StatelessWidget {
                       // 하단 정보 (마감일, 태그, 삭제 버튼)
                       Row(
                         children: [
-                          // 마감일 (기간 있는 할 일)
+                          // 개선된 마감일 (기간 있는 할 일)
                           if (todo.hasDeadline && todo.deadline != null)
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -150,23 +99,31 @@ class TodoListItem extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 102),
-                                borderRadius: BorderRadius.circular(12),
+                                color: NeumorphicStyles.secondaryButtonColor
+                                    .withValues(alpha: 38),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: NeumorphicStyles.secondaryButtonColor
+                                      .withValues(alpha: 77),
+                                  width: 1,
+                                ),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    Icons.calendar_today,
+                                    Icons.event,
                                     size: 12,
-                                    color: darkColor,
+                                    color:
+                                        NeumorphicStyles.secondaryButtonColor,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     DateFormat('MM/dd').format(todo.deadline!),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black87,
+                                      color:
+                                          NeumorphicStyles.secondaryButtonColor,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -176,7 +133,7 @@ class TodoListItem extends StatelessWidget {
 
                           const SizedBox(width: 8),
 
-                          // 태그 (최대 1개만 표시)
+                          // 태그 개선
                           if (todo.tags.isNotEmpty)
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -184,27 +141,43 @@ class TodoListItem extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: darkColor.withValues(alpha: 26),
-                                borderRadius: BorderRadius.circular(4),
+                                color: NeumorphicStyles.primaryButtonColor
+                                    .withValues(alpha: 38),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: NeumorphicStyles.primaryButtonColor
+                                      .withValues(alpha: 77),
+                                  width: 1,
+                                ),
                               ),
                               child: Text(
                                 '#${todo.tags.first}',
                                 style: TextStyle(
-                                  fontSize: 10,
-                                  color: darkColor,
+                                  fontSize: 11,
+                                  color: NeumorphicStyles.primaryButtonColor,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
 
-                          // 추가 태그 개수 표시
+                          // 추가 태그 개수 표시 개선
                           if (todo.tags.length > 1)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4),
+                            Container(
+                              margin: const EdgeInsets.only(left: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: NeumorphicStyles.primaryButtonColor
+                                    .withValues(alpha: 26),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                               child: Text(
                                 '+${todo.tags.length - 1}',
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: darkColor,
+                                  color: NeumorphicStyles.primaryButtonColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -212,12 +185,33 @@ class TodoListItem extends StatelessWidget {
 
                           const Spacer(),
 
-                          // 생성 시간
-                          Text(
-                            _getTimeString(todo.createdAt),
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.black54,
+                          // 생성 시간 개선
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withValues(alpha: 26),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.access_time_filled,
+                                  size: 10,
+                                  color: NeumorphicStyles.textLight,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _getTimeString(todo.createdAt),
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: NeumorphicStyles.textLight,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -226,30 +220,20 @@ class TodoListItem extends StatelessWidget {
                   ),
                 ),
 
-                // 삭제 버튼
-                GestureDetector(
-                  onTap: onDelete,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    margin: const EdgeInsets.only(left: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white.withOpacity(0.6),
-                          offset: const Offset(-2, -2),
-                          blurRadius: 4,
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: const Offset(2, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
+                // 삭제 버튼 개선
+                NeumorphicButton(
+                  onPressed: onDelete,
+                  width: 32,
+                  height: 32,
+                  padding: EdgeInsets.zero,
+                  borderRadius: 16,
+                  color: NeumorphicStyles.backgroundColor,
+                  child: Center(
+                    child: Icon(
+                      Icons.delete_outline,
+                      size: 18,
+                      color: Colors.redAccent,
                     ),
-                    child: Icon(Icons.close, size: 18, color: darkColor),
                   ),
                 ),
               ],

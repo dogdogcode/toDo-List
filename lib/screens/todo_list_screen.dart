@@ -21,7 +21,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   // 스크롤 애니메이션을 위한 변수
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
-  final double _appBarHeight = 220.0; // 수정: 높이 증가
+  final double _appBarHeight = 190.0; // 헤더 높이 최적화
 
   @override
   void initState() {
@@ -134,7 +134,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
     final detailedTodos = _todos.where((todo) => todo.hasDeadline).toList();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100], // 배경색 변경
+      backgroundColor: NeumorphicStyles.backgroundColor, // 배경색 통일 - 뉴모피즘 컬러 사용
       body: SafeArea(
         child: Column(
           children: [
@@ -142,7 +142,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              height: _isCollapsed ? 70 : _appBarHeight,
+              height:
+                  _isCollapsed
+                      ? 80
+                      : _appBarHeight, // 변경: collapsed height를 80로 조정
               child:
                   _isCollapsed
                       ? Center(
@@ -375,45 +378,97 @@ class _TodoListScreenState extends State<TodoListScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 기간 없는 작업 섹션 헤더
+          // 기간 없는 작업 섹션 헤더 - 디자인 개선
           Padding(
-            padding: const EdgeInsets.only(left: 8, bottom: 12),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.assignment_outlined,
-                  color: NeumorphicStyles.textDark,
-                  size: 18,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '기간 없는 작업',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: NeumorphicStyles.textDark,
+            padding: const EdgeInsets.only(
+              left: 20,
+              bottom: 12,
+              right: 20,
+              top: 8,
+            ),
+            child: NeumorphicContainer(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              borderRadius: 12,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: NeumorphicStyles.cardColors[0].withValues(
+                        alpha: 51,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.checklist,
+                      color: NeumorphicStyles.primaryButtonColor,
+                      size: 18,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Text(
+                    '기간 없는 할 일',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: NeumorphicStyles.textDark,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${simpleTodos.length}개',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: NeumorphicStyles.textLight,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           simpleTodos.isEmpty
               ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.assignment_outlined,
-                        size: 36,
-                        color: Colors.grey[300],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '기간 없는 할 일을 추가해보세요!',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                      ),
-                    ],
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 20,
+                ),
+                child: NeumorphicContainer(
+                  height: 100,
+                  borderRadius: 16,
+                  color: NeumorphicStyles.backgroundColor.withValues(
+                    alpha: 179,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: NeumorphicStyles.cardColors[0].withValues(
+                              alpha: 51,
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add_task,
+                            size: 28,
+                            color: NeumorphicStyles.primaryButtonColor,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          '기간 없는 할 일을 추가해보세요!',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: NeumorphicStyles.textLight,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -426,7 +481,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   final cardColor =
                       _todoColors[todo.id] ?? NeumorphicStyles.cardColors[0];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(
+                      bottom: 12,
+                      left: 20,
+                      right: 20,
+                    ),
                     child: TodoListItem(
                       todo: todo,
                       onToggle: () => _toggleTodo(todo.id),
@@ -436,49 +495,109 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   );
                 },
               ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(color: Colors.grey, thickness: 1),
-          ),
-          // 기간 있는 작업 섹션 헤더
+          // 개선된 구분선
           Padding(
-            padding: const EdgeInsets.only(left: 8, bottom: 12, top: 8),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.event_note_outlined,
-                  color: NeumorphicStyles.textDark,
-                  size: 18,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '기간 있는 작업',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: NeumorphicStyles.textDark,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: NeumorphicContainer(
+              height: 2,
+              width: double.infinity,
+              intensity: 0.1,
+              color: NeumorphicStyles.backgroundColor,
+              borderRadius: 1,
+              child: SizedBox.shrink(), // 변경: null -> SizedBox.shrink()
+            ),
+          ),
+          // 기간 있는 작업 섹션 헤더 - 디자인 개선
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 20,
+              bottom: 12,
+              right: 20,
+              top: 16,
+            ),
+            child: NeumorphicContainer(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              borderRadius: 12,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: NeumorphicStyles.cardColors[1].withValues(
+                        alpha: 51,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.event_note,
+                      color: NeumorphicStyles.secondaryButtonColor,
+                      size: 18,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Text(
+                    '기간 있는 할 일',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: NeumorphicStyles.textDark,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${detailedTodos.length}개',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: NeumorphicStyles.textLight,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           detailedTodos.isEmpty
               ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.event_note_outlined,
-                        size: 36,
-                        color: Colors.grey[300],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '기간 있는 할 일을 추가해보세요!',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                      ),
-                    ],
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 20,
+                ),
+                child: NeumorphicContainer(
+                  height: 100,
+                  borderRadius: 16,
+                  color: NeumorphicStyles.backgroundColor.withValues(
+                    alpha: 179,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: NeumorphicStyles.cardColors[1].withValues(
+                              alpha: 51,
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.calendar_today,
+                            size: 28,
+                            color: NeumorphicStyles.secondaryButtonColor,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          '기간 있는 할 일을 추가해보세요!',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: NeumorphicStyles.textLight,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -491,7 +610,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   final cardColor =
                       _todoColors[todo.id] ?? NeumorphicStyles.cardColors[1];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(
+                      bottom: 12,
+                      left: 20,
+                      right: 20,
+                    ),
                     child: TodoListItem(
                       todo: todo,
                       onToggle: () => _toggleTodo(todo.id),

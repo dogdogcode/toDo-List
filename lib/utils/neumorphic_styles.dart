@@ -82,17 +82,14 @@ class NeumorphicStyles {
   static BoxDecoration getFABDecoration() {
     return BoxDecoration(
       gradient: LinearGradient(
-        colors: [
-          primaryButtonColor,
-          primaryButtonColor.withAlpha(204), // 여기도 필요시 255,193,7에 직접 값 넣을 수 있음
-        ],
+        colors: [primaryButtonColor, primaryButtonColor.withValues(alpha: 204)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(32),
       boxShadow: [
         BoxShadow(
-          color: primaryButtonColor.withAlpha(76), // withAlpha 사용
+          color: primaryButtonColor.withValues(alpha: 76),
           blurRadius: 12,
           offset: const Offset(0, 6),
         ),
