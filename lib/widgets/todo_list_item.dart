@@ -27,22 +27,24 @@ class TodoListItem extends StatelessWidget {
     // 계산된 색상 값
     final Color lightColor = Color.lerp(cardColor, Colors.white, 0.5)!;
     
-    return NeumorphicContainer(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      color: cardColor.withValues(alpha: 240),  // 0.94 * 255
-      borderRadius: 16,
-      intensity: 0.15,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 80, maxHeight: 150),
+      child: NeumorphicContainer(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        color: cardColor.withOpacity(0.94), // 0.94 opacity
+        borderRadius: 16,
+        intensity: 0.15,
+        // height 매개변수 제거 (ConstrainedBox로 높이 제어)
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(16),
-          onTap: onToggle,
-          splashColor: lightColor,
-          // 핵심: 중첩 레이아웃으로 인한 오버플로우 방지를 위해 Padding 안에 IntrinsicHeight 추가
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: IntrinsicHeight(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: onToggle,
+            splashColor: lightColor,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              // 오버플로우 방지를 위해 ConstrainedBox 사용
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start, // 상단 정렬로 변경
                 children: [
@@ -95,11 +97,11 @@ class TodoListItem extends StatelessWidget {
                           ],
                           
                           // 하단 정보 영역과의 간격
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           
                           // 가장 문제가 되던 하단 정보 영역 재구성 - Stack 대신 Row + Wrap 조합
                           SizedBox(
-                            height: 24,
+                            height: 20, // 높이 감소
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,10 +174,10 @@ class TodoListItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: NeumorphicStyles.secondaryButtonColor.withValues(alpha: 38),
+        color: NeumorphicStyles.secondaryButtonColor.withOpacity(0.15),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: NeumorphicStyles.secondaryButtonColor.withValues(alpha: 77),
+          color: NeumorphicStyles.secondaryButtonColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -206,10 +208,10 @@ class TodoListItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: NeumorphicStyles.primaryButtonColor.withValues(alpha: 38),
+        color: NeumorphicStyles.primaryButtonColor.withOpacity(0.15),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: NeumorphicStyles.primaryButtonColor.withValues(alpha: 77),
+          color: NeumorphicStyles.primaryButtonColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -229,7 +231,7 @@ class TodoListItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: NeumorphicStyles.primaryButtonColor.withValues(alpha: 26),
+        color: NeumorphicStyles.primaryButtonColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -248,7 +250,7 @@ class TodoListItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 26),
+        color: Colors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

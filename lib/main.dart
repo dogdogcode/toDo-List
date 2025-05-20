@@ -178,8 +178,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   _selectionAnimationController.forward();
                 },
                 itemBuilder: (context, index) {
-                  // 각 화면에 별도의 패딩 없이 화면 전체 활용
-                  return _screens[index];
+                  // 충돌 방지를 위해 SafeArea 적용
+                  return SafeArea(
+                    bottom: false,
+                    child: _screens[index],
+                  );
                 },
               ),
             ),
@@ -199,13 +202,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(25),
                     boxShadow: [
                     BoxShadow(
-                    color: Colors.black.withValues(alpha: 38), // 0.15 * 255 = 38
+                    color: Colors.black.withOpacity(0.15), // 0.15 opacity
                     offset: const Offset(0, 4),
                     blurRadius: 12,
                     spreadRadius: 0,
                     ),
                     BoxShadow(
-                    color: Colors.white.withValues(alpha: 179), // 0.7 * 255 = 179
+                    color: Colors.white.withOpacity(0.7), // 0.7 opacity
                     offset: const Offset(0, -2),
                     blurRadius: 6,
                     spreadRadius: 0,
@@ -264,19 +267,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isPressed || _selectedIndex == index
-                            ? NeumorphicStyles.backgroundColor.withValues(alpha: 204) // 0.8 * 255 = 204
+                            ? NeumorphicStyles.backgroundColor.withOpacity(0.8) // 0.8 opacity
                             : Colors.transparent,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow:
                         isPressed || _selectedIndex == index
                             ? [
                                 BoxShadow(
-                                color: Colors.black.withValues(alpha: 26), // 0.1 * 255 = 26
+                                color: Colors.black.withOpacity(0.1), // 0.1 opacity
                                 offset: const Offset(2, 2),
                                 blurRadius: 4,
                               ),
                               BoxShadow(
-                                color: Colors.white.withValues(alpha: 128), // 0.5 * 255 = 128
+                                color: Colors.white.withOpacity(0.5), // 0.5 opacity
                                 offset: const Offset(-2, -2),
                                 blurRadius: 4,
                               ),

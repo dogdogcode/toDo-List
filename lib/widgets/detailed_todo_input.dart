@@ -86,12 +86,12 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 26),
+                  color: Colors.black.withOpacity(0.1),
                   offset: const Offset(2, 2),
                   blurRadius: 6,
                 ),
                 BoxShadow(
-                  color: Colors.white.withValues(alpha: 128),
+                  color: Colors.white.withOpacity(0.5),
                   offset: const Offset(-2, -2),
                   blurRadius: 6,
                 ),
@@ -530,7 +530,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                                     width: 18,
                                     height: 18,
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withValues(alpha: 26),
+                                      color: Colors.red.withOpacity(0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(

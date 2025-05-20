@@ -37,12 +37,12 @@ class ProfileScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 26), // 0.1 * 255 = 26
+                              color: Colors.black.withOpacity(0.1), // 0.1 opacity
                               offset: const Offset(2, 2),
                               blurRadius: 4,
                             ),
                             BoxShadow(
-                              color: Colors.white.withValues(alpha: 128), // 0.5 * 255 = 128
+                              color: Colors.white.withOpacity(0.5), // 0.5 opacity
                               offset: const Offset(-1, -1),
                               blurRadius: 4,
                             ),
@@ -88,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: NeumorphicContainer(
-                padding: const EdgeInsets.all(20), // 패딩 줄임
+                padding: const EdgeInsets.symmetric(vertical: 15), // 패딩 최적화
                 borderRadius: 20,
                 // IntrinsicHeight로 감싸서 컬럼이 실제 필요한 만큼만 공간 차지하도록 함
                 child: IntrinsicHeight(
@@ -97,22 +97,22 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       // 사용자 아바타 - 크기 줄임
                       NeumorphicContainer(
-                        height: 100, // 크기 줄임
-                        width: 100, // 크기 줄임
+                        height: 85, // 크기 더 줄임
+                        width: 85, // 크기 더 줄임
                         borderRadius: 50, // 반지름 조정
                         padding: EdgeInsets.zero,
                         color: Colors.white,
                         child: const CircleAvatar(
-                          radius: 45, // 반지름 조정
+                          radius: 40, // 반지름 조정
                           backgroundColor: NeumorphicStyles.secondaryButtonColor,
                           child: Icon(
                             Icons.person_rounded,
-                            size: 60, // 아이콘 크기 줄임
+                            size: 50, // 아이콘 크기 더 줄임
                             color: Colors.white,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20), // 간격 줄임
+                      const SizedBox(height: 12), // 간격 더 줄임
                       // 사용자 이름 - 크기 줄이고 레이아웃 최적화
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -124,7 +124,7 @@ class ProfileScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: NeumorphicStyles.secondaryButtonColor
-                                .withValues(alpha: 77), // 0.3 * 255 = 77
+                                .withOpacity(0.3), // 0.3 opacity
                             width: 2,
                           ),
                         ),
@@ -155,9 +155,9 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 25), // 간격 줄임
             _buildMenuItem(icon: Icons.settings, title: '설정', onTap: () {}),
-            const SizedBox(height: 8), // 간격 더 줄임
+            const SizedBox(height: 5), // 간격 더 줄임
             _buildMenuItem(icon: Icons.help, title: '도움말', onTap: () {}),
-            const SizedBox(height: 8), // 간격 더 줄임
+            const SizedBox(height: 5), // 간격 더 줄임
             _buildMenuItem(
               icon: Icons.logout,
               title: '로그아웃',
@@ -188,7 +188,7 @@ class ProfileScreen extends StatelessWidget {
       ), // 세로 패딩 더 줄임
       child: NeumorphicButton(
         onPressed: onTap,
-        height: 50, // 높이 더 줄임
+        height: 45, // 높이 더 줄임
         borderRadius: 16, // 라운드 줄임
         padding: const EdgeInsets.symmetric(horizontal: 16), // 패딩 줄임
         child: Row(
@@ -199,9 +199,9 @@ class ProfileScreen extends StatelessWidget {
               height: 32,
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 38), // 0.15 * 255 = 38
+                color: iconColor.withOpacity(0.15), // 0.15 opacity
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: iconColor.withValues(alpha: 77), width: 1.5),
+                border: Border.all(color: iconColor.withOpacity(0.3), width: 1.5),
               ),
               child: FittedBox(
                 fit: BoxFit.contain,
@@ -229,12 +229,12 @@ class ProfileScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withValues(alpha: 230), // 0.9 * 255 = 230
+                    color: Colors.white.withOpacity(0.9), // 0.9 opacity
                     offset: const Offset(-1, -1),
                     blurRadius: 2,
                   ),
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 26), // 0.1 * 255 = 26
+                    color: Colors.black.withOpacity(0.1), // 0.1 opacity
                     offset: const Offset(1, 1),
                     blurRadius: 2,
                   ),

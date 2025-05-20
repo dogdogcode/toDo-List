@@ -32,21 +32,23 @@ class NeumorphicStyles {
     double radius = 16.0,
     double intensity = 0.15,
   }) {
+    // 바깥쪽 그림자 강도 조절
+    final effectiveIntensity = intensity * 1.5; // 바깥쪽 그림자 강도 조절
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: Colors.white.withOpacity(0.8),
-          offset: const Offset(-3, -3),
-          blurRadius: 8,
-          spreadRadius: 0,
+          color: Colors.white.withOpacity(0.7 * effectiveIntensity), // 영향 감소
+          offset: const Offset(-2, -2), // 거리 줄임
+          blurRadius: 6, // 필터 검소
+          spreadRadius: 0, // 퍼짐 방지
         ),
         BoxShadow(
-          color: darkShadow.withOpacity(0.3),
-          offset: const Offset(3, 3),
-          blurRadius: 8,
-          spreadRadius: 0,
+          color: darkShadow.withOpacity(0.25 * effectiveIntensity), // 영향 감소
+          offset: const Offset(2, 2), // 거리 줄임
+          blurRadius: 6, // 필터 감소
+          spreadRadius: 0, // 퍼짐 방지
         ),
       ],
     );
@@ -58,20 +60,18 @@ class NeumorphicStyles {
     double radius = 16.0,
     double intensity = 0.25,
   }) {
+    // 효과 강도 조절
+    final effectiveIntensity = intensity * 0.8; // 효과를 약해지게 하여 중첩 방지
+    
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
+        // 내부 그림자 효과만 사용하여 렌더링 부하 감소
         BoxShadow(
-          color: darkShadow.withOpacity(0.4),
+          color: darkShadow.withOpacity(0.3 * effectiveIntensity),
           offset: const Offset(1, 1),
-          blurRadius: 3,
-          spreadRadius: 0,
-        ),
-        BoxShadow(
-          color: Colors.white.withOpacity(0.7),
-          offset: const Offset(-1, -1),
-          blurRadius: 3,
+          blurRadius: 2, // 감소된 블러
           spreadRadius: 0,
         ),
       ],
