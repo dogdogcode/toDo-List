@@ -37,16 +37,16 @@ class NeumorphicStyles {
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: Colors.white.withAlpha(204),
-          offset: const Offset(-4, -4),
-          blurRadius: 10,
-          spreadRadius: 1,
+          color: Colors.white.withOpacity(0.8),
+          offset: const Offset(-3, -3),
+          blurRadius: 8,
+          spreadRadius: 0,
         ),
         BoxShadow(
-          color: darkShadow.withAlpha(77),
-          offset: const Offset(4, 4),
-          blurRadius: 10,
-          spreadRadius: 1,
+          color: darkShadow.withOpacity(0.3),
+          offset: const Offset(3, 3),
+          blurRadius: 8,
+          spreadRadius: 0,
         ),
       ],
     );
@@ -63,16 +63,16 @@ class NeumorphicStyles {
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: darkShadow.withAlpha(102),
-          offset: const Offset(2, 2),
-          blurRadius: 5,
-          spreadRadius: -1,
+          color: darkShadow.withOpacity(0.4),
+          offset: const Offset(1, 1),
+          blurRadius: 3,
+          spreadRadius: 0,
         ),
         BoxShadow(
-          color: Colors.white.withAlpha(179),
-          offset: const Offset(-2, -2),
-          blurRadius: 5,
-          spreadRadius: -1,
+          color: Colors.white.withOpacity(0.7),
+          offset: const Offset(-1, -1),
+          blurRadius: 3,
+          spreadRadius: 0,
         ),
       ],
     );
@@ -82,16 +82,16 @@ class NeumorphicStyles {
   static BoxDecoration getFABDecoration() {
     return BoxDecoration(
       gradient: LinearGradient(
-        colors: [primaryButtonColor, primaryButtonColor.withValues(alpha: 204)],
+        colors: [primaryButtonColor, primaryButtonColor.withOpacity(0.8)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(32),
       boxShadow: [
         BoxShadow(
-          color: primaryButtonColor.withValues(alpha: 76),
-          blurRadius: 12,
-          offset: const Offset(0, 6),
+          color: primaryButtonColor.withOpacity(0.3),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
         ),
       ],
     );
@@ -99,15 +99,14 @@ class NeumorphicStyles {
 
   // 랜덤 카드 색상 얻기
   static Color getRandomCardColor() {
-    return cardColors[DateTime.now().millisecondsSinceEpoch %
-        cardColors.length];
+    return cardColors[DateTime.now().millisecondsSinceEpoch % cardColors.length];
   }
 }
 
 // 기본 뉴모픽 컨테이너 위젯
 class NeumorphicContainer extends StatelessWidget {
   final Widget child;
-  final EdgeInsetsGeometry? margin; // 새로 추가
+  final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry padding;
   final double width;
   final double height;
@@ -115,7 +114,7 @@ class NeumorphicContainer extends StatelessWidget {
   final double borderRadius;
   final bool isPressed;
   final double intensity;
-  final BoxDecoration? decoration; // 새로 추가: 외부 decoration override
+  final BoxDecoration? decoration;
 
   const NeumorphicContainer({
     super.key,
@@ -128,7 +127,7 @@ class NeumorphicContainer extends StatelessWidget {
     this.borderRadius = 16.0,
     this.isPressed = false,
     this.intensity = 0.1,
-    this.decoration, // override decoration
+    this.decoration,
   });
 
   @override
@@ -147,7 +146,7 @@ class NeumorphicContainer extends StatelessWidget {
               intensity: intensity,
             ));
     return Container(
-      margin: margin, // 추가
+      margin: margin,
       width: width,
       height: height,
       padding: padding,
@@ -300,12 +299,7 @@ class NeumorphicCheckbox extends StatelessWidget {
                   borderRadius: BorderRadius.circular(size / 3),
                   boxShadow: [
                     BoxShadow(
-                      color: Color.fromRGBO(
-                        163, // darkShadow.red
-                        177, // darkShadow.green
-                        198, // darkShadow.blue
-                        76 / 255,
-                      ),
+                      color: NeumorphicStyles.darkShadow.withOpacity(0.3),
                       offset: const Offset(2, 2),
                       blurRadius: 5,
                     ),

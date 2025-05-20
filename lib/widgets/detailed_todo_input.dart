@@ -78,10 +78,25 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
               headerBackgroundColor: NeumorphicStyles.backgroundColor,
             ),
           ),
-          child: NeumorphicContainer(
-            // 뉴모피즘 스타일 적용: 여백과 elevation 효과 부여
+          child: Container(
+            // NeumorphicContainer 대신 일반 Container로 변경
             padding: const EdgeInsets.all(8),
-            // NeumorphicStyles.getNeumorphicElevated 사용 가능
+            decoration: BoxDecoration(
+              color: NeumorphicStyles.backgroundColor,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 26),
+                  offset: const Offset(2, 2),
+                  blurRadius: 6,
+                ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 128),
+                  offset: const Offset(-2, -2),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
             child: child!,
           ),
         );
