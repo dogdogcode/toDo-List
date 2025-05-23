@@ -14,8 +14,10 @@ class TodoService {
       return [];
     }
 
-    final List<dynamic> todosJson = jsonDecode(todosString);
-    return todosJson.map((json) => Todo.fromJson(json)).toList();
+    final List<dynamic> todosJson = jsonDecode(todosString) as List<dynamic>;
+    return todosJson
+        .map((json) => Todo.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   // 할 일 목록 저장하기

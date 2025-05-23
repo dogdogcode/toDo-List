@@ -77,21 +77,23 @@ class Todo {
   // Map에서 Todo 객체로 변환하는 팩토리 생성자
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
-      id: json['id'],
-      title: json['title'],
-      completed: json['completed'],
-      hasDeadline: json['hasDeadline'],
+      id: json['id'] as String,
+      title: json['title'] as String,
+      completed: json['completed'] as bool,
+      hasDeadline: json['hasDeadline'] as bool,
       deadline:
-          json['deadline'] != null ? DateTime.parse(json['deadline']) : null,
-      memo: json['memo'],
-      tags: List<String>.from(json['tags'] ?? []),
+          json['deadline'] != null
+              ? DateTime.parse(json['deadline'] as String)
+              : null,
+      memo: json['memo'] as String?,
+      tags: List<String>.from(json['tags'] as Iterable<dynamic>? ?? []),
       createdAt:
           json['createdAt'] != null
-              ? DateTime.parse(json['createdAt'])
+              ? DateTime.parse(json['createdAt'] as String)
               : DateTime.now(),
       completedAt:
           json['completedAt'] != null
-              ? DateTime.parse(json['completedAt'])
+              ? DateTime.parse(json['completedAt'] as String)
               : null,
     );
   }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../utils/neumorphic_styles.dart';
-import '../providers/todo_provider.dart';
 import '../models/todo.dart';
+import '../providers/todo_provider.dart';
 import '../utils/constants.dart';
+import '../utils/neumorphic_styles.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -60,10 +60,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    // final bottomPadding = mediaQuery.padding.bottom; // 사용되지 않으므로 주석 처리 또는 삭제
-    // final bottomNavHeight = 100.0;  // 네비게이션 바 하단 여백 공간 -> _buildEventList 내부로 이동 또는 다른 방식으로 관리
-
     return Consumer<TodoProvider>(
       builder: (context, todoProvider, child) {
         return Scaffold(
@@ -124,7 +120,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         '일정 관리',
                         style: TextStyle(
                           fontSize: 24, // 폰트 크기 조정
@@ -228,13 +224,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _buildCalendar(TodoProvider provider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: NeumorphicContainer(
-        width: double.infinity,
-        // height: 360, // 높이 고정 제거 또는 유동적으로 변경 고려
-        // intensity: 0.07, // NeumorphicContainer는 intensity를 받음
-        borderRadius: 18, // 테두리 반경 조정
-        padding: const EdgeInsets.all(12), // 내부 패딩 조정
-        color: NeumorphicStyles.backgroundColor.withOpacity(0.95), // 배경색 변경
+      child: Container(
+        decoration: NeumorphicStyles.getNeumorphicElevated(
+          color: NeumorphicStyles.backgroundColor,
+          radius: 20,
+          intensity: 0.08,
+          opacity: 0.93,
+        ),
+        padding: const EdgeInsets.all(16),
         child: TableCalendar(
           locale: 'ko_KR', // 한글 로케일 설정
           firstDay: DateTime.utc(2020, 1, 1), // 범위 시작일 조정
@@ -296,7 +293,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   child: Center(
                     child: Text(
                       '${day.day}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: NeumorphicStyles.secondaryButtonColor,
                         fontWeight: FontWeight.bold,
                       ),
@@ -376,7 +373,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 width: 0.5,
               ),
             ),
-            titleTextStyle: TextStyle(
+            titleTextStyle: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: NeumorphicStyles.textDark,
@@ -414,12 +411,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _selectedDay ?? DateTime.now(),
     ); // _selectedDay가 null일 경우 대비
     final bool hasHoliday = holidays.isNotEmpty;
-    final bottomNavHeight = 110.0; // 하단 네비게이션 바 높이 고려
+    const bottomNavHeight = 110.0; // 하단 네비게이션 바 높이 고려
 
     if (_selectedEvents.isEmpty && !hasHoliday) {
       return Center(
         child: Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             bottom: bottomNavHeight / 2,
           ), // 빈 상태일 때도 하단 여백 고려
           child: NeumorphicContainer(
@@ -456,7 +453,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
 
     return ListView(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, bottomNavHeight + 16), // 하단 패딩 추가
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        bottomNavHeight + 16,
+      ), // 하단 패딩 추가
       children: [
         if (hasHoliday)
           Padding(
@@ -514,7 +516,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildEventCard(Todo todo, TodoProvider provider) {
-    final tagColors = AppConstants.tagColors; // 수정: const 제거
+    const tagColors = AppConstants.tagColors; // 수정: const 제거
 
     return NeumorphicContainer(
       width: double.infinity,

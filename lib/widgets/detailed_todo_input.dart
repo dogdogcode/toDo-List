@@ -3,7 +3,7 @@ import '../models/todo.dart';
 import '../utils/neumorphic_styles.dart';
 
 class DetailedTodoInput extends StatefulWidget {
-  final Function(Todo) onSave;
+  final Future<void> Function(Todo) onSave;
 
   const DetailedTodoInput({super.key, required this.onSave});
 
@@ -53,7 +53,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
               ), // 모서리 둥글게
             ),
             datePickerTheme: DatePickerThemeData(
-              dayStyle: TextStyle(
+              dayStyle: const TextStyle(
                 color: NeumorphicStyles.textDark,
                 fontSize: 14,
               ),
@@ -66,7 +66,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                   0.2,
                 ), // 오늘 날짜 배경 강조
               ),
-              todayForegroundColor: WidgetStatePropertyAll<Color>(
+              todayForegroundColor: const WidgetStatePropertyAll<Color>(
                 NeumorphicStyles.secondaryButtonColor, // 오늘 날짜 텍스트 강조
               ),
               dayBackgroundColor: WidgetStateProperty.resolveWith<Color>((
@@ -135,7 +135,14 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
   void _addTag() {
     if (_tagController.text.isNotEmpty) {
       setState(() {
-        _tags.add(_tagController.text.trim());
+        // 쉼표로 구분하여 여러 태그 한 번에 추가
+        final newTags =
+            _tagController.text
+                .split(',')
+                .map((tag) => tag.trim())
+                .where((tag) => tag.isNotEmpty && !_tags.contains(tag))
+                .toList();
+        _tags.addAll(newTags);
         _tagController.clear();
       });
     }
@@ -151,7 +158,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
   // 할 일 저장
   Future<void> _saveTodo() async {
     if (_titleController.text.isEmpty) {
-      await showDialog(
+      await showDialog<void>(
         context: context,
         builder:
             (context) => Dialog(
@@ -247,18 +254,24 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       decoration: BoxDecoration(
-        color: NeumorphicStyles.backgroundColor.withOpacity(0.97), // 반투명도 미세 조정
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(28), // 모서리 반지름 조정
-          topRight: Radius.circular(28),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            NeumorphicStyles.backgroundColor.withOpacity(0.96),
+            NeumorphicStyles.backgroundColor.withOpacity(0.92),
+          ],
         ),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 0.5),
         boxShadow: [
           BoxShadow(
-            color: NeumorphicStyles.darkShadow.withValues(
-              alpha: 0.12,
-            ), // 그림자 연하게
-            blurRadius: 18,
-            offset: const Offset(0, -6),
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 24,
+            offset: const Offset(0, -8),
           ),
         ],
       ),

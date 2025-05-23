@@ -26,52 +26,97 @@ class NeumorphicStyles {
   static const Color textDark = Color(0xFF2D3748);
   static const Color textLight = Color(0xFF718096);
 
-  // 뉴모피즘 돌출 효과 (볼록): 윤곽선을 추가하고 그림자 효과 강화
+  // 뉴모피즘 돌출 효과 (볼록): 반투명 효과 강화
   static BoxDecoration getNeumorphicElevated({
     Color color = backgroundColor,
     double radius = 16.0,
     double intensity = 0.15,
+    double opacity = 1.0, // 투명도 파라미터 추가
   }) {
-    // 바깥쪽 그림자 강도 조절
-    final effectiveIntensity = intensity * 1.5; // 바깥쪽 그림자 강도 조절
     return BoxDecoration(
-      color: color,
+      color: color.withOpacity(opacity),
       borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: Colors.white.withOpacity(0.2), width: 0.5),
       boxShadow: [
         BoxShadow(
-          color: Colors.white.withOpacity(0.7 * effectiveIntensity), // 영향 감소
-          offset: const Offset(-2, -2), // 거리 줄임
-          blurRadius: 6, // 필터 검소
-          spreadRadius: 0, // 퍼짐 방지
+          color: Colors.white.withOpacity(0.5 * intensity),
+          offset: const Offset(-3, -3),
+          blurRadius: 8,
+          spreadRadius: 0,
         ),
         BoxShadow(
-          color: darkShadow.withOpacity(0.25 * effectiveIntensity), // 영향 감소
-          offset: const Offset(2, 2), // 거리 줄임
-          blurRadius: 6, // 필터 감소
-          spreadRadius: 0, // 퍼짐 방지
+          color: darkShadow.withOpacity(0.2 * intensity),
+          offset: const Offset(3, 3),
+          blurRadius: 8,
+          spreadRadius: 0,
         ),
       ],
     );
   }
 
-  // 뉴모피즘 함몰 효과 (오목): 터치시 반응하는 색상 변화 및 윤곽선 효과 적용
+  // 뉴모피즘 함몰 효과 (오목): 반투명 인셋 효과
   static BoxDecoration getNeumorphicPressed({
     Color color = backgroundColor,
     double radius = 16.0,
     double intensity = 0.25,
+    double opacity = 1.0, // 투명도 파라미터 추가
   }) {
-    // 효과 강도 조절
-    final effectiveIntensity = intensity * 0.8; // 효과를 약해지게 하여 중첩 방지
-    
     return BoxDecoration(
-      color: color,
+      color: color.withOpacity(opacity * 0.95),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: darkShadow.withOpacity(0.1), width: 0.5),
+      boxShadow: [
+        BoxShadow(
+          color: darkShadow.withOpacity(0.15 * intensity),
+          offset: const Offset(2, 2),
+          blurRadius: 4,
+          spreadRadius: -2,
+        ),
+        // 안쪽 그림자 추가 (더 어두운 색상으로)
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1 * intensity), // 더 어두운 그림자
+          offset: const Offset(-1, -1), // 안쪽으로
+          blurRadius: 2,
+          spreadRadius: -1,
+        ),
+      ],
+    );
+  }
+
+  // 뉴모피즘 오목 효과 (Concave) - getNeumorphicPressed와 유사하지만, 내부 그림자 강조
+  static BoxDecoration getNeumorphicConcave({
+    Color color = backgroundColor,
+    double radius = 16.0,
+    double intensity = 0.15, // 기본 intensity 값을 getNeumorphicElevated와 유사하게 조정
+    double opacity = 1.0,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color.lerp(color, Colors.white, 0.1)!.withOpacity(opacity), // 밝은 부분
+          Color.lerp(color, Colors.black, 0.05)!.withOpacity(opacity), // 어두운 부분
+        ],
+      ),
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
-        // 내부 그림자 효과만 사용하여 렌더링 부하 감소
+        // 바깥쪽 어두운 그림자 (상단 왼쪽)
         BoxShadow(
-          color: darkShadow.withOpacity(0.3 * effectiveIntensity),
-          offset: const Offset(1, 1),
-          blurRadius: 2, // 감소된 블러
+          color: darkShadow.withOpacity(
+            0.3 * intensity,
+          ), // 기존 darkShadow 사용 및 intensity 적용
+          offset: const Offset(-2, -2), // 오프셋 조정
+          blurRadius: 5, // 블러 반경 조정
+          spreadRadius: 0,
+        ),
+        // 바깥쪽 밝은 그림자 (하단 오른쪽)
+        BoxShadow(
+          color: lightShadow.withOpacity(
+            0.7 * intensity,
+          ), // 기존 lightShadow 사용 및 intensity 적용
+          offset: const Offset(2, 2), // 오프셋 조정
+          blurRadius: 5, // 블러 반경 조정
           spreadRadius: 0,
         ),
       ],
@@ -99,7 +144,8 @@ class NeumorphicStyles {
 
   // 랜덤 카드 색상 얻기
   static Color getRandomCardColor() {
-    return cardColors[DateTime.now().millisecondsSinceEpoch % cardColors.length];
+    return cardColors[DateTime.now().millisecondsSinceEpoch %
+        cardColors.length];
   }
 }
 
@@ -139,13 +185,16 @@ class NeumorphicContainer extends StatelessWidget {
               color: color,
               radius: borderRadius,
               intensity: intensity,
+              opacity: 1.0,
             )
             : NeumorphicStyles.getNeumorphicElevated(
               color: color,
               radius: borderRadius,
               intensity: intensity,
+              opacity: 1.0,
             ));
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
       margin: margin,
       width: width,
       height: height,
@@ -218,7 +267,7 @@ class NeumorphicButtonState extends State<NeumorphicButton> {
 class NeumorphicTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
-  final Function(String)? onSubmitted;
+  final void Function(String)? onSubmitted; // 명시적 타입 선언
   final double borderRadius;
   final TextStyle? textStyle;
   final TextStyle? hintStyle;
@@ -246,7 +295,8 @@ class NeumorphicTextField extends StatelessWidget {
           hintText: hintText,
           hintStyle:
               hintStyle ??
-              TextStyle(
+              const TextStyle(
+                // const 추가
                 color: NeumorphicStyles.textLight,
                 fontSize: 16.0,
                 fontStyle: FontStyle.italic,
@@ -259,7 +309,8 @@ class NeumorphicTextField extends StatelessWidget {
         ),
         style:
             textStyle ??
-            TextStyle(
+            const TextStyle(
+              // const 추가
               color: NeumorphicStyles.textDark,
               fontSize: 16.0,
               fontWeight: FontWeight.w500,

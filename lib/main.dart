@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'screens/calendar_screen.dart';
-import 'screens/todo_list_screen.dart';
-import 'screens/profile_screen.dart';
-import 'utils/neumorphic_styles.dart';
 import 'providers/todo_provider.dart';
+import 'screens/calendar_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/todo_list_screen.dart';
 import 'utils/constants.dart';
+import 'utils/neumorphic_styles.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -140,15 +140,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
-    final screenHeight = mediaQuery.size.height;
     final bottomPadding = mediaQuery.padding.bottom;
-    final topPadding = mediaQuery.padding.top;
-    
+
     // 네비게이션 바 크기 및 위치 계산
-    final navBarHeight = AppConstants.bottomNavHeight;
+    const navBarHeight = AppConstants.bottomNavHeight;
     final navBarWidth = screenWidth - 48.0;
     final itemWidth = navBarWidth / 3;
-    
+
     // 콘텐츠 영역에 네비게이션 바 영역을 고려한 패딩 추가
     final contentBottomPadding = navBarHeight + bottomPadding + 20.0;
 
@@ -161,9 +159,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           children: [
             // 메인 컨텐츠
             Padding(
-              padding: EdgeInsets.only(
-                bottom: contentBottomPadding,
-              ),
+              padding: EdgeInsets.only(bottom: contentBottomPadding),
               child: PageView.builder(
                 controller: _pageController,
                 physics: const BouncingScrollPhysics(), // 스크롤 물리학 개선
@@ -179,10 +175,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 },
                 itemBuilder: (context, index) {
                   // 충돌 방지를 위해 SafeArea 적용
-                  return SafeArea(
-                    bottom: false,
-                    child: _screens[index],
-                  );
+                  return SafeArea(bottom: false, child: _screens[index]);
                 },
               ),
             ),
@@ -198,21 +191,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   height: navBarHeight,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: NeumorphicStyles.backgroundColor,
-                    borderRadius: BorderRadius.circular(25),
+                    color: NeumorphicStyles.backgroundColor.withOpacity(0.92),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 0.5,
+                    ),
                     boxShadow: [
-                    BoxShadow(
-                    color: Colors.black.withOpacity(0.15), // 0.15 opacity
-                    offset: const Offset(0, 4),
-                    blurRadius: 12,
-                    spreadRadius: 0,
-                    ),
-                    BoxShadow(
-                    color: Colors.white.withOpacity(0.7), // 0.7 opacity
-                    offset: const Offset(0, -2),
-                    blurRadius: 6,
-                    spreadRadius: 0,
-                    ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 6),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                      ),
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.6),
+                        offset: const Offset(0, -3),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                      ),
                     ],
                   ),
                   child: Row(
@@ -222,8 +219,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         width: itemWidth,
                         child: Center(
                           child: _buildNavItem(
-                            _navItems[index]['icon'],
-                            _navItems[index]['label'],
+                            _navItems[index]['icon'] as IconData, // Add cast
+                            _navItems[index]['label'] as String, // Add cast
                             index,
                             itemWidth * 0.8, // 터치 영역을 아이템 너비의 80%로 제한
                           ),
@@ -266,20 +263,27 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isPressed || _selectedIndex == index
-                            ? NeumorphicStyles.backgroundColor.withOpacity(0.8) // 0.8 opacity
+                    color:
+                        isPressed || _selectedIndex == index
+                            ? NeumorphicStyles.backgroundColor.withOpacity(
+                              0.8,
+                            ) // 0.8 opacity
                             : Colors.transparent,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow:
                         isPressed || _selectedIndex == index
                             ? [
-                                BoxShadow(
-                                color: Colors.black.withOpacity(0.1), // 0.1 opacity
+                              BoxShadow(
+                                color: Colors.black.withOpacity(
+                                  0.1,
+                                ), // 0.1 opacity
                                 offset: const Offset(2, 2),
                                 blurRadius: 4,
                               ),
                               BoxShadow(
-                                color: Colors.white.withOpacity(0.5), // 0.5 opacity
+                                color: Colors.white.withOpacity(
+                                  0.5,
+                                ), // 0.5 opacity
                                 offset: const Offset(-2, -2),
                                 blurRadius: 4,
                               ),

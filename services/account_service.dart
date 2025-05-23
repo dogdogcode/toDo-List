@@ -9,8 +9,10 @@ class AccountService {
 
   // 계정 동기화: 실제 네트워크 호출 대신 시뮬레이션
   Future<Map<String, dynamic>> syncAccount() async {
-    // ...existing code (예: API 호출 최적화)...
-    await Future.delayed(const Duration(seconds: 1));
-    return {'username': '동기화된 사용자 이름', 'email': 'user@example.com'};
+    // 가상의 지연을 위한 Future.delayed (타입 인수 명시)
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+
+    // Firebase 코드 비활성화: 항상 게스트 사용자 정보를 반환
+    return {'username': '게스트 사용자', 'email': 'guest@example.com'};
   }
 }

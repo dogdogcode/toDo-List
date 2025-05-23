@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/todo_provider.dart';
-import '../widgets/detailed_todo_input.dart';
 import '../utils/neumorphic_styles.dart';
+import '../widgets/detailed_todo_input.dart';
 import '../widgets/optimized_todo_list.dart';
 
 class TodoListScreen extends StatefulWidget {
@@ -58,7 +58,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
       ).addSimpleTodo(_textController.text);
       _textController.clear();
       // 키보드 숨기기
-      FocusScope.of(context).unfocus();
+      if (mounted) {
+        FocusScope.of(context).unfocus();
+      }
     }
   }
 
@@ -96,19 +98,25 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   Widget _buildAnimatedHeader() {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 250), // 애니메이션 속도 조정
-      curve: Curves.easeOut, // 애니메이션 커브 변경
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       height: _isCollapsed ? _collapsedAppBarHeight : _expandedAppBarHeight,
       decoration: BoxDecoration(
-        // 헤더 배경에 미묘한 그림자 추가
-        color: NeumorphicStyles.backgroundColor.withOpacity(0.95),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            NeumorphicStyles.backgroundColor.withOpacity(0.98),
+            NeumorphicStyles.backgroundColor.withOpacity(0.92),
+          ],
+        ),
         boxShadow:
             _isCollapsed
                 ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
                   ),
                 ]
                 : [],
@@ -280,7 +288,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
             height: 50, // 높이 조정
             borderRadius: 14,
             color: NeumorphicStyles.backgroundColor.withOpacity(0.9), // 반투명 배경
-            intensity: 0.08,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -307,7 +314,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   void _showDetailedTodoInput(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent, // 모달 배경 투명하게
@@ -331,12 +338,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
   Widget _buildCombinedListView(TodoProvider provider) {
     final simpleTodos = provider.simpleTodos;
     final detailedTodos = provider.detailedTodos;
-    final bottomNavHeight = 110.0;
+    const bottomNavHeight = 110.0;
 
     return SingleChildScrollView(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.only(bottom: bottomNavHeight, top: 8),
+      padding: const EdgeInsets.only(bottom: bottomNavHeight, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
