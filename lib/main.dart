@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart'; // 추가된 임포트
 import 'package:provider/provider.dart';
 import 'providers/todo_provider.dart';
 import 'screens/calendar_screen.dart';
@@ -20,6 +21,8 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
+
+  await initializeDateFormatting('ko_KR', null); // 날짜 포맷 초기화 추가
 
   // Provider를 활용한 상태 관리 설정
   runApp(
@@ -215,14 +218,61 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(_navItems.length, (index) {
-                      return SizedBox(
-                        width: itemWidth,
-                        child: Center(
-                          child: _buildNavItem(
-                            _navItems[index]['icon'] as IconData, // Add cast
-                            _navItems[index]['label'] as String, // Add cast
-                            index,
-                            itemWidth * 0.8, // 터치 영역을 아이템 너비의 80%로 제한
+                      return Expanded(
+                        // SizedBox를 Expanded로 변경
+                        child: GestureDetector(
+                          onTap: () => _onItemTapped(index),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 16,
+                            ), // 패딩 조정
+                            decoration: BoxDecoration(
+                              color:
+                                  _selectedIndex == index
+                                      ? NeumorphicStyles.primaryButtonColor
+                                          .withOpacity(
+                                            // primaryColor를 primaryButtonColor로 변경
+                                            0.15,
+                                          ) // 선택된 탭 배경색 변경
+                                      : Colors.transparent,
+                              borderRadius: BorderRadius.circular(
+                                16,
+                              ), // 둥근 모서리 추가
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  _navItems[index]['icon'] as IconData,
+                                  color:
+                                      _selectedIndex == index
+                                          ? NeumorphicStyles
+                                              .primaryButtonColor // primaryColor를 primaryButtonColor로 변경
+                                          : NeumorphicStyles.textLight
+                                              .withOpacity(0.7), // 아이콘 색상 변경
+                                  size: 26, // 아이콘 크기 조정
+                                ),
+                                const SizedBox(height: 4), // 아이콘과 텍스트 간격 조정
+                                Text(
+                                  _navItems[index]['label'] as String,
+                                  style: TextStyle(
+                                    color:
+                                        _selectedIndex == index
+                                            ? NeumorphicStyles
+                                                .primaryButtonColor // primaryColor를 primaryButtonColor로 변경
+                                            : NeumorphicStyles.textLight
+                                                .withOpacity(0.7), // 텍스트 색상 변경
+                                    fontSize: 11, // 폰트 크기 조정
+                                    fontWeight:
+                                        _selectedIndex == index
+                                            ? FontWeight.bold
+                                            : FontWeight.normal, // 선택된 탭 폰트 강조
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -237,88 +287,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index, double width) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        bool isPressed = false;
-        return SizedBox(
-          width: width,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque, // 터치 영역을 시각적 영역으로 제한
-            onTapDown: (_) => setState(() => isPressed = true),
-            onTapUp: (_) {
-              setState(() => isPressed = false);
-              this.setState(() => _selectedIndex = index);
-              _pageController.animateToPage(
-                index,
-                duration: AppConstants.animationDuration,
-                curve: Curves.easeOutQuint,
-              );
-            },
-            onTapCancel: () => setState(() => isPressed = false),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 아이콘 버튼
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color:
-                        isPressed || _selectedIndex == index
-                            ? NeumorphicStyles.backgroundColor.withOpacity(
-                              0.8,
-                            ) // 0.8 opacity
-                            : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow:
-                        isPressed || _selectedIndex == index
-                            ? [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(
-                                  0.1,
-                                ), // 0.1 opacity
-                                offset: const Offset(2, 2),
-                                blurRadius: 4,
-                              ),
-                              BoxShadow(
-                                color: Colors.white.withOpacity(
-                                  0.5,
-                                ), // 0.5 opacity
-                                offset: const Offset(-2, -2),
-                                blurRadius: 4,
-                              ),
-                            ]
-                            : null,
-                  ),
-                  child: Icon(
-                    icon,
-                    color:
-                        _selectedIndex == index
-                            ? NeumorphicStyles.primaryButtonColor
-                            : NeumorphicStyles.textLight,
-                    size: 26,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13.5,
-                    fontWeight:
-                        _selectedIndex == index
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                    color:
-                        _selectedIndex == index
-                            ? NeumorphicStyles.primaryButtonColor
-                            : NeumorphicStyles.textLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.animateToPage(
+      index,
+      duration: AppConstants.animationDuration,
+      curve: Curves.easeOutQuint,
     );
   }
 }

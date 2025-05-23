@@ -44,59 +44,57 @@ class ProfileScreen extends StatelessWidget {
                     opacity: 0.92,
                   ),
                   padding: const EdgeInsets.all(16),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: NeumorphicStyles.secondaryButtonColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                offset: const Offset(2, 2),
-                                blurRadius: 4,
-                              ),
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.5),
-                                offset: const Offset(-1, -1),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '프로필',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: NeumorphicStyles.textDark,
-                              ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: NeumorphicStyles.secondaryButtonColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              offset: const Offset(2, 2),
+                              blurRadius: 4,
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              '사용자 설정을 관리하세요',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: NeumorphicStyles.textLight,
-                              ),
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(-1, -1),
+                              blurRadius: 4,
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                        child: const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '프로필',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: NeumorphicStyles.textDark,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '사용자 설정을 관리하세요',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: NeumorphicStyles.textLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -104,66 +102,69 @@ class ProfileScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: NeumorphicContainer(
+                  height: 180, // 충분한 높이 지정
+                  width: double.infinity, // 전체 너비 사용
+                  color: NeumorphicStyles.backgroundColor.withOpacity(
+                    0.8,
+                  ), // 반투명 뉴모피즘 배경
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   borderRadius: 20,
-                  child: IntrinsicHeight(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const NeumorphicContainer(
-                          height: 85,
-                          width: 85,
-                          borderRadius: 50,
-                          padding: EdgeInsets.zero,
-                          color: Colors.white,
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundColor:
-                                NeumorphicStyles.secondaryButtonColor,
-                            child: Icon(
-                              Icons.person_rounded,
-                              size: 50,
-                              color: Colors.white,
-                            ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const NeumorphicContainer(
+                        height: 85,
+                        width: 85,
+                        borderRadius: 50,
+                        padding: EdgeInsets.zero,
+                        color: Colors.white,
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundColor:
+                              NeumorphicStyles.secondaryButtonColor,
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: 50,
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 20,
-                          ),
-                          decoration: BoxDecoration(
-                            color: NeumorphicStyles.backgroundColor,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: NeumorphicStyles.secondaryButtonColor
-                                  .withOpacity(0.3),
-                              width: 2,
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.verified_user,
-                                color: NeumorphicStyles.secondaryButtonColor,
-                                size: 18,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                username,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: NeumorphicStyles.textDark,
-                                ),
-                              ),
-                            ],
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: NeumorphicStyles.backgroundColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: NeumorphicStyles.secondaryButtonColor
+                                .withOpacity(0.3),
+                            width: 2,
                           ),
                         ),
-                      ],
-                    ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.verified_user,
+                              color: NeumorphicStyles.secondaryButtonColor,
+                              size: 18,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              username,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: NeumorphicStyles.textDark,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

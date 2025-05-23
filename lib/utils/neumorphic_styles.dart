@@ -154,8 +154,8 @@ class NeumorphicContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry padding;
-  final double width;
-  final double height;
+  final double? width; // null 허용으로 변경
+  final double? height; // null 허용으로 변경
   final Color color;
   final double borderRadius;
   final bool isPressed;
@@ -167,8 +167,8 @@ class NeumorphicContainer extends StatelessWidget {
     required this.child,
     this.margin,
     this.padding = const EdgeInsets.all(16.0),
-    this.width = double.infinity,
-    this.height = 100.0,
+    this.width, // 기본 null로 설정
+    this.height, // 기본 null로 설정
     this.color = NeumorphicStyles.backgroundColor,
     this.borderRadius = 16.0,
     this.isPressed = false,

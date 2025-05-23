@@ -74,7 +74,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 _buildHeader(),
 
                 // 캘린더
-                _buildCalendar(todoProvider),
+                Container(
+                  // TableCalendar를 Container로 감싸서 높이 제한
+                  height:
+                      MediaQuery.of(context).size.height *
+                      0.5, // 화면 높이의 50%로 제한
+                  child: _buildCalendar(todoProvider),
+                ),
 
                 // 선택한 날짜의 할 일 목록
                 Expanded(child: _buildEventList(todoProvider)),
