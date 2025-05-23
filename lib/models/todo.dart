@@ -38,14 +38,14 @@ class Todo {
   // 기간 있는 상세 할 일 생성을 위한 팩토리 메서드
   factory Todo.detailed({
     required String title,
-    required DateTime deadline,
+    DateTime? deadline, // DateTime?으로 변경하여 nullable 허용
     String? memo,
     List<String>? tags,
   }) {
     return Todo(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
-      hasDeadline: true,
+      hasDeadline: deadline != null, // deadline 유무에 따라 hasDeadline 설정
       deadline: deadline,
       memo: memo,
       tags: tags,

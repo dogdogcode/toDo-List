@@ -31,7 +31,7 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now(), // 오늘부터 선택 가능
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
@@ -39,61 +39,82 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
             colorScheme: ColorScheme.light(
               primary: NeumorphicStyles.primaryButtonColor,
               onPrimary: Colors.white,
-              surface: NeumorphicStyles.backgroundColor,
+              surface: NeumorphicStyles.backgroundColor.withOpacity(
+                0.9,
+              ), // 반투명 효과
               onSurface: NeumorphicStyles.textDark,
             ),
             dialogTheme: DialogThemeData(
-              backgroundColor: NeumorphicStyles.backgroundColor,
+              backgroundColor: NeumorphicStyles.backgroundColor.withOpacity(
+                0.9,
+              ), // 반투명 효과
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ), // 모서리 둥글게
             ),
-            // 뉴모피즘 스타일 추가
             datePickerTheme: DatePickerThemeData(
-              dayStyle: TextStyle(color: NeumorphicStyles.textDark),
-              weekdayStyle: TextStyle(color: NeumorphicStyles.textLight),
-              // 오늘 날짜
+              dayStyle: TextStyle(
+                color: NeumorphicStyles.textDark,
+                fontSize: 14,
+              ),
+              weekdayStyle: TextStyle(
+                color: NeumorphicStyles.textLight.withOpacity(0.8),
+                fontSize: 12,
+              ),
               todayBackgroundColor: WidgetStatePropertyAll<Color>(
-                NeumorphicStyles.backgroundColor,
+                NeumorphicStyles.secondaryButtonColor.withOpacity(
+                  0.2,
+                ), // 오늘 날짜 배경 강조
               ),
               todayForegroundColor: WidgetStatePropertyAll<Color>(
-                NeumorphicStyles.secondaryButtonColor,
+                NeumorphicStyles.secondaryButtonColor, // 오늘 날짜 텍스트 강조
               ),
-              // 선택된 날짜
               dayBackgroundColor: WidgetStateProperty.resolveWith<Color>((
                 states,
               ) {
                 if (states.contains(WidgetState.selected)) {
-                  return NeumorphicStyles.backgroundColor; // 배경색 변경
+                  return NeumorphicStyles.primaryButtonColor.withOpacity(
+                    0.8,
+                  ); // 선택된 날짜 배경색 변경 및 반투명
                 }
-                return NeumorphicStyles.backgroundColor;
+                return Colors.transparent; // 기본 배경 투명
               }),
               dayForegroundColor: WidgetStateProperty.resolveWith<Color>((
                 states,
               ) {
                 if (states.contains(WidgetState.selected)) {
-                  return NeumorphicStyles.primaryButtonColor; // 글자 색상 변경
+                  return Colors.white; // 선택된 날짜 글자 색상 흰색으로 변경
                 }
                 return NeumorphicStyles.textDark;
               }),
-              rangePickerBackgroundColor: NeumorphicStyles.backgroundColor,
-              backgroundColor: NeumorphicStyles.backgroundColor,
-              headerBackgroundColor: NeumorphicStyles.backgroundColor,
+              headerBackgroundColor: NeumorphicStyles.backgroundColor
+                  .withOpacity(0.9), // 반투명 효과
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ), // 모서리 둥글게
+              yearOverlayColor: WidgetStatePropertyAll<Color>(
+                NeumorphicStyles.primaryButtonColor.withOpacity(0.1),
+              ),
+              rangePickerHeaderBackgroundColor: NeumorphicStyles.backgroundColor
+                  .withOpacity(0.9),
             ),
           ),
           child: Container(
-            // NeumorphicContainer 대신 일반 Container로 변경
-            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: NeumorphicStyles.backgroundColor,
-              borderRadius: BorderRadius.circular(16),
+              color: NeumorphicStyles.backgroundColor.withOpacity(
+                0.95,
+              ), // 반투명 배경
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  offset: const Offset(2, 2),
-                  blurRadius: 6,
+                  color: Colors.black.withOpacity(0.1), // 그림자 연하게
+                  offset: const Offset(5, 5),
+                  blurRadius: 12,
                 ),
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.5),
-                  offset: const Offset(-2, -2),
-                  blurRadius: 6,
+                  color: Colors.white.withOpacity(0.7), // 밝은 그림자 연하게
+                  offset: const Offset(-5, -5),
+                  blurRadius: 12,
                 ),
               ],
             ),
@@ -129,15 +150,16 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
 
   // 할 일 저장
   Future<void> _saveTodo() async {
-    if (_titleController.text.isEmpty || _selectedDate == null) {
-      // 입력 오류 메시지를 뉴모피즘 스타일 팝업으로 표시
+    if (_titleController.text.isEmpty) {
       await showDialog(
         context: context,
         builder:
             (context) => Dialog(
               backgroundColor: Colors.transparent,
               child: NeumorphicContainer(
-                padding: const EdgeInsets.all(16),
+                color: NeumorphicStyles.backgroundColor.withOpacity(0.95),
+                borderRadius: 16,
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -146,14 +168,34 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: NeumorphicStyles.textDark,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text('제목과 날짜를 입력해주세요'),
-                    const SizedBox(height: 20),
+                    const Text(
+                      '제목을 입력해주세요.',
+                      style: TextStyle(
+                        color: NeumorphicStyles.textDark,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     NeumorphicButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('확인'),
+                      width: double.infinity,
+                      height: 48,
+                      borderRadius: 12,
+                      color: NeumorphicStyles.primaryButtonColor.withOpacity(
+                        0.85,
+                      ),
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -162,21 +204,24 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
       );
       return;
     }
-    // 현재 선택된 날짜의 시간을 정확하게 설정 (시간대 문제 해결)
-    final deadline = DateTime(
-      _selectedDate!.year,
-      _selectedDate!.month,
-      _selectedDate!.day,
-      23,
-      59,
-      59,
-    );
+
+    DateTime? deadline;
+    if (_selectedDate != null) {
+      deadline = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        23, // 마감일의 가장 마지막 시간으로 설정
+        59,
+        59,
+      );
+    }
 
     final todo = Todo.detailed(
       title: _titleController.text,
-      deadline: deadline,
+      deadline: deadline, // nullable로 변경된 deadline 사용
       memo: _memoController.text.isEmpty ? null : _memoController.text,
-      tags: _tags.isEmpty ? null : _tags,
+      tags: _tags.isEmpty ? [] : _tags, // 빈 리스트로 초기화
     );
 
     try {
@@ -202,373 +247,316 @@ class DetailedTodoInputState extends State<DetailedTodoInput> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       decoration: BoxDecoration(
-        color: NeumorphicStyles.backgroundColor,
+        color: NeumorphicStyles.backgroundColor.withOpacity(0.97), // 반투명도 미세 조정
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(28), // 모서리 반지름 조정
+          topRight: Radius.circular(28),
         ),
         boxShadow: [
           BoxShadow(
-            color: NeumorphicStyles.darkShadow.withValues(alpha: 0.2),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+            color: NeumorphicStyles.darkShadow.withValues(
+              alpha: 0.12,
+            ), // 그림자 연하게
+            blurRadius: 18,
+            offset: const Offset(0, -6),
           ),
         ],
       ),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 20), // 상하 패딩 조정
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             // 헤더
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // 이모티콘과 타이틀
-                Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: NeumorphicStyles.primaryButtonColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.calendar_month,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      '기간이 있는 할 일 추가',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: NeumorphicStyles.textDark,
-                      ),
-                    ),
-                  ],
-                ),
-                // 닫기 버튼
-                NeumorphicButton(
-                  onPressed: () => Navigator.pop(context),
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  padding: EdgeInsets.zero,
-                  child: const Icon(
-                    Icons.close,
-                    color: NeumorphicStyles.textDark,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // 제목 입력
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: NeumorphicStyles.getNeumorphicElevated(
-                radius: 12,
-                intensity: 0.05,
-              ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0), // 헤더 하단 여백 추가
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(
-                    Icons.title,
-                    color: NeumorphicStyles.primaryButtonColor,
-                    size: 20,
+                  Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: NeumorphicStyles.primaryButtonColor
+                              .withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.edit_calendar_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        '새로운 할 일', // 타이틀 변경
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: NeumorphicStyles.textDark,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '제목',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: NeumorphicStyles.textDark,
+                  NeumorphicButton(
+                    onPressed: () => Navigator.pop(context),
+                    width: 38,
+                    height: 38,
+                    borderRadius: 10,
+                    color: NeumorphicStyles.backgroundColor.withOpacity(0.95),
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      Icons.close_rounded, // 아이콘 변경
+                      color: NeumorphicStyles.textLight.withOpacity(0.9),
+                      size: 22,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+
+            // 제목 입력
+            _buildSectionTitle(icon: Icons.title_rounded, title: '제목'),
+            const SizedBox(height: 10),
             NeumorphicTextField(
               controller: _titleController,
-              hintText: '할 일 제목을 입력하세요',
-              borderRadius: 16,
+              hintText: '무엇을 해야 하나요?',
+              borderRadius: 14,
               textStyle: const TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
+                color: NeumorphicStyles.textDark,
                 fontWeight: FontWeight.w500,
               ),
-              hintStyle: const TextStyle(
-                fontSize: 16,
-                color: Colors.black38,
-                fontStyle: FontStyle.italic,
-              ),
+              // NeumorphicTextField는 contentPadding을 직접 지원합니다.
+              // hintStyle도 NeumorphicTextField 내부에서 처리됩니다.
             ),
             const SizedBox(height: 20),
 
             // 날짜 선택
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: NeumorphicStyles.getNeumorphicElevated(
-                radius: 12,
-                intensity: 0.05,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.event,
-                    color: NeumorphicStyles.primaryButtonColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '날짜',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: NeumorphicStyles.textDark,
-                    ),
-                  ),
-                ],
-              ),
+            _buildSectionTitle(
+              icon: Icons.calendar_today_rounded,
+              title: '마감일 (선택)',
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             NeumorphicButton(
               onPressed: () => _selectDate(context),
-              color: NeumorphicStyles.backgroundColor,
-              height: 55,
-              borderRadius: 16,
+              color: NeumorphicStyles.backgroundColor.withOpacity(0.95),
+              borderRadius: 14,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    color: NeumorphicStyles.textDark,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.event_available_rounded,
+                        color:
+                            _selectedDate != null
+                                ? NeumorphicStyles.primaryButtonColor
+                                : NeumorphicStyles.textLight.withOpacity(0.8),
+                        size: 22,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        _selectedDate == null
+                            ? '날짜를 선택해주세요'
+                            : '${_selectedDate!.year}.${_selectedDate!.month.toString().padLeft(2, '0')}.${_selectedDate!.day.toString().padLeft(2, '0')}', // 날짜 형식 변경
+                        style: TextStyle(
+                          fontSize: 15,
+                          color:
+                              _selectedDate != null
+                                  ? NeumorphicStyles.textDark
+                                  : NeumorphicStyles.textLight.withOpacity(0.8),
+                          fontWeight:
+                              _selectedDate != null
+                                  ? FontWeight.w500
+                                  : FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    _selectedDate == null
-                        ? '날짜 선택'
-                        : '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',
-                    style: TextStyle(
-                      color:
-                          _selectedDate == null
-                              ? NeumorphicStyles.textLight
-                              : NeumorphicStyles.textDark,
-                      fontSize: 16,
+                  if (_selectedDate != null)
+                    NeumorphicButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedDate = null;
+                        });
+                      },
+                      width: 30,
+                      height: 30,
+                      borderRadius: 8,
+                      padding: EdgeInsets.zero,
+                      color: NeumorphicStyles.backgroundColor.withOpacity(0.9),
+                      child: Icon(
+                        Icons.clear_rounded,
+                        size: 18,
+                        color: NeumorphicStyles.textLight.withOpacity(0.8),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
 
             // 메모 입력
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: NeumorphicStyles.getNeumorphicElevated(
-                radius: 12,
-                intensity: 0.05,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.note,
-                    color: NeumorphicStyles.primaryButtonColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '메모',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: NeumorphicStyles.textDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            _buildSectionTitle(icon: Icons.notes_rounded, title: '메모 (선택)'),
+            const SizedBox(height: 10),
+            // NeumorphicTextField가 minLines/maxLines를 지원하지 않으므로, 일반 TextField에 뉴모피즘 스타일 적용
             Container(
               decoration: NeumorphicStyles.getNeumorphicPressed(
-                radius: 16,
+                radius: 14,
                 intensity: 0.08,
               ),
               child: TextField(
                 controller: _memoController,
-                decoration: const InputDecoration(
-                  hintText: '메모를 입력하세요 (선택사항)',
+                decoration: InputDecoration(
+                  hintText: '자세한 내용을 기록해보세요',
                   hintStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black38,
-                    fontStyle: FontStyle.italic,
+                    color: NeumorphicStyles.textLight.withOpacity(0.7),
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                  color: NeumorphicStyles.textDark,
                 ),
-                maxLines: 3,
+                minLines: 2,
+                maxLines: 4,
               ),
             ),
             const SizedBox(height: 20),
 
             // 태그 입력
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: NeumorphicStyles.getNeumorphicElevated(
-                radius: 12,
-                intensity: 0.05,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.label,
-                    color: NeumorphicStyles.primaryButtonColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '태그',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: NeumorphicStyles.textDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            _buildSectionTitle(icon: Icons.tag_rounded, title: '태그 (선택)'),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   child: NeumorphicTextField(
                     controller: _tagController,
-                    hintText: '태그 입력 (선택사항)',
+                    hintText: '쉼표(,)로 태그를 구분해주세요',
+                    borderRadius: 14,
                     textStyle: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color: NeumorphicStyles.textDark,
                     ),
-                    hintStyle: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black38,
-                      fontStyle: FontStyle.italic,
-                    ),
+                    // NeumorphicTextField는 contentPadding을 직접 지원합니다.
+                    // hintStyle도 NeumorphicTextField 내부에서 처리됩니다.
+                    onSubmitted: (_) => _addTag(),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 NeumorphicButton(
                   onPressed: _addTag,
-                  width: 80,
+                  width: 50,
                   height: 50,
-                  color: NeumorphicStyles.primaryButtonColor,
-                  child: const Center(
-                    child: Text(
-                      '추가',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  borderRadius: 14,
+                  color: NeumorphicStyles.secondaryButtonColor.withOpacity(
+                    0.85,
+                  ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                    size: 26,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-
-            // 태그 목록 표시
-            if (_tags.isNotEmpty) ...[
-              const Text(
-                '추가된 태그:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: NeumorphicStyles.textDark,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children:
-                    _tags
-                        .map(
-                          (tag) => NeumorphicContainer(
-                            height: 32,
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            borderRadius: 16,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.tag,
-                                  size: 14,
-                                  color: NeumorphicStyles.primaryButtonColor,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  tag,
-                                  style: const TextStyle(
-                                    color: NeumorphicStyles.textDark,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () => _removeTag(tag),
-                                  child: Container(
-                                    width: 18,
-                                    height: 18,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.close,
-                                      size: 12,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ),
-                              ],
+            const SizedBox(height: 12),
+            if (_tags.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0), // 태그 목록 상단 여백 추가
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children:
+                      _tags.map((tag) {
+                        return Chip(
+                          label: Text(
+                            tag,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: NeumorphicStyles.primaryButtonColor,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        )
-                        .toList(),
+                          onDeleted: () => _removeTag(tag),
+                          backgroundColor: NeumorphicStyles.primaryButtonColor
+                              .withOpacity(0.12),
+                          deleteIconColor: NeumorphicStyles.primaryButtonColor
+                              .withOpacity(0.6),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color: NeumorphicStyles.primaryButtonColor
+                                  .withOpacity(0.2),
+                              width: 0.5,
+                            ),
+                          ),
+                          labelPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 1,
+                          ),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          deleteIcon: const Icon(
+                            Icons.cancel_rounded,
+                            size: 18,
+                          ), // 삭제 아이콘 변경
+                        );
+                      }).toList(),
+                ),
               ),
-              const SizedBox(height: 24),
-            ],
+            const SizedBox(height: 28),
 
             // 저장 버튼
             NeumorphicButton(
               onPressed: _saveTodo,
-              color: NeumorphicStyles.primaryButtonColor,
-              height: 55,
-              child: const Center(
-                child: Text(
-                  '저장하기',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+              width: double.infinity,
+              height: 56,
+              borderRadius: 16,
+              color: NeumorphicStyles.primaryButtonColor.withOpacity(0.9),
+              child: const Text(
+                '저장하기',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
-            const SizedBox(height: 16),
           ],
         ),
       ),
+    );
+  }
+
+  // 섹션 타이틀 위젯
+  Widget _buildSectionTitle({required IconData icon, required String title}) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: NeumorphicStyles.textLight.withOpacity(0.9),
+          size: 20,
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: NeumorphicStyles.textLight.withOpacity(0.9),
+          ),
+        ),
+      ],
     );
   }
 }
