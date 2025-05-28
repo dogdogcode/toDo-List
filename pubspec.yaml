@@ -7,16 +7,21 @@ environment:
   sdk: ^3.7.2
 
 dependencies:
-  table_calendar: ^3.0.9
-  intl: ^0.20.2
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.2.2
-  firebase_core: ^3.13.0
-  cloud_firestore: ^5.6.7
-  firebase_auth: ^5.5.3
   provider: ^6.0.5
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  intl: ^0.19.0
+  flutter_local_notifications: ^17.0.0
+  reorderables: ^0.6.0
+  flutter_slidable: ^3.0.1
+  glassmorphism: ^3.0.0
+  flutter_screenutil: ^5.9.0
+  animations: ^2.0.8
+  flutter_staggered_animations: ^1.1.1
 
 dev_dependencies:
   flutter_test:
