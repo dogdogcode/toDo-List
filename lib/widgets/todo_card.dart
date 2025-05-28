@@ -58,6 +58,8 @@ class TodoCard extends StatelessWidget {
       child: GlassCard(
         backgroundColor: _getCardColor(),
         onTap: onToggle,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,7 +68,7 @@ class TodoCard extends StatelessWidget {
               children: [
                 // 완료 체크박스
                 Container(
-                  margin: const EdgeInsets.only(right: 12, top: 2),
+                  margin: const EdgeInsets.only(right: 10, top: 2),
                   child: InkWell(
                     onTap: onToggle,
                     borderRadius: BorderRadius.circular(20),
@@ -132,7 +134,7 @@ class TodoCard extends StatelessWidget {
                       // 마감일
                       if (todo.hasDeadline)
                         Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.only(top: 6),
                           child: Row(
                             children: [
                               Icon(
@@ -190,12 +192,12 @@ class TodoCard extends StatelessWidget {
             ),
             // 생성일
             Padding(
-              padding: const EdgeInsets.only(top: 8, left: 36),
+              padding: const EdgeInsets.only(top: 6, left: 34),
               child: Text(
                 '생성일: ${DateFormat('MM/dd HH:mm').format(todo.createdAt)}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: isDark ? Colors.white38 : Colors.grey.shade500,
-                  fontSize: 11,
+                  fontSize: 10,
                 ),
               ),
             ),
