@@ -16,21 +16,74 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _tabController;
+  late AnimationController _scaleController;
+  late AnimationController _textController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _borderRadiusAnimation;
+  late Animation<double> _textFadeAnimation;
+  late Animation<Offset> _textSlideAnimation;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    
+    // 스케일 애니메이션 컸트롤러 초기화 (아이폰 스타일)
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    
+    // 텍스트 애니메이션 컸트롤러
+    _textController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.94,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _borderRadiusAnimation = Tween<double>(
+      begin: 0.0,
+      end: 16.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _textFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _textController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+    
+    _textSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _textController,
+      curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+    ));
 
     // 앱 시작 시 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TodoProvider>().loadTodos();
+      _textController.forward(); // 텍스트 애니메이션 시작
     });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scaleController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
@@ -40,8 +93,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA),
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -50,41 +103,65 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             colors:
                 isDark
                     ? [
-                      const Color(0xFF1A1A2E),
-                      const Color(0xFF16213E),
-                      const Color(0xFF0F3460),
+                      const Color(0xFF0F0C29),
+                      const Color(0xFF302B63),
+                      const Color(0xFF24243E),
                     ]
                     : [
-                      const Color(0xFFE3F2FD),
-                      const Color(0xFFBBDEFB),
-                      const Color(0xFF90CAF9),
+                      const Color(0xFFE0C3FC),
+                      const Color(0xFF8EC5FC),
+                      const Color(0xFFFFE0F7),
                     ],
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // 커스텀 앱바
-              _buildAppBar(),
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_scaleAnimation, _borderRadiusAnimation]),
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(_borderRadiusAnimation.value),
+                child: Container(
+                  decoration: _scaleAnimation.value < 1.0 ? BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ) : null,
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        // 커스텀 앱바
+                        _buildAppBar(),
 
-              // 통계 카드
-              _buildStatsCard(),
+                        // 통계 카드
+                        _buildStatsCard(),
 
-              // 탭바
-              _buildTabBar(),
+                        // 탭바
+                        _buildTabBar(),
 
-              // 탭 뷰
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildSimpleTasksList(),
-                    _buildDeadlineTasksList(),
-                  ],
+                        // 탭 뷰
+                        Expanded(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              _buildSimpleTasksList(),
+                              _buildDeadlineTasksList(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
       floatingActionButton: _buildFloatingActionButton(),
@@ -96,40 +173,52 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '안녕하세요! 👋',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+          FadeTransition(
+            opacity: _textFadeAnimation,
+            child: SlideTransition(
+              position: _textSlideAnimation,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '안녕하세요! 👋',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '오늘도 화이팅하세요!',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const Spacer(),
+          FadeTransition(
+            opacity: _textFadeAnimation,
+            child: ScaleTransition(
+              scale: _textFadeAnimation,
+              child: IconButton(
+                onPressed: _showOptionsBottomSheet,
+                icon: Icon(
+                  Icons.more_vert,
                   color:
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.white
                           : Colors.black87,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                '오늘도 화이팅하세요!',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white70
-                          : Colors.grey.shade600,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          IconButton(
-            onPressed: _showOptionsBottomSheet,
-            icon: Icon(
-              Icons.more_vert,
-              color:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black87,
             ),
           ),
         ],
@@ -140,76 +229,108 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildStatsCard() {
     return Consumer<TodoProvider>(
       builder: (context, provider, child) {
-        return GlassCard(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Row(
-            children: [
-              _buildStatItem(
-                '전체',
-                provider.totalTasks,
-                Icons.list_alt,
-                Colors.blue,
+        return FadeTransition(
+          opacity: _textFadeAnimation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.5),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: _textController,
+              curve: const Interval(0.3, 0.9, curve: Curves.easeOut),
+            )),
+            child: GlassCard(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Row(
+                children: [
+                  _buildStatItem(
+                    '전체',
+                    provider.totalTasks,
+                    Icons.list_alt,
+                    Colors.blue,
+                    0,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildStatItem(
+                    '완료',
+                    provider.completedTasks,
+                    Icons.check_circle,
+                    Colors.green,
+                    1,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildStatItem(
+                    '대기',
+                    provider.pendingTasks,
+                    Icons.pending,
+                    Colors.orange,
+                    2,
+                  ),
+                  if (provider.overdueTasks > 0) ...[
+                    const SizedBox(width: 16),
+                    _buildStatItem(
+                      '초과',
+                      provider.overdueTasks,
+                      Icons.warning,
+                      Colors.red,
+                      3,
+                    ),
+                  ],
+                ],
               ),
-              const SizedBox(width: 16),
-              _buildStatItem(
-                '완료',
-                provider.completedTasks,
-                Icons.check_circle,
-                Colors.green,
-              ),
-              const SizedBox(width: 16),
-              _buildStatItem(
-                '대기',
-                provider.pendingTasks,
-                Icons.pending,
-                Colors.orange,
-              ),
-              if (provider.overdueTasks > 0) ...[
-                const SizedBox(width: 16),
-                _buildStatItem(
-                  '초과',
-                  provider.overdueTasks,
-                  Icons.warning,
-                  Colors.red,
-                ),
-              ],
-            ],
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildStatItem(String label, int count, IconData icon, Color color) {
+  Widget _buildStatItem(String label, int count, IconData icon, Color color, int index) {
     return Expanded(
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
+      child: TweenAnimationBuilder<double>(
+        duration: Duration(milliseconds: 600 + (index * 100)),
+        tween: Tween(begin: 0.0, end: 1.0),
+        curve: Curves.elasticOut,
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: value,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(height: 8),
+                TweenAnimationBuilder<int>(
+                  duration: Duration(milliseconds: 800 + (index * 100)),
+                  tween: IntTween(begin: 0, end: count),
+                  builder: (context, value, child) {
+                    return Text(
+                      value.toString(),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    );
+                  },
+                ),
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : Colors.grey.shade600,
+                  ),
+                ),
+              ],
             ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            count.toString(),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white70
-                      : Colors.grey.shade600,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -217,53 +338,100 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildTabBar() {
     return Consumer<TodoProvider>(
       builder: (context, provider, child) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color:
-                Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.white.withOpacity(0.8),
-          ),
-          child: TabBar(
-            controller: _tabController,
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).primaryColor.withOpacity(0.8),
+        return FadeTransition(
+          opacity: _textFadeAnimation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.7),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: _textController,
+              curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+            )),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? [
+                            Colors.white.withOpacity(0.15),
+                            Colors.white.withOpacity(0.05),
+                          ]
+                          : [
+                            Colors.white.withOpacity(0.9),
+                            Colors.white.withOpacity(0.6),
+                          ],
+                ),
+                border: Border.all(
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.white.withOpacity(0.8),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: TabBar(
+                controller: _tabController,
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColor.withOpacity(0.8),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      blurRadius: 15,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                labelColor: Colors.white,
+                unselectedLabelColor:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : Colors.grey.shade600,
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                tabs: [
+                  Tab(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.task_alt, size: 20),
+                        const SizedBox(width: 8),
+                        Text('기간 없음 (${provider.simpleTasks.length})'),
+                      ],
+                    ),
+                  ),
+                  Tab(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.schedule, size: 20),
+                        const SizedBox(width: 8),
+                        Text('기간 있음 (${provider.deadlineTasks.length})'),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            labelColor: Colors.white,
-            unselectedLabelColor:
-                Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white70
-                    : Colors.grey.shade600,
-            tabs: [
-              Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.task_alt, size: 20),
-                    const SizedBox(width: 8),
-                    Text('기간 없음 (${provider.simpleTasks.length})'),
-                  ],
-                ),
-              ),
-              Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.schedule, size: 20),
-                    const SizedBox(width: 8),
-                    Text('기간 있음 (${provider.deadlineTasks.length})'),
-                  ],
-                ),
-              ),
-            ],
           ),
         );
       },
@@ -385,24 +553,58 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildFloatingActionButton() {
-    return FloatingActionButton.extended(
-      onPressed: _showAddTodoScreen,
-      backgroundColor: Theme.of(context).primaryColor,
-      icon: const Icon(Icons.add, color: Colors.white),
-      label: const Text(
-        '할일 추가',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    return ScaleTransition(
+      scale: Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(
+        parent: _textController,
+        curve: const Interval(0.6, 1.0, curve: Curves.elasticOut),
+      )),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).primaryColor.withOpacity(0.8),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).primaryColor.withOpacity(0.3),
+              blurRadius: 15,
+              spreadRadius: 2,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: _showAddTodoScreen,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text(
+            '할일 추가',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }
 
   void _showAddTodoScreen() {
+    // 배경 축소 애니메이션 시작
+    _scaleController.forward();
+    
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => const AddTodoScreen(),
     ).then((_) {
+      // 배경 원래 크기로 복원
+      _scaleController.reverse();
       // 화면이 닫힐 때 데이터 새로고침
       context.read<TodoProvider>().loadTodos();
     });

@@ -18,10 +18,10 @@ class GlassmorphismContainer extends StatelessWidget {
     required this.child,
     this.width = double.infinity,
     this.height = double.infinity,
-    this.blur = 20,
-    this.opacity = 0.2,
+    this.blur = 25,
+    this.opacity = 0.15,
     this.borderColor = Colors.white,
-    this.borderWidth = 1.5,
+    this.borderWidth = 1.2,
     this.borderRadius = 16,
     this.margin,
     this.padding,
@@ -43,14 +43,14 @@ class GlassmorphismContainer extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             borderColor.withOpacity(opacity),
-            borderColor.withOpacity(opacity * 0.1),
+            borderColor.withOpacity(opacity * 0.05),
           ],
-          stops: const [0.1, 1],
+          stops: const [0.0, 1.0],
         ),
         borderGradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [borderColor.withOpacity(0.5), borderColor.withOpacity(0.2)],
+          colors: [borderColor.withOpacity(0.3), borderColor.withOpacity(0.1)],
         ),
         child: Container(
           padding: padding ?? const EdgeInsets.all(16),
@@ -77,7 +77,7 @@ class GlassCard extends StatelessWidget {
     this.onTap,
     this.margin,
     this.padding,
-    this.borderRadius = 16,
+    this.borderRadius = 24,
     this.backgroundColor,
     this.height,
   }) : super(key: key);
@@ -94,46 +94,51 @@ class GlassCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(borderRadius),
-          child: GlassmorphicContainer(
-            width: double.infinity,
-            height: height ?? 200,
-            borderRadius: borderRadius,
-            blur: 15,
-            alignment: Alignment.bottomCenter,
-            border: 1,
-            linearGradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors:
-                  backgroundColor != null
-                      ? [
-                        backgroundColor!.withOpacity(0.3),
-                        backgroundColor!.withOpacity(0.1),
-                      ]
-                      : isDark
-                      ? [
-                        Colors.white.withOpacity(0.1),
-                        Colors.white.withOpacity(0.05),
-                      ]
-                      : [
-                        Colors.white.withOpacity(0.8),
-                        Colors.white.withOpacity(0.3),
-                      ],
-              stops: const [0.1, 1],
-            ),
-            borderGradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors:
-                  isDark
-                      ? [
-                        Colors.white.withOpacity(0.2),
-                        Colors.white.withOpacity(0.1),
-                      ]
-                      : [
-                        Colors.white.withOpacity(0.7),
-                        Colors.white.withOpacity(0.3),
-                      ],
+          child: Container(
+            height: height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(borderRadius),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors:
+                    backgroundColor != null
+                        ? [
+                          backgroundColor!.withOpacity(0.2),
+                          backgroundColor!.withOpacity(0.05),
+                        ]
+                        : isDark
+                        ? [
+                          Colors.white.withOpacity(0.08),
+                          Colors.white.withOpacity(0.02),
+                        ]
+                        : [
+                          Colors.white.withOpacity(0.7),
+                          Colors.white.withOpacity(0.4),
+                        ],
+                stops: const [0.0, 1.0],
+              ),
+              border: Border.all(
+                color:
+                    isDark
+                        ? Colors.white.withOpacity(0.15)
+                        : Colors.white.withOpacity(0.5),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.2 : 0.08),
+                  blurRadius: 30,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(isDark ? 0.05 : 0.5),
+                  blurRadius: 25,
+                  spreadRadius: -5,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
             child: Container(
               padding: padding ?? const EdgeInsets.all(16),

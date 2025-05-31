@@ -64,7 +64,7 @@ class _TodoCardState extends State<TodoCard>
             if (widget.onEdit != null)
               SlidableAction(
                 onPressed: (_) => widget.onEdit!(),
-                backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
+                backgroundColor: Colors.blue.withOpacity(0.8),
                 foregroundColor: Colors.white,
                 icon: Icons.edit,
                 label: '편집',
@@ -278,11 +278,11 @@ class _TodoCardState extends State<TodoCard>
 
   Color? _getCardColor() {
     if (widget.todo.isCompleted) {
-      return Colors.green.withOpacity(0.08);
+      return Colors.green.withOpacity(0.1);
     } else if (widget.todo.isOverdue) {
-      return Colors.red.withOpacity(0.08);
+      return Colors.red.withOpacity(0.1);
     } else if (widget.todo.hasDeadline) {
-      return Colors.purple.withOpacity(0.08);
+      return Colors.blue.withOpacity(0.1);
     }
     return null;
   }
@@ -332,8 +332,8 @@ class TodoSectionHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (color ?? theme.primaryColor).withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16),
+              color: (color ?? theme.primaryColor).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, size: 20, color: color ?? theme.primaryColor),
           ),

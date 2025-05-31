@@ -34,26 +34,24 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     super.initState();
 
     _slideController = AnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 180),
       vsync: this,
     );
 
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 150),
       vsync: this,
     );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
-    );
+    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
 
     // 애니메이션 시작
     _slideController.forward();
@@ -95,11 +93,17 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                     end: Alignment.bottomRight,
                     colors:
                         isDark
-                            ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
+                            ? [
+                              const Color(0xFF0F0C29).withOpacity(0.95),
+                              const Color(0xFF302B63).withOpacity(0.95),
+                              const Color(0xFF24243E).withOpacity(0.95),
+                            ]
                             : [
-                              const Color(0xFFF8FBFF),
-                              const Color(0xFFE3F2FD),
+                              const Color(0xFFE0C3FC).withOpacity(0.95),
+                              const Color(0xFF8EC5FC).withOpacity(0.95),
+                              const Color(0xFFFFE0F7).withOpacity(0.95),
                             ],
+                    stops: const [0.0, 0.5, 1.0],
                   ),
                 ),
                 child: Column(
