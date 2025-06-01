@@ -27,50 +27,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     // 스케일 애니메이션 컸트롤러 초기화 (아이폰 스타일)
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    
+
     // 텍스트 애니메이션 컸트롤러
     _textController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.94,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _borderRadiusAnimation = Tween<double>(
-      begin: 0.0,
-      end: 16.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _textFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _textController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
-    
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.94).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    );
+
+    _borderRadiusAnimation = Tween<double>(begin: 0.0, end: 16.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    );
+
+    _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _textController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
     _textSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _textController,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _textController,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+      ),
+    );
 
     // 앱 시작 시 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -116,23 +109,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
         child: AnimatedBuilder(
-          animation: Listenable.merge([_scaleAnimation, _borderRadiusAnimation]),
+          animation: Listenable.merge([
+            _scaleAnimation,
+            _borderRadiusAnimation,
+          ]),
           builder: (context, child) {
             return Transform.scale(
               scale: _scaleAnimation.value,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(_borderRadiusAnimation.value),
+                borderRadius: BorderRadius.circular(
+                  _borderRadiusAnimation.value,
+                ),
                 child: Container(
-                  decoration: _scaleAnimation.value < 1.0 ? BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 20,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ) : null,
+                  decoration:
+                      _scaleAnimation.value < 1.0
+                          ? BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          )
+                          : null,
                   child: SafeArea(
                     child: Column(
                       children: [
@@ -235,10 +236,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             position: Tween<Offset>(
               begin: const Offset(0, 0.5),
               end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: _textController,
-              curve: const Interval(0.3, 0.9, curve: Curves.easeOut),
-            )),
+            ).animate(
+              CurvedAnimation(
+                parent: _textController,
+                curve: const Interval(0.3, 0.9, curve: Curves.easeOut),
+              ),
+            ),
             child: GlassCard(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               child: Row(
@@ -285,7 +288,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatItem(String label, int count, IconData icon, Color color, int index) {
+  Widget _buildStatItem(
+    String label,
+    int count,
+    IconData icon,
+    Color color,
+    int index,
+  ) {
     return Expanded(
       child: TweenAnimationBuilder<double>(
         duration: Duration(milliseconds: 600 + (index * 100)),
@@ -344,10 +353,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             position: Tween<Offset>(
               begin: const Offset(0, 0.7),
               end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: _textController,
-              curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
-            )),
+            ).animate(
+              CurvedAnimation(
+                parent: _textController,
+                curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+              ),
+            ),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
@@ -554,13 +565,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildFloatingActionButton() {
     return ScaleTransition(
-      scale: Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.6, 1.0, curve: Curves.elasticOut),
-      )),
+      scale: Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _textController,
+          curve: const Interval(0.6, 1.0, curve: Curves.elasticOut),
+        ),
+      ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
@@ -596,7 +606,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _showAddTodoScreen() {
     // 배경 축소 애니메이션 시작
     _scaleController.forward();
-    
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

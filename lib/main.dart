@@ -54,7 +54,7 @@ class TodoApp extends StatelessWidget {
       brightness: Brightness.light,
       primarySwatch: Colors.purple,
       primaryColor: const Color(0xFF7C4DFF),
-      scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+      scaffoldBackgroundColor: Colors.transparent, // 배경 투명 처리
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -68,7 +68,7 @@ class TodoApp extends StatelessWidget {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white.withOpacity(0.6), // 글래스모피즘 효과를 위한 투명도 조절
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -84,7 +84,7 @@ class TodoApp extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
+        fillColor: Colors.white.withOpacity(0.7), // 글래스모피즘 효과
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,
@@ -137,7 +137,7 @@ class TodoApp extends StatelessWidget {
       brightness: Brightness.dark,
       primarySwatch: Colors.purple,
       primaryColor: const Color(0xFFBB86FC),
-      scaffoldBackgroundColor: const Color(0xFF121212),
+      scaffoldBackgroundColor: Colors.transparent, // 배경 투명 처리
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -151,7 +151,7 @@ class TodoApp extends StatelessWidget {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withOpacity(0.1), // 글래스모피즘 효과를 위한 투명도 조절
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -167,7 +167,7 @@ class TodoApp extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withOpacity(0.15), // 글래스모피즘 효과
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,

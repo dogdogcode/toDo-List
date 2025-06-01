@@ -64,7 +64,9 @@ class _TodoCardState extends State<TodoCard>
             if (widget.onEdit != null)
               SlidableAction(
                 onPressed: (_) => widget.onEdit!(),
-                backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
+                backgroundColor: Colors.blue.withOpacity(
+                  0.7,
+                ), // 색상 및 투명도 변경 (fixed 반영)
                 foregroundColor: Colors.white,
                 icon: Icons.edit,
                 label: '편집',
@@ -75,7 +77,7 @@ class _TodoCardState extends State<TodoCard>
               ),
             SlidableAction(
               onPressed: (_) => widget.onDelete(),
-              backgroundColor: Colors.red.withOpacity(0.8),
+              backgroundColor: Colors.red.withOpacity(0.7), // 투명도 변경
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: '삭제',
@@ -95,7 +97,8 @@ class _TodoCardState extends State<TodoCard>
           ],
         ),
         child: GlassCard(
-          backgroundColor: _getCardColor(),
+          // GlassCard 사용
+          backgroundColor: _getCardColor(), // GlassCard의 backgroundColor로 전달
           onTap: widget.onToggle,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,13 +280,15 @@ class _TodoCardState extends State<TodoCard>
   }
 
   Color? _getCardColor() {
+    // GlassCard의 backgroundColor로 사용될 색상. GlassCard 내부에서 투명도 조절됨.
     if (widget.todo.isCompleted) {
-      return Colors.green.withOpacity(0.08);
+      return Colors.green.withOpacity(0.5); // 기본 투명도 증가 (fixed 반영 및 조정)
     } else if (widget.todo.isOverdue) {
-      return Colors.red.withOpacity(0.08);
+      return Colors.red.withOpacity(0.5); // 기본 투명도 증가 (fixed 반영 및 조정)
     } else if (widget.todo.hasDeadline) {
-      return Colors.purple.withOpacity(0.08);
+      return Colors.blue.withOpacity(0.4); // 기본 투명도 증가 (fixed 반영 및 조정)
     }
+    // 기본 배경색 (GlassCard에서 isDark에 따라 흰색 계열 그라데이션 처리)
     return null;
   }
 
@@ -325,14 +330,18 @@ class TodoSectionHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    // GlassCard와 유사한 스타일을 적용하거나, GlassCard를 사용할 수 있습니다.
+    // 여기서는 기존 구조를 유지하고 패딩만 조정합니다.
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 8), // 패딩 조정
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (color ?? theme.primaryColor).withOpacity(0.15),
+              color: (color ?? theme.primaryColor).withOpacity(
+                isDark ? 0.25 : 0.15,
+              ), // 투명도 조정
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, size: 20, color: color ?? theme.primaryColor),
@@ -349,7 +358,9 @@ class TodoSectionHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: (color ?? theme.primaryColor).withOpacity(0.2),
+              color: (color ?? theme.primaryColor).withOpacity(
+                isDark ? 0.3 : 0.2,
+              ), // 투명도 조정
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(

@@ -1,3 +1,4 @@
+import 'dart:ui'; // BackdropFilter 사용을 위해 추가
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,6 +6,7 @@ import '../models/todo_item.dart';
 import '../providers/todo_provider.dart';
 import '../utils/date_helper.dart';
 import '../widgets/custom_date_time_picker.dart';
+import '../widgets/glassmorphism_container.dart'; // GlassCard 사용
 
 class AddTodoScreen extends StatefulWidget {
   const AddTodoScreen({Key? key}) : super(key: key);
@@ -75,7 +77,8 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Container(
-        decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+        // 전체 화면을 약간 어둡게 하여 모달 강조
+        decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
         child: SlideTransition(
           position: _slideAnimation,
           child: DraggableScrollableSheet(
@@ -84,159 +87,165 @@ class _AddTodoScreenState extends State<AddTodoScreen>
             maxChildSize: 0.9,
             builder: (context, scrollController) {
               return Container(
+                // DraggableScrollableSheet의 배경
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(24),
                   ),
                   gradient: LinearGradient(
+                    // 그라데이션 배경 적용
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors:
                         isDark
                             ? [
-                              const Color(0xFF0F0C29).withOpacity(0.95),
-                              const Color(0xFF302B63).withOpacity(0.95),
-                              const Color(0xFF24243E).withOpacity(0.95),
+                              const Color(
+                                0xFF1A1A2E,
+                              ).withOpacity(0.9), // 어두운 테마 그라데이션
+                              const Color(0xFF16213E).withOpacity(0.9),
                             ]
                             : [
-                              const Color(0xFFE0C3FC).withOpacity(0.95),
-                              const Color(0xFF8EC5FC).withOpacity(0.95),
-                              const Color(0xFFFFE0F7).withOpacity(0.95),
+                              const Color(
+                                0xFFF8FBFF,
+                              ).withOpacity(0.95), // 밝은 테마 그라데이션
+                              const Color(0xFFE3F2FD).withOpacity(0.95),
                             ],
-                    stops: const [0.0, 0.5, 1.0],
+                    stops: const [0.0, 1.0],
                   ),
-                ),
-                child: Column(
-                  children: [
-                    // 핸들 바
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.white54 : Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                  boxShadow: [
+                    // 상단 그림자 추가
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      spreadRadius: -5,
+                      offset: const Offset(0, -10),
                     ),
+                  ],
+                ),
+                child: ClipRRect(
+                  // 블러 효과를 위해 추가
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                    child: Column(
+                      children: [
+                        // 핸들 바
+                        Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color:
+                                isDark ? Colors.white54 : Colors.grey.shade400,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
 
-                    // 헤더
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors:
-                              isDark
-                                  ? [
-                                    Colors.white.withOpacity(0.1),
-                                    Colors.white.withOpacity(0.05),
-                                  ]
-                                  : [
-                                    Colors.white.withOpacity(0.9),
-                                    Colors.white.withOpacity(0.7),
-                                  ],
-                        ),
-                        border: Border.all(
-                          color:
-                              isDark
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.white.withOpacity(0.8),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: theme.primaryColor.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              Icons.add_task,
-                              color: theme.primaryColor,
-                              size: 20,
-                            ),
+                        // 헤더
+                        GlassCard(
+                          // GlassCard 사용
+                          margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            '새로운 할일',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                          ),
-                          const Spacer(),
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: _closeScreen,
-                              child: Container(
+                          borderRadius: 20,
+                          // backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                          child: Row(
+                            children: [
+                              Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Colors.black)
-                                      .withOpacity(0.1),
+                                  color: theme.primaryColor.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
-                                  Icons.close_rounded,
-                                  color:
-                                      isDark ? Colors.white70 : Colors.black54,
+                                  Icons.add_task,
+                                  color: theme.primaryColor,
                                   size: 20,
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // 폼 내용
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // 제목 입력
-                              _buildTitleField(),
-                              const SizedBox(height: 12),
-
-                              // 설명 입력
-                              _buildDescriptionField(),
-                              const SizedBox(height: 16),
-
-                              // 마감일 설정
-                              _buildDeadlineSection(),
-
-                              if (_hasDeadline) ...[
-                                const SizedBox(height: 16),
-                                _buildDateTimeSelectors(),
-                              ],
-
-                              const SizedBox(height: 24),
-
-                              // 저장 버튼
-                              _buildSaveButton(),
-
-                              const SizedBox(height: 16),
+                              const SizedBox(width: 12),
+                              Text(
+                                '새로운 할일',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: isDark ? Colors.white : Colors.black87,
+                                ),
+                              ),
+                              const Spacer(),
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: _closeScreen,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: (isDark
+                                              ? Colors.white
+                                              : Colors.black)
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      color:
+                                          isDark
+                                              ? Colors.white70
+                                              : Colors.black54,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ),
+
+                        // 폼 내용
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // 제목 입력
+                                  _buildTitleField(),
+                                  const SizedBox(height: 12),
+
+                                  // 설명 입력
+                                  _buildDescriptionField(),
+                                  const SizedBox(height: 16),
+
+                                  // 마감일 설정
+                                  _buildDeadlineSection(),
+
+                                  if (_hasDeadline) ...[
+                                    const SizedBox(height: 16),
+                                    _buildDateTimeSelectors(), // 이 내부도 GlassCard 스타일 적용 고려
+                                  ],
+
+                                  const SizedBox(height: 24),
+
+                                  // 저장 버튼
+                                  _buildSaveButton(), // 이 버튼도 GlassCard 스타일 적용 고려
+
+                                  const SizedBox(height: 16),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               );
             },
@@ -250,79 +259,49 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors:
-              isDark
-                  ? [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
-                  ]
-                  : [
-                    Colors.white.withOpacity(0.9),
-                    Colors.white.withOpacity(0.7),
-                  ],
-        ),
-        border: Border.all(
-          color:
-              isDark
-                  ? Colors.white.withOpacity(0.2)
-                  : Colors.white.withOpacity(0.8),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+    return GlassCard(
+      // GlassCard 사용
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      borderRadius: 20,
+      // backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: theme.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.title, color: theme.primaryColor, size: 22),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextFormField(
+              controller: _titleController,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+              decoration: InputDecoration(
+                labelText: '할일 제목',
+                hintText: '무엇을 해야 하나요?',
+                border: InputBorder.none,
+                labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: isDark ? Colors.white54 : Colors.grey.shade600,
+                ),
+                hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: isDark ? Colors.white38 : Colors.grey.shade400,
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '제목을 입력해주세요';
+                }
+                return null;
+              },
+              textInputAction: TextInputAction.next,
+            ),
           ),
         ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: theme.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(Icons.title, color: theme.primaryColor, size: 22),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: TextFormField(
-                controller: _titleController,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-                decoration: InputDecoration(
-                  labelText: '할일 제목',
-                  hintText: '무엇을 해야 하나요?',
-                  border: InputBorder.none,
-                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.white54 : Colors.grey.shade600,
-                  ),
-                  hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.white38 : Colors.grey.shade400,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '제목을 입력해주세요';
-                  }
-                  return null;
-                },
-                textInputAction: TextInputAction.next,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -331,79 +310,45 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors:
-              isDark
-                  ? [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
-                  ]
-                  : [
-                    Colors.white.withOpacity(0.9),
-                    Colors.white.withOpacity(0.7),
-                  ],
-        ),
-        border: Border.all(
-          color:
-              isDark
-                  ? Colors.white.withOpacity(0.2)
-                  : Colors.white.withOpacity(0.8),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+    return GlassCard(
+      // GlassCard 사용
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+      borderRadius: 20,
+      // backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: theme.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.description, color: theme.primaryColor, size: 22),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextFormField(
+              controller: _descriptionController,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+              decoration: InputDecoration(
+                labelText: '설명 (선택사항)',
+                hintText: '추가 설명을 입력하세요',
+                border: InputBorder.none,
+                labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: isDark ? Colors.white54 : Colors.grey.shade600,
+                ),
+                hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: isDark ? Colors.white38 : Colors.grey.shade400,
+                ),
+              ),
+              maxLines: 3,
+              textInputAction: TextInputAction.done,
+            ),
           ),
         ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: theme.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.description,
-                color: theme.primaryColor,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: TextFormField(
-                controller: _descriptionController,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-                decoration: InputDecoration(
-                  labelText: '설명 (선택사항)',
-                  hintText: '추가 설명을 입력하세요',
-                  border: InputBorder.none,
-                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.white54 : Colors.grey.shade600,
-                  ),
-                  hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.white38 : Colors.grey.shade400,
-                  ),
-                ),
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -412,42 +357,13 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
+    return GlassCard(
+      // GlassCard 사용
       height: 80,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors:
-              isDark
-                  ? [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
-                  ]
-                  : [
-                    Colors.white.withOpacity(0.9),
-                    Colors.white.withOpacity(0.7),
-                  ],
-        ),
-        border: Border.all(
-          color:
-              isDark
-                  ? Colors.white.withOpacity(0.2)
-                  : Colors.white.withOpacity(0.8),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color:
-                _hasDeadline
-                    ? theme.primaryColor.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
+      borderRadius: 20,
+      // backgroundColor: _hasDeadline
+      //     ? theme.primaryColor.withOpacity(0.03)
+      //     : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -554,39 +470,12 @@ class _AddTodoScreenState extends State<AddTodoScreen>
         Expanded(
           child: GestureDetector(
             onTap: _selectDate,
-            child: Container(
+            child: GlassCard(
+              // GlassCard 사용
               height: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors:
-                      isDark
-                          ? [
-                            Colors.white.withOpacity(0.1),
-                            Colors.white.withOpacity(0.05),
-                          ]
-                          : [
-                            Colors.white.withOpacity(0.9),
-                            Colors.white.withOpacity(0.7),
-                          ],
-                ),
-                border: Border.all(
-                  color:
-                      isDark
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.8),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.primaryColor.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
+              borderRadius: 20,
+              padding: EdgeInsets.zero, // GlassCard 내부 패딩 제거 후 직접 관리
+              // backgroundColor: theme.primaryColor.withOpacity(0.03),
               child: Stack(
                 children: [
                   // 배경 장식
@@ -690,39 +579,12 @@ class _AddTodoScreenState extends State<AddTodoScreen>
         Expanded(
           child: GestureDetector(
             onTap: _selectTime,
-            child: Container(
+            child: GlassCard(
+              // GlassCard 사용
               height: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors:
-                      isDark
-                          ? [
-                            Colors.white.withOpacity(0.1),
-                            Colors.white.withOpacity(0.05),
-                          ]
-                          : [
-                            Colors.white.withOpacity(0.9),
-                            Colors.white.withOpacity(0.7),
-                          ],
-                ),
-                border: Border.all(
-                  color:
-                      isDark
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.8),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.primaryColor.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
+              borderRadius: 20,
+              padding: EdgeInsets.zero, // GlassCard 내부 패딩 제거 후 직접 관리
+              // backgroundColor: theme.primaryColor.withOpacity(0.03),
               child: Stack(
                 children: [
                   // 배경 장식
@@ -805,6 +667,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final theme = Theme.of(context);
 
     return Container(
+      // GlassCard 스타일 직접 적용 (그라데이션 버튼)
       width: double.infinity,
       height: 56,
       decoration: BoxDecoration(
@@ -812,12 +675,12 @@ class _AddTodoScreenState extends State<AddTodoScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.7)],
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.primaryColor.withOpacity(0.3),
-            blurRadius: 20,
+            color: theme.primaryColor.withOpacity(0.4), // 그림자 강화
+            blurRadius: 25,
             offset: const Offset(0, 10),
           ),
         ],
