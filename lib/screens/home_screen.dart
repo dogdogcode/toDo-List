@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
@@ -96,14 +97,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             colors:
                 isDark
                     ? [
-                      const Color(0xFF0F0C29),
-                      const Color(0xFF302B63),
-                      const Color(0xFF24243E),
+                      const Color(0xFF0F0C29).withOpacity(0.85),
+                      const Color(0xFF302B63).withOpacity(0.8),
+                      const Color(0xFF24243E).withOpacity(0.85),
                     ]
                     : [
-                      const Color(0xFFE0C3FC),
-                      const Color(0xFF8EC5FC),
-                      const Color(0xFFFFE0F7),
+                      const Color(0xFFE0C3FC).withOpacity(0.8),
+                      const Color(0xFF8EC5FC).withOpacity(0.75),
+                      const Color(0xFFFFE0F7).withOpacity(0.8),
                     ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -361,86 +362,94 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? [
-                            Colors.white.withOpacity(0.15),
-                            Colors.white.withOpacity(0.05),
-                          ]
-                          : [
-                            Colors.white.withOpacity(0.9),
-                            Colors.white.withOpacity(0.6),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? [
+                                  Colors.white.withOpacity(0.08),
+                                  Colors.white.withOpacity(0.03),
+                                ]
+                                : [
+                                  Colors.white.withOpacity(0.6),
+                                  Colors.white.withOpacity(0.3),
+                                ],
+                      ),
+                      border: Border.all(
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white.withOpacity(0.1)
+                                : Colors.white.withOpacity(0.3),
+                        width: 1.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColor.withOpacity(0.8),
                           ],
-                ),
-                border: Border.all(
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.8),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  gradient: LinearGradient(
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.8),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
-                      blurRadius: 15,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                labelColor: Colors.white,
-                unselectedLabelColor:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white70
-                        : Colors.grey.shade600,
-                dividerColor: Colors.transparent,
-                indicatorSize: TabBarIndicatorSize.tab,
-                tabs: [
-                  Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.task_alt, size: 20),
-                        const SizedBox(width: 8),
-                        Text('기간 없음 (${provider.simpleTasks.length})'),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).primaryColor.withOpacity(0.3),
+                            blurRadius: 15,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      labelColor: Colors.white,
+                      unselectedLabelColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : Colors.grey.shade600,
+                      dividerColor: Colors.transparent,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      tabs: [
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.task_alt, size: 20),
+                              const SizedBox(width: 8),
+                              Text('기간 없음 (${provider.simpleTasks.length})'),
+                            ],
+                          ),
+                        ),
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.schedule, size: 20),
+                              const SizedBox(width: 8),
+                              Text('기간 있음 (${provider.deadlineTasks.length})'),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.schedule, size: 20),
-                        const SizedBox(width: 8),
-                        Text('기간 있음 (${provider.deadlineTasks.length})'),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -648,29 +657,99 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder:
-          (context) => GlassCard(
+          (context) => Container(
             margin: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.delete_sweep),
-                  title: const Text('완료된 할일 모두 삭제'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showDeleteCompletedConfirmDialog();
-                  },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? [
+                                Colors.white.withOpacity(0.08),
+                                Colors.white.withOpacity(0.03),
+                              ]
+                              : [
+                                Colors.white.withOpacity(0.6),
+                                Colors.white.withOpacity(0.3),
+                              ],
+                    ),
+                    border: Border.all(
+                      color:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.white.withOpacity(0.3),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 핸들 바
+                      Container(
+                        margin: const EdgeInsets.only(top: 12, bottom: 8),
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white54
+                              : Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          Icons.delete_sweep,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : Colors.grey.shade700,
+                        ),
+                        title: Text(
+                          '완료된 할일 모두 삭제',
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black87,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _showDeleteCompletedConfirmDialog();
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          Icons.refresh,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : Colors.grey.shade700,
+                        ),
+                        title: Text(
+                          '새로고침',
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black87,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.read<TodoProvider>().loadTodos();
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.refresh),
-                  title: const Text('새로고침'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.read<TodoProvider>().loadTodos();
-                  },
-                ),
-              ],
+              ),
             ),
           ),
     );

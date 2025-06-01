@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import '../models/todo_item.dart';
+import '../utils/date_helper.dart'; // DateHelper import 추가
 import 'glassmorphism_container.dart';
 
 class TodoCard extends StatefulWidget {
@@ -64,9 +65,7 @@ class _TodoCardState extends State<TodoCard>
             if (widget.onEdit != null)
               SlidableAction(
                 onPressed: (_) => widget.onEdit!(),
-                backgroundColor: Colors.blue.withOpacity(
-                  0.7,
-                ), // 색상 및 투명도 변경 (fixed 반영)
+                backgroundColor: Colors.blue.withOpacity(0.7),
                 foregroundColor: Colors.white,
                 icon: Icons.edit,
                 label: '편집',
@@ -77,7 +76,7 @@ class _TodoCardState extends State<TodoCard>
               ),
             SlidableAction(
               onPressed: (_) => widget.onDelete(),
-              backgroundColor: Colors.red.withOpacity(0.7), // 투명도 변경
+              backgroundColor: Colors.red.withOpacity(0.7),
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: '삭제',
@@ -97,8 +96,7 @@ class _TodoCardState extends State<TodoCard>
           ],
         ),
         child: GlassCard(
-          // GlassCard 사용
-          backgroundColor: _getCardColor(), // GlassCard의 backgroundColor로 전달
+          backgroundColor: _getCardColor(),
           onTap: widget.onToggle,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,12 +156,13 @@ class _TodoCardState extends State<TodoCard>
                                 color:
                                     widget.todo.isCompleted
                                         ? (isDark
-                                            ? Colors.white54
-                                            : Colors.grey)
+                                            ? Colors.white60
+                                            : Colors.grey.shade600)
                                         : (isDark
                                             ? Colors.white
-                                            : Colors.black87),
+                                            : Colors.black),
                                 fontWeight: FontWeight.w600,
+                                fontSize: 17,
                               ) ??
                               const TextStyle(),
                           child: Text(widget.todo.title),
@@ -184,11 +183,12 @@ class _TodoCardState extends State<TodoCard>
                                     color:
                                         widget.todo.isCompleted
                                             ? (isDark
-                                                ? Colors.white38
+                                                ? Colors.white54
                                                 : Colors.grey.shade600)
                                             : (isDark
                                                 ? Colors.white70
-                                                : Colors.grey.shade700),
+                                                : Colors.grey.shade800),
+                                    fontSize: 15,
                                   ) ??
                                   const TextStyle(),
                               child: Text(widget.todo.description!),
@@ -261,15 +261,23 @@ class _TodoCardState extends State<TodoCard>
                   ),
                 ],
               ),
-              // 생성일
+              // 상태 정보 (생성일 또는 마감일 상태)
               Padding(
-                padding: const EdgeInsets.only(top: 8, left: 36),
-                child: Text(
-                  '생성일: ${DateFormat('MM/dd HH:mm').format(widget.todo.createdAt)}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isDark ? Colors.white38 : Colors.grey.shade500,
-                    fontSize: 11,
-                  ),
+                padding: const EdgeInsets.only(top: 12, left: 36),
+                child: Row(
+                  children: [
+                    // 날짜 상태 표시
+                    _buildDateStatus(),
+                    const Spacer(),
+                    // 생성일 표시 (작게)
+                    Text(
+                      '생성: ${DateFormat('MM/dd HH:mm').format(widget.todo.createdAt)}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: isDark ? Colors.white38 : Colors.grey.shade500,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -279,17 +287,94 @@ class _TodoCardState extends State<TodoCard>
     );
   }
 
-  Color? _getCardColor() {
-    // GlassCard의 backgroundColor로 사용될 색상. GlassCard 내부에서 투명도 조절됨.
-    if (widget.todo.isCompleted) {
-      return Colors.green.withOpacity(0.5); // 기본 투명도 증가 (fixed 반영 및 조정)
-    } else if (widget.todo.isOverdue) {
-      return Colors.red.withOpacity(0.5); // 기본 투명도 증가 (fixed 반영 및 조정)
-    } else if (widget.todo.hasDeadline) {
-      return Colors.blue.withOpacity(0.4); // 기본 투명도 증가 (fixed 반영 및 조정)
+  // 날짜 상태 표시 위젯
+  Widget _buildDateStatus() {
+    final theme = Theme.of(context);
+    
+    if (widget.todo.hasDeadline) {
+      // 마감일 있는 작업
+      final statusText = DateHelper.getDueStatusString(widget.todo.dueDate!);
+      final statusColor = DateHelper.getDueStatusColor(widget.todo.dueDate!, widget.todo.isCompleted);
+      
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: statusColor.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: statusColor.withOpacity(0.5),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              widget.todo.isCompleted
+                  ? Icons.check_circle
+                  : widget.todo.isOverdue
+                      ? Icons.warning
+                      : Icons.schedule,
+              size: 14,
+              color: statusColor,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              statusText,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // 기간 없는 작업
+      final statusText = DateHelper.getCreatedAgoString(widget.todo.createdAt);
+      final statusColor = DateHelper.getCreatedAgoColor(widget.todo.createdAt);
+      
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: statusColor.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: statusColor.withOpacity(0.5),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.history,
+              size: 14,
+              color: statusColor,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              statusText,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      );
     }
-    // 기본 배경색 (GlassCard에서 isDark에 따라 흰색 계열 그라데이션 처리)
-    return null;
+  }
+
+  Color? _getCardColor() {
+    // 모든 작업을 흰색 계열로 통일
+    if (widget.todo.isCompleted) {
+      return Colors.green.withOpacity(0.15); // 완료된 작업만 약간의 초록색
+    } else {
+      return Colors.white.withOpacity(0.1); // 모두 흰색 계열
+    }
   }
 
   String _formatDueDate(DateTime dueDate) {
@@ -330,10 +415,8 @@ class TodoSectionHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // GlassCard와 유사한 스타일을 적용하거나, GlassCard를 사용할 수 있습니다.
-    // 여기서는 기존 구조를 유지하고 패딩만 조정합니다.
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 8), // 패딩 조정
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
       child: Row(
         children: [
           Container(
@@ -341,7 +424,7 @@ class TodoSectionHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: (color ?? theme.primaryColor).withOpacity(
                 isDark ? 0.25 : 0.15,
-              ), // 투명도 조정
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, size: 20, color: color ?? theme.primaryColor),
@@ -360,7 +443,7 @@ class TodoSectionHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: (color ?? theme.primaryColor).withOpacity(
                 isDark ? 0.3 : 0.2,
-              ), // 투명도 조정
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(

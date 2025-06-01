@@ -111,29 +111,29 @@ class GlassCard extends StatelessWidget {
                     backgroundColor != null
                         ? [
                           backgroundColor!.withOpacity(
-                            isDark ? 0.25 : 0.45,
-                          ), // 투명도 조정
+                            isDark ? 0.15 : 0.25,
+                          ), // 투명도 더욱 감소
                           backgroundColor!.withOpacity(
-                            isDark ? 0.10 : 0.20,
-                          ), // 투명도 조정
+                            isDark ? 0.05 : 0.1,
+                          ), // 투명도 더욱 감소
                         ]
                         : isDark
                         ? [
-                          Colors.white.withOpacity(0.12), // 어두운 테마 글래스 효과 강화
-                          Colors.white.withOpacity(0.05),
+                          Colors.white.withOpacity(0.05), // 극도로 투명한 글래스
+                          Colors.white.withOpacity(0.02),
                         ]
                         : [
-                          Colors.white.withOpacity(0.85), // 밝은 테마 글래스 효과 강화
-                          Colors.white.withOpacity(0.50),
+                          Colors.white.withOpacity(0.5), // 극도로 투명한 글래스
+                          Colors.white.withOpacity(0.25),
                         ],
                 stops: const [0.0, 1.0],
               ),
               border: Border.all(
                 color:
                     isDark
-                        ? Colors.white.withOpacity(0.2) // 테두리 강화
-                        : Colors.white.withOpacity(0.6), // 테두리 강화
-                width: 1.5, // 테두리 두께 증가
+                        ? Colors.white.withOpacity(0.08) // 테두리 더욱 투명
+                        : Colors.white.withOpacity(0.2), // 테두리 더욱 투명
+                width: 0.5, // 테두리 더욱 얖c게
               ),
               boxShadow: [
                 BoxShadow(
@@ -147,11 +147,11 @@ class GlassCard extends StatelessWidget {
                 // 내부 하이라이트 효과 (선택적)
                 BoxShadow(
                   color: (backgroundColor ?? Colors.white).withOpacity(
-                    isDark ? 0.08 : 0.3,
+                    isDark ? 0.05 : 0.2,
                   ),
-                  blurRadius: 20,
-                  spreadRadius: -10, // 안쪽으로 더 깊게
-                  offset: const Offset(0, -5),
+                  blurRadius: 15,
+                  spreadRadius: -8, // 안쪽으로 더 깊게
+                  offset: const Offset(0, -3),
                 ),
               ],
             ),
@@ -159,8 +159,8 @@ class GlassCard extends StatelessWidget {
               // BackdropFilter를 위해 ClipRRect 추가
               borderRadius: BorderRadius.circular(borderRadius),
               child: BackdropFilter(
-                // 블러 효과 추가
-                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                // 블러 효과 최대 강화
+                filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
                 child: Container(
                   padding: padding ?? const EdgeInsets.all(16),
                   child: child,
@@ -198,7 +198,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
       // 블러 효과를 위해 ClipRRect 추가
       child: BackdropFilter(
         // 블러 효과 추가
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -207,12 +207,12 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
               colors:
                   isDark
                       ? [
-                        Colors.black.withOpacity(0.4), // 투명도 조정
-                        Colors.black.withOpacity(0.2), // 투명도 조정
+                        Colors.black.withOpacity(0.25), // 투명도 감소
+                        Colors.black.withOpacity(0.1), // 투명도 감소
                       ]
                       : [
-                        Colors.white.withOpacity(0.7), // 투명도 조정
-                        Colors.white.withOpacity(0.5), // 투명도 조정
+                        Colors.white.withOpacity(0.5), // 투명도 감소
+                        Colors.white.withOpacity(0.3), // 투명도 감소
                       ],
             ),
           ),

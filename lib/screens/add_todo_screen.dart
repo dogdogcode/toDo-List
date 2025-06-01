@@ -78,7 +78,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
       opacity: _fadeAnimation,
       child: Container(
         // 전체 화면을 약간 어둡게 하여 모달 강조
-        decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+        decoration: BoxDecoration(color: Colors.black.withOpacity(0.2)), // 배경 투명도 감소
         child: SlideTransition(
           position: _slideAnimation,
           child: DraggableScrollableSheet(
@@ -93,7 +93,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                     top: Radius.circular(24),
                   ),
                   gradient: LinearGradient(
-                    // 그라데이션 배경 적용
+                    // 그라데이션 배경 적용 (투명도 증가)
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors:
@@ -101,14 +101,14 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                             ? [
                               const Color(
                                 0xFF1A1A2E,
-                              ).withOpacity(0.9), // 어두운 테마 그라데이션
-                              const Color(0xFF16213E).withOpacity(0.9),
+                              ).withOpacity(0.6), // 더욱 투명하게
+                              const Color(0xFF16213E).withOpacity(0.5),
                             ]
                             : [
                               const Color(
                                 0xFFF8FBFF,
-                              ).withOpacity(0.95), // 밝은 테마 그라데이션
-                              const Color(0xFFE3F2FD).withOpacity(0.95),
+                              ).withOpacity(0.65), // 더욱 투명하게
+                              const Color(0xFFE3F2FD).withOpacity(0.6),
                             ],
                     stops: const [0.0, 1.0],
                   ),
@@ -128,7 +128,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                     top: Radius.circular(24),
                   ),
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                    filter: ImageFilter.blur(sigmaX: 25.0, sigmaY: 25.0),
                     child: Column(
                       children: [
                         // 핸들 바
@@ -164,7 +164,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                                 child: Icon(
                                   Icons.add_task,
                                   color: theme.primaryColor,
-                                  size: 20,
+                                  size: 24, // 아이콘 크기 증가
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -172,7 +172,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                                 '새로운 할일',
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: 22, // 글자 크기 증가
                                   color: isDark ? Colors.white : Colors.black87,
                                 ),
                               ),
@@ -208,37 +208,44 @@ class _AddTodoScreenState extends State<AddTodoScreen>
 
                         // 폼 내용
                         Expanded(
-                          child: SingleChildScrollView(
-                            controller: scrollController,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // 제목 입력
-                                  _buildTitleField(),
-                                  const SizedBox(height: 12),
+                          child: GestureDetector(
+                            onTap: () {
+                              // 다른 부분 터치시 키보드 숨기기
+                              FocusScope.of(context).unfocus();
+                            },
+                            behavior: HitTestBehavior.translucent,
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // 제목 입력
+                                    _buildTitleField(),
+                                    const SizedBox(height: 12),
 
-                                  // 설명 입력
-                                  _buildDescriptionField(),
-                                  const SizedBox(height: 16),
-
-                                  // 마감일 설정
-                                  _buildDeadlineSection(),
-
-                                  if (_hasDeadline) ...[
+                                    // 설명 입력
+                                    _buildDescriptionField(),
                                     const SizedBox(height: 16),
-                                    _buildDateTimeSelectors(), // 이 내부도 GlassCard 스타일 적용 고려
+
+                                    // 마감일 설정
+                                    _buildDeadlineSection(),
+
+                                    if (_hasDeadline) ...[
+                                      const SizedBox(height: 16),
+                                      _buildDateTimeSelectors(), // 이 내부도 GlassCard 스타일 적용 고려
+                                    ],
+
+                                    const SizedBox(height: 24),
+
+                                    // 저장 버튼
+                                    _buildSaveButton(), // 이 버튼도 GlassCard 스타일 적용 고려
+
+                                    const SizedBox(height: 16),
                                   ],
-
-                                  const SizedBox(height: 24),
-
-                                  // 저장 버튼
-                                  _buildSaveButton(), // 이 버튼도 GlassCard 스타일 적용 고려
-
-                                  const SizedBox(height: 16),
-                                ],
+                                ),
                               ),
                             ),
                           ),
@@ -260,48 +267,70 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return GlassCard(
-      // GlassCard 사용
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       borderRadius: 20,
-      // backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: theme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.title, color: theme.primaryColor, size: 22),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: TextFormField(
-              controller: _titleController,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-              decoration: InputDecoration(
-                labelText: '할일 제목',
-                hintText: '무엇을 해야 하나요?',
-                border: InputBorder.none,
-                labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark ? Colors.white54 : Colors.grey.shade600,
+      padding: const EdgeInsets.all(0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {}, // 빈 함수로 터치 효과만
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.primaryColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(Icons.title, color: theme.primaryColor, size: 24),
                 ),
-                hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark ? Colors.white38 : Colors.grey.shade400,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '할일 제목',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _titleController,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: '무엇을 해야 하나요?',
+                          border: InputBorder.none,
+                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: isDark ? Colors.white54 : Colors.grey.shade500,
+                            fontSize: 16,
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return '제목을 입력해주세요';
+                          }
+                          return null;
+                        },
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return '제목을 입력해주세요';
-                }
-                return null;
-              },
-              textInputAction: TextInputAction.next,
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -311,44 +340,66 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return GlassCard(
-      // GlassCard 사용
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       borderRadius: 20,
-      // backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: theme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.description, color: theme.primaryColor, size: 22),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: TextFormField(
-              controller: _descriptionController,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-              decoration: InputDecoration(
-                labelText: '설명 (선택사항)',
-                hintText: '추가 설명을 입력하세요',
-                border: InputBorder.none,
-                labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark ? Colors.white54 : Colors.grey.shade600,
+      padding: const EdgeInsets.all(0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {}, // 빈 함수로 터치 효과만
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.primaryColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(Icons.description, color: theme.primaryColor, size: 24),
                 ),
-                hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark ? Colors.white38 : Colors.grey.shade400,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '설명 (선택사항)',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _descriptionController,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: '추가 설명을 입력하세요',
+                          border: InputBorder.none,
+                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: isDark ? Colors.white54 : Colors.grey.shade500,
+                            fontSize: 16,
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        maxLines: 3,
+                        textInputAction: TextInputAction.done,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              maxLines: 3,
-              textInputAction: TextInputAction.done,
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -358,12 +409,9 @@ class _AddTodoScreenState extends State<AddTodoScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return GlassCard(
-      // GlassCard 사용
-      height: 80,
+      // GlassCard 사용 (height 제거하여 내용에 맞게 자동 조정)
       borderRadius: 20,
-      // backgroundColor: _hasDeadline
-      //     ? theme.primaryColor.withOpacity(0.03)
-      //     : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+      padding: const EdgeInsets.all(0), // 내부 패딩 제거
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -378,11 +426,11 @@ class _AddTodoScreenState extends State<AddTodoScreen>
             });
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // 패딩 증가
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12), // 패딩 통일
                   decoration: BoxDecoration(
                     color:
                         _hasDeadline
@@ -390,7 +438,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                             : (isDark
                                 ? Colors.white.withOpacity(0.1)
                                 : Colors.grey.withOpacity(0.1)),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14), // 보더 랄디어스 통일
                   ),
                   child: Icon(
                     _hasDeadline ? Icons.schedule : Icons.task_alt,
@@ -398,26 +446,30 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                         _hasDeadline
                             ? theme.primaryColor
                             : (isDark ? Colors.white54 : Colors.grey.shade600),
-                    size: 24,
+                    size: 24, // 아이콘 크기 통일
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start, // center에서 start로 변경
+                    mainAxisSize: MainAxisSize.min, // 크기를 최소로 제한
                     children: [
                       Text(
                         '마감일 설정',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
+                          fontSize: 16, // 글자 크기 통일
                           color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4), // 간격 증가
                       Text(
                         _hasDeadline ? '마감일이 있는 할일' : '기간 없는 할일',
                         style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 14, // 글자 크기 증가
+                          fontWeight: FontWeight.w500, // 글자 두께 증가
                           color:
                               _hasDeadline
                                   ? theme.primaryColor
@@ -521,6 +573,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                                         ? Colors.white70
                                         : Colors.grey.shade600,
                                 fontWeight: FontWeight.w500,
+                                fontSize: 14, // 글자 크기 통일
                               ),
                             ),
                           ],
@@ -535,6 +588,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                                 ).split(' ')[0],
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 20, // 글자 크기 증가
                                   color: theme.primaryColor,
                                 ),
                               ),
@@ -546,6 +600,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                                     _selectedDate!,
                                   ).split(' ').skip(1).join(' '),
                                   style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontSize: 15, // 글자 크기 증가
                                     color:
                                         isDark
                                             ? Colors.white70
@@ -556,6 +611,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                               Text(
                                 '선택하세요',
                                 style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontSize: 17, // 글자 크기 증가
                                   color:
                                       isDark
                                           ? Colors.white38
@@ -630,6 +686,7 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                                         ? Colors.white70
                                         : Colors.grey.shade600,
                                 fontWeight: FontWeight.w500,
+                                fontSize: 14, // 글자 크기 통일
                               ),
                             ),
                           ],
@@ -642,9 +699,11 @@ class _AddTodoScreenState extends State<AddTodoScreen>
                               _selectedTime != null
                                   ? theme.textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 20, // 글자 크기 증가
                                     color: theme.primaryColor,
                                   )
                                   : theme.textTheme.bodyLarge?.copyWith(
+                                    fontSize: 17, // 글자 크기 증가
                                     color:
                                         isDark
                                             ? Colors.white38

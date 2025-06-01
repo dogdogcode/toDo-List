@@ -127,4 +127,99 @@ class DateHelper {
     ];
     return months[month - 1];
   }
+
+  // 생성일로부터 며칠 전인지 계산
+  static int getDaysAgo(DateTime createdDate) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final createdDay = DateTime(createdDate.year, createdDate.month, createdDate.day);
+    return today.difference(createdDay).inDays;
+  }
+
+  // 마감일까지 며칠 남았는지 계산 (음수면 초과)
+  static int getDaysUntilDue(DateTime dueDate) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dueDayOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
+    return dueDayOnly.difference(today).inDays;
+  }
+
+  // 생성일 기준 표시 문자열
+  static String getCreatedAgoString(DateTime createdDate) {
+    final daysAgo = getDaysAgo(createdDate);
+    
+    if (daysAgo == 0) {
+      return '오늘 생성';
+    } else if (daysAgo == 1) {
+      return '어제 생성';
+    } else if (daysAgo < 7) {
+      return '$daysAgo일 전 생성';
+    } else if (daysAgo < 30) {
+      final weeks = (daysAgo / 7).floor();
+      return '$weeks주 전 생성';
+    } else {
+      final months = (daysAgo / 30).floor();
+      return '$months개월 전 생성';
+    }
+  }
+
+  // 마감일 기준 표시 문자열
+  static String getDueStatusString(DateTime dueDate) {
+    final daysUntil = getDaysUntilDue(dueDate);
+    
+    if (daysUntil < 0) {
+      final overdue = daysUntil.abs();
+      if (overdue == 1) {
+        return '어제 초과';
+      } else {
+        return '$overdue일 초과';
+      }
+    } else if (daysUntil == 0) {
+      return '오늘 마감';
+    } else if (daysUntil == 1) {
+      return '내일 마감';
+    } else if (daysUntil <= 7) {
+      return '$daysUntil일 남음';
+    } else if (daysUntil <= 30) {
+      final weeks = (daysUntil / 7).floor();
+      return '$weeks주 남음';
+    } else {
+      final months = (daysUntil / 30).floor();
+      return '$months개월 남음';
+    }
+  }
+
+  // 생성일 기준 색상 반환
+  static Color getCreatedAgoColor(DateTime createdDate) {
+    final daysAgo = getDaysAgo(createdDate);
+    
+    if (daysAgo == 0) {
+      return Colors.grey.shade600; // 오늘 생성
+    } else if (daysAgo <= 3) {
+      return Colors.lightBlue.shade400; // 1-3일 전
+    } else if (daysAgo <= 7) {
+      return Colors.blue.shade500; // 4-7일 전
+    } else {
+      return Colors.deepPurple.shade400; // 1주일 이상
+    }
+  }
+
+  // 마감일 기준 색상 반환
+  static Color getDueStatusColor(DateTime dueDate, bool isCompleted) {
+    if (isCompleted) {
+      return Colors.green.shade500; // 완료됨
+    }
+    
+    final daysUntil = getDaysUntilDue(dueDate);
+    
+    if (daysUntil < 0) {
+      return Colors.red.shade600; // 초과
+    } else if (daysUntil == 0) {
+      return Colors.orange.shade600; // 오늘 마감
+    } else if (daysUntil <= 2) {
+      return Colors.amber.shade600; // 1-2일 남음
+    } else {
+      return Colors.blue.shade500; // 3일 이상 남음
+    }
+  }
 }

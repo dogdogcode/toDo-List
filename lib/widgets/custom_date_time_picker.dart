@@ -51,12 +51,12 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
               colors:
                   isDark
                       ? [
-                        const Color(0xFF1A1A2E).withOpacity(0.9),
-                        const Color(0xFF16213E).withOpacity(0.9),
+                        const Color(0xFF1A1A2E).withOpacity(0.6),
+                        const Color(0xFF16213E).withOpacity(0.5),
                       ]
                       : [
-                        const Color(0xFFF8FBFF).withOpacity(0.95),
-                        const Color(0xFFE3F2FD).withOpacity(0.95),
+                        const Color(0xFFF8FBFF).withOpacity(0.65),
+                        const Color(0xFFE3F2FD).withOpacity(0.6),
                       ],
             ),
             boxShadow: [
@@ -73,7 +73,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             // 블러 효과를 위해 추가
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+              filter: ImageFilter.blur(sigmaX: 25.0, sigmaY: 25.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -439,18 +439,18 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             gradient: LinearGradient(
-              // 그라데이션 배경 적용
+              // 그라데이션 배경 적용 (투명도 증가)
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors:
                   isDark
                       ? [
-                        const Color(0xFF1A1A2E).withOpacity(0.9),
-                        const Color(0xFF16213E).withOpacity(0.9),
+                        const Color(0xFF1A1A2E).withOpacity(0.6),
+                        const Color(0xFF16213E).withOpacity(0.5),
                       ]
                       : [
-                        const Color(0xFFF8FBFF).withOpacity(0.95),
-                        const Color(0xFFE3F2FD).withOpacity(0.95),
+                        const Color(0xFFF8FBFF).withOpacity(0.65),
+                        const Color(0xFFE3F2FD).withOpacity(0.6),
                       ],
             ),
             boxShadow: [
@@ -467,7 +467,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             // 블러 효과를 위해 추가
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+              filter: ImageFilter.blur(sigmaX: 25.0, sigmaY: 25.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
