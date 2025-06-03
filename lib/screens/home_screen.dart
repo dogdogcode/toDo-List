@@ -1,12 +1,13 @@
-import 'dart:ui';
+import 'dart:ui'; // Keep for BackdropFilter
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+// import 'package:flutter_staggered_animations/flutter_staggered_animations.dart'; // Removed
 import 'package:provider/provider.dart';
 
 import '../providers/todo_provider.dart';
 import '../widgets/glassmorphism_container.dart';
 import '../widgets/todo_card.dart';
 import 'add_todo_screen.dart';
+import 'calendar_screen.dart'; // Added import for CalendarScreen
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,68 +17,69 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
-  late AnimationController _scaleController;
-  late AnimationController _textController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _borderRadiusAnimation;
-  late Animation<double> _textFadeAnimation;
-  late Animation<Offset> _textSlideAnimation;
+  int _currentIndex = 0;
+  late PageController _pageController;
+  // late AnimationController _scaleController; // Removed
+  // late AnimationController _textController; // Removed
+  // late Animation<double> _scaleAnimation; // Removed
+  // late Animation<double> _borderRadiusAnimation; // Removed
+  // late Animation<double> _textFadeAnimation; // Removed
+  // late Animation<Offset> _textSlideAnimation; // Removed
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _pageController = PageController();
 
     // 스케일 애니메이션 컸트롤러 초기화 (아이폰 스타일)
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
+    // _scaleController = AnimationController( // Removed
+    //   duration: const Duration(milliseconds: 200),
+    //   vsync: this,
+    // );
 
     // 텍스트 애니메이션 컸트롤러
-    _textController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+    // _textController = AnimationController( // Removed
+    //   duration: const Duration(milliseconds: 800),
+    //   vsync: this,
+    // );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.94).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
-    );
+    // _scaleAnimation = Tween<double>(begin: 1.0, end: 0.94).animate( // Removed
+    //   CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    // );
 
-    _borderRadiusAnimation = Tween<double>(begin: 0.0, end: 16.0).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
-    );
+    // _borderRadiusAnimation = Tween<double>(begin: 0.0, end: 16.0).animate( // Removed
+    //   CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    // );
 
-    _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
+    // _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate( // Removed
+    //   CurvedAnimation(
+    //     parent: _textController,
+    //     curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    //   ),
+    // );
 
-    _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
-      ),
-    );
+    // _textSlideAnimation = Tween<Offset>( // Removed
+    //   begin: const Offset(0, 0.3),
+    //   end: Offset.zero,
+    // ).animate(
+    //   CurvedAnimation(
+    //     parent: _textController,
+    //     curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+    //   ),
+    // );
 
     // 앱 시작 시 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TodoProvider>().loadTodos();
-      _textController.forward(); // 텍스트 애니메이션 시작
+      // _textController.forward(); // Removed: 텍스트 애니메이션 시작
     });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _scaleController.dispose();
-    _textController.dispose();
+    _pageController.dispose();
+    // _scaleController.dispose(); // Removed
+    // _textController.dispose(); // Removed
     super.dispose();
   }
 
@@ -109,64 +111,100 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             stops: const [0.0, 0.5, 1.0],
           ),
         ),
-        child: AnimatedBuilder(
-          animation: Listenable.merge([
-            _scaleAnimation,
-            _borderRadiusAnimation,
-          ]),
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  _borderRadiusAnimation.value,
-                ),
-                child: Container(
-                  decoration:
-                      _scaleAnimation.value < 1.0
-                          ? BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 20,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 10),
+        // child: AnimatedBuilder( // Removed AnimatedBuilder
+        //   animation: Listenable.merge([
+        //     _scaleAnimation,
+        //     _borderRadiusAnimation,
+        //   ]),
+        //   builder: (context, child) {
+        //     return Transform.scale( // Removed Transform.scale
+        //       scale: _scaleAnimation.value,
+        //       child: ClipRRect( // Removed ClipRRect
+        //         borderRadius: BorderRadius.circular(
+        //           _borderRadiusAnimation.value,
+        //         ),
+        //         child: Container( // Removed Container with conditional shadow
+        //           decoration:
+        //               _scaleAnimation.value < 1.0
+        //                   ? BoxDecoration(
+        //                     boxShadow: [
+        //                       BoxShadow(
+        //                         color: Colors.black.withOpacity(0.3),
+        //                         blurRadius: 20,
+        //                         spreadRadius: 2,
+        //                         offset: const Offset(0, 10),
+        //                       ),
+        //                     ],
+        //                   )
+        //                   : null,
+                  child: SafeArea( // SafeArea remains
+                    child: PageView( // PageView remains
+                      controller: _pageController, // controller remains
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                      children: <Widget>[
+                        // Home Screen Content
+                        // Home Screen Content
+                        Consumer<TodoProvider>( // Moved Consumer to wrap the content that needs provider
+                          builder: (context, provider, child) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  _buildAppBar(),
+                                  _buildStatsCard(), // This already uses Consumer internally
+                                  _buildSectionHeader("기간 없음", Icons.task_alt_outlined, provider.simpleTasks.length, theme.primaryColor),
+                                  _buildSimpleTasksList(), // This uses Consumer internally
+                                  _buildSectionHeader("마감일 있음", Icons.event_available_outlined, provider.deadlineTasks.length, theme.colorScheme.secondary),
+                                  _buildDeadlineTasksList(), // This uses Consumer internally
+                                ],
                               ),
-                            ],
-                          )
-                          : null,
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        // 커스텀 앱바
-                        _buildAppBar(),
-
-                        // 통계 카드
-                        _buildStatsCard(),
-
-                        // 탭바
-                        _buildTabBar(),
-
-                        // 탭 뷰
-                        Expanded(
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                              _buildSimpleTasksList(),
-                              _buildDeadlineTasksList(),
-                            ],
-                          ),
+                            );
+                          },
                         ),
+                        // Calendar Screen Content
+                        const CalendarScreen(), // Replaced placeholder with CalendarScreen instance
                       ],
                     ),
                   ),
-                ),
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
+      ),
+      floatingActionButton: _buildFloatingActionButton(), // FAB remains
+      bottomNavigationBar: ClipRect( // Added ClipRect for BackdropFilter
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          child: BottomNavigationBar(
+            backgroundColor: theme.cardColor.withOpacity(isDark ? 0.1 : 0.5), // Semi-transparent background
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            selectedItemColor: theme.primaryColor,
+            unselectedItemColor: isDark ? Colors.white54 : Colors.black54,
+            elevation: 0, // Remove default elevation, blur will handle depth
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
               ),
-            );
-          },
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today),
+                label: 'Calendar',
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(),
     );
   }
 
@@ -175,52 +213,42 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         children: [
-          FadeTransition(
-            opacity: _textFadeAnimation,
-            child: SlideTransition(
-              position: _textSlideAnimation,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '안녕하세요! 👋',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '오늘도 화이팅하세요!',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white70
-                              : Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Spacer(),
-          FadeTransition(
-            opacity: _textFadeAnimation,
-            child: ScaleTransition(
-              scale: _textFadeAnimation,
-              child: IconButton(
-                onPressed: _showOptionsBottomSheet,
-                icon: Icon(
-                  Icons.more_vert,
+          // FadeTransition & SlideTransition removed
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '안녕하세요! 👋',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color:
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.white
                           : Colors.black87,
                 ),
               ),
+              const SizedBox(height: 4),
+              Text(
+                '오늘도 화이팅하세요!',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white70
+                          : Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          // FadeTransition & ScaleTransition removed
+          IconButton(
+            onPressed: _showOptionsBottomSheet,
+            icon: Icon(
+              Icons.more_vert,
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black87,
             ),
           ),
         ],
@@ -231,21 +259,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildStatsCard() {
     return Consumer<TodoProvider>(
       builder: (context, provider, child) {
-        return FadeTransition(
-          opacity: _textFadeAnimation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.5),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(
-                parent: _textController,
-                curve: const Interval(0.3, 0.9, curve: Curves.easeOut),
-              ),
-            ),
-            child: GlassCard(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: Row(
+        // FadeTransition & SlideTransition removed
+        return GlassCard(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Row(
                 children: [
                   _buildStatItem(
                     '전체',
@@ -345,118 +362,118 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTabBar() {
-    return Consumer<TodoProvider>(
-      builder: (context, provider, child) {
-        return FadeTransition(
-          opacity: _textFadeAnimation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.7),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(
-                parent: _textController,
-                curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
-              ),
-            ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? [
-                                  Colors.white.withOpacity(0.08),
-                                  Colors.white.withOpacity(0.03),
-                                ]
-                                : [
-                                  Colors.white.withOpacity(0.6),
-                                  Colors.white.withOpacity(0.3),
-                                ],
-                      ),
-                      border: Border.all(
-                        color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.white.withOpacity(0.3),
-                        width: 1.0,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: TabBar(
-                      controller: _tabController,
-                      indicator: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).primaryColor.withOpacity(0.8),
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context).primaryColor.withOpacity(0.3),
-                            blurRadius: 15,
-                            spreadRadius: 1,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      labelColor: Colors.white,
-                      unselectedLabelColor:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white70
-                              : Colors.grey.shade600,
-                      dividerColor: Colors.transparent,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      tabs: [
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.task_alt, size: 20),
-                              const SizedBox(width: 8),
-                              Text('기간 없음 (${provider.simpleTasks.length})'),
-                            ],
-                          ),
-                        ),
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.schedule, size: 20),
-                              const SizedBox(width: 8),
-                              Text('기간 있음 (${provider.deadlineTasks.length})'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // Widget _buildTabBar() { // Removed this method as it's no longer used by the main PageView structure
+  //   return Consumer<TodoProvider>(
+  //     builder: (context, provider, child) {
+  //       return FadeTransition(
+  //         opacity: _textFadeAnimation,
+  //         child: SlideTransition(
+  //           position: Tween<Offset>(
+  //             begin: const Offset(0, 0.7),
+  //             end: Offset.zero,
+  //           ).animate(
+  //             CurvedAnimation(
+  //               parent: _textController,
+  //               curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+  //             ),
+  //           ),
+  //           child: Container(
+  //             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //             child: ClipRRect(
+  //               borderRadius: BorderRadius.circular(20),
+  //               child: BackdropFilter(
+  //                 filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+  //                 child: Container(
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(20),
+  //                     gradient: LinearGradient(
+  //                       begin: Alignment.topLeft,
+  //                       end: Alignment.bottomRight,
+  //                       colors:
+  //                           Theme.of(context).brightness == Brightness.dark
+  //                               ? [
+  //                                 Colors.white.withOpacity(0.08),
+  //                                 Colors.white.withOpacity(0.03),
+  //                               ]
+  //                               : [
+  //                                 Colors.white.withOpacity(0.6),
+  //                                 Colors.white.withOpacity(0.3),
+  //                               ],
+  //                     ),
+  //                     border: Border.all(
+  //                       color:
+  //                           Theme.of(context).brightness == Brightness.dark
+  //                               ? Colors.white.withOpacity(0.1)
+  //                               : Colors.white.withOpacity(0.3),
+  //                       width: 1.0,
+  //                     ),
+  //                     boxShadow: [
+  //                       BoxShadow(
+  //                         color: Colors.black.withOpacity(0.1),
+  //                         blurRadius: 20,
+  //                         spreadRadius: 1,
+  //                         offset: const Offset(0, 10),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   // child: TabBar(  // The TabBar is removed
+  //                   //   controller: _tabController,
+  //                   //   indicator: BoxDecoration(
+  //                   //     borderRadius: BorderRadius.circular(18),
+  //                   //     gradient: LinearGradient(
+  //                   //       colors: [
+  //                   //         Theme.of(context).primaryColor,
+  //                   //         Theme.of(context).primaryColor.withOpacity(0.8),
+  //                   //       ],
+  //                   //     ),
+  //                   //     boxShadow: [
+  //                   //       BoxShadow(
+  //                   //         color: Theme.of(context).primaryColor.withOpacity(0.3),
+  //                   //         blurRadius: 15,
+  //                   //         spreadRadius: 1,
+  //                   //         offset: const Offset(0, 5),
+  //                   //       ),
+  //                   //     ],
+  //                   //   ),
+  //                   //   labelColor: Colors.white,
+  //                   //   unselectedLabelColor:
+  //                   //       Theme.of(context).brightness == Brightness.dark
+  //                   //           ? Colors.white70
+  //                   //           : Colors.grey.shade600,
+  //                   //   dividerColor: Colors.transparent,
+  //                   //   indicatorSize: TabBarIndicatorSize.tab,
+  //                   //   tabs: [
+  //                   //     Tab(
+  //                   //       child: Row(
+  //                   //         mainAxisAlignment: MainAxisAlignment.center,
+  //                   //         children: [
+  //                   //           const Icon(Icons.task_alt, size: 20),
+  //                   //           const SizedBox(width: 8),
+  //                   //           Text('기간 없음 (${provider.simpleTasks.length})'),
+  //                   //         ],
+  //                   //       ),
+  //                   //     ),
+  //                   //     Tab(
+  //                   //       child: Row(
+  //                   //         mainAxisAlignment: MainAxisAlignment.center,
+  //                   //         children: [
+  //                   //           const Icon(Icons.schedule, size: 20),
+  //                   //           const SizedBox(width: 8),
+  //                   //           Text('기간 있음 (${provider.deadlineTasks.length})'),
+  //                   //         ],
+  //                   //       ),
+  //                   //     ),
+  //                   //   ],
+  //                   // ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildSimpleTasksList() {
     return Consumer<TodoProvider>(
@@ -469,28 +486,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           return _buildEmptyState('아직 할일이 없어요', '새로운 할일을 추가해보세요!');
         }
 
-        return AnimationLimiter(
-          child: ListView.builder(
-            padding: const EdgeInsets.only(bottom: 80),
-            itemCount: provider.simpleTasks.length,
-            itemBuilder: (context, index) {
-              final todo = provider.simpleTasks[index];
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: const Duration(milliseconds: 375),
-                child: SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: TodoCard(
-                      todo: todo,
-                      onToggle: () => provider.toggleTodoStatus(todo),
-                      onDelete: () => _showDeleteConfirmDialog(todo.id!),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+        // AnimationLimiter, AnimationConfiguration, SlideAnimation, FadeInAnimation removed
+        return ListView.builder(
+          shrinkWrap: true, // Added for SingleChildScrollView
+          physics: const NeverScrollableScrollPhysics(), // Added for SingleChildScrollView
+          padding: const EdgeInsets.only(bottom: 16), // Adjusted padding
+          itemCount: provider.simpleTasks.length,
+          itemBuilder: (context, index) {
+            final todo = provider.simpleTasks[index];
+            return TodoCard(
+              todo: todo,
+              onToggle: () => provider.toggleTodoStatus(todo),
+              onDelete: () => _showDeleteConfirmDialog(todo.id!),
+            );
+          },
         );
       },
     );
@@ -500,37 +509,72 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Consumer<TodoProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          // For a shrinkWrapped list, returning a fixed small widget is better than Center
+          return const SizedBox(height: 50, child: Center(child: CircularProgressIndicator()));
         }
 
         if (provider.deadlineTasks.isEmpty) {
           return _buildEmptyState('기간이 있는 할일이 없어요', '마감일이 있는 할일을 추가해보세요!');
         }
 
-        return AnimationLimiter(
-          child: ListView.builder(
-            padding: const EdgeInsets.only(bottom: 80),
-            itemCount: provider.deadlineTasks.length,
-            itemBuilder: (context, index) {
-              final todo = provider.deadlineTasks[index];
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: const Duration(milliseconds: 375),
-                child: SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: TodoCard(
-                      todo: todo,
-                      onToggle: () => provider.toggleTodoStatus(todo),
-                      onDelete: () => _showDeleteConfirmDialog(todo.id!),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+        // AnimationLimiter, AnimationConfiguration, SlideAnimation, FadeInAnimation removed
+        return ListView.builder(
+          shrinkWrap: true, // Added for SingleChildScrollView
+          physics: const NeverScrollableScrollPhysics(), // Added for SingleChildScrollView
+          padding: const EdgeInsets.only(bottom: 80), // Keep padding for FAB space
+          itemCount: provider.deadlineTasks.length,
+          itemBuilder: (context, index) {
+            final todo = provider.deadlineTasks[index];
+            return TodoCard(
+              todo: todo,
+              onToggle: () => provider.toggleTodoStatus(todo),
+              onDelete: () => _showDeleteConfirmDialog(todo.id!),
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon, int count, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(isDark ? 0.25 : 0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(isDark ? 0.3 : 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              count.toString(),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -573,16 +617,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildFloatingActionButton() {
-    return ScaleTransition(
-      scale: Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _textController,
-          curve: const Interval(0.6, 1.0, curve: Curves.elasticOut),
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
+    // ScaleTransition removed
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
           gradient: LinearGradient(
             colors: [
               Theme.of(context).primaryColor,
@@ -613,8 +651,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _showAddTodoScreen() {
-    // 배경 축소 애니메이션 시작
-    _scaleController.forward();
+    // _scaleController.forward(); // Removed
 
     showModalBottomSheet<void>(
       context: context,
@@ -622,8 +659,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.transparent,
       builder: (context) => const AddTodoScreen(),
     ).then((_) {
-      // 배경 원래 크기로 복원
-      _scaleController.reverse();
+      // _scaleController.reverse(); // Removed
       // 화면이 닫힐 때 데이터 새로고침
       context.read<TodoProvider>().loadTodos();
     });

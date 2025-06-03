@@ -23,43 +23,41 @@ class TodoCard extends StatefulWidget {
   State<TodoCard> createState() => _TodoCardState();
 }
 
-class _TodoCardState extends State<TodoCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
+class _TodoCardState extends State<TodoCard> { // Removed SingleTickerProviderStateMixin
+  // late AnimationController _controller; // Removed
+  // late Animation<double> _fadeAnimation; // Removed
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
+  // @override // Removed initState
+  // void initState() {
+  //   super.initState();
+  //   _controller = AnimationController(
+  //     duration: const Duration(milliseconds: 150),
+  //     vsync: this,
+  //   );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  //   _fadeAnimation = Tween<double>(
+  //     begin: 0.0,
+  //     end: 1.0,
+  //   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _controller.forward();
-  }
+  //   _controller.forward();
+  // }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // @override // Removed dispose
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Slidable(
-        key: ValueKey(widget.todo.id),
-        endActionPane: ActionPane(
+    // FadeTransition removed
+    return Slidable(
+      key: ValueKey(widget.todo.id),
+      endActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
             if (widget.onEdit != null)
